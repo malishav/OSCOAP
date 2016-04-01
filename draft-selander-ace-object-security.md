@@ -331,6 +331,8 @@ The Plaintext is formatted as a CoAP message without Header (see {{plaintext-fig
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |1 1 1 1 1 1 1 1|    Payload (if any) ...                       ~
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+(only if there 
+ is payload)
 ~~~~~~~~~~~
 {: #plaintext-figure title="Plaintext" }
 {: artwork-align="center"}
