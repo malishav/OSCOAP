@@ -1,7 +1,7 @@
 ---
 title: Object Security of CoAP (OSCOAP)
 # abbrev: OSCOAP
-docname: draft-selander-ace-object-security-04
+docname: draft-selander-ace-object-security-05
 
 # stand_alone: true
 
@@ -382,7 +382,8 @@ In order to protect from replay of messages and verify freshness, a CoAP endpoin
 
 Depending on use case and ordering of messages provided by underlying layers, an endpoint MAY maintain a sliding replay window for Sequence Numbers of received messages associated to each Cid.
 
-A receiving endpoint SHALL verify that the Sequence Number received in the COSE object has not been received before in the security context identified by the Cid. Note that for the server, the relevant Sequence Number here is the Client Write Sequence Number and vice versa for the client.
+A receiving endpoint SHALL verify that the Sequence Number received in the COSE object has not been received before in the security context identified by the Cid. The receiving endpoint SHALL also
+reject messages with a sequence number greater than 2^56-1. Note that for the server, the relevant Sequence Number here is the Client Write Sequence Number and vice versa for the client.
 
 OSCOAP is a challenge-response protocol, where the response is verified to match a prior request, by including the unique transaction identifier (Tid as defined in {{sec-context-section}}) of the request in the Additional Authenticated Data of the response message.
 
@@ -625,7 +626,7 @@ Let's analyse the contributions one at a time:
 * The header parameters of the COSE object are the Context Identifier (Cid) and the Sequence Number (Seq) (also known as the Transaction Identifier (Tid)) if the message is a request, and Seq only if the message is a response (see {{sec-obj-cose}}).
 
     * The size of Cid depends on the number of simultaneous clients, and must be chosen so that the server can uniquely identify the requesting client. For example, in the case of an ACE-based authentication and authorization model {{I-D.ietf-ace-oauth-authz}}, the Authorization Server or the server itself can define the context identifier of all clients interacting with a particular server, in which case the size of Cid can be proportional to the logarithm of number of authorized clients. 
-      * As Cids of different lengths can be used by different client, it is RECOMMENDED to start assigning Cids of length 1 byte (0x00, 0x01, ..., 0xff), and then when all 1 byte Cids are in use, start handling out Cids with a length of two bytes (0x0000, 0x0001, ..., 0xffff). 
+      * As Cids of different lengths can be used by different client, it is RECOMMENDED to start assigning Cids of length 1 byte (0x00, 0x01, ..., 0xff), and then when all 1 byte Cids are in use, start handling out Cids with a length of two bytes (0x0000, 0x0001, ..., 0xffff). Note that a Cid with the value 0x00 is considered different from the Cid with the value 0x0000.
 
     * The size of Seq is variable, and increases with the number of messages exchanged.
 
