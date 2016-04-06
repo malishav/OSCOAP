@@ -163,7 +163,8 @@ A CoAP proxy SHOULD NOT cache a response to a request with an Object-Security op
 {: #obj-sec-option title="The Object-Security Option"}
 {: artwork-align="center"}
 
-The length of the Object-Security option depends on whether the unprotected message has payload, on the set of options that are included in the unprotected message, the length of the integrity tag, and the length of the information identifying the security context.
+The length of the Object-Security option depends on whether the unprotected message has payload, on the set of options that are included in the unprotected message, the length of the integrity tag, and the length of the information identifying the security context. An endpoint receiving a CoAP message with payload, that also contains a non-empty Object-Security option SHALL treat it as malformed.
+
 
 * If the unprotected message has payload, then the COSE object is the payload of the protected message (see {{protected-coap-formatting-req}} and {{protected-coap-formatting-resp}}), and the Object-Security option has length zero.
 
@@ -307,7 +308,7 @@ The fields of COSE\_Encrypted structure are defined as follows (see example in {
 
     - The "protected" field, which SHALL include:
 
-        * The "Partial Initialization Vector" parameter. The value is set to the Client Write Sequence Number, or the Server Write Sequence Number, depending on whether the client or server is sending the message. The Partial IV is a byte string (type: bstr), where the length is the minimum length needed to encode the sequence number.
+        * The "Partial Initialization Vector" parameter. The value is set to the Client Write Sequence Number, or the Server Write Sequence Number, depending on whether the client or server is sending the message. The Partial IV is a byte string (type: bstr), where the length is the minimum length needed to encode the sequence number. An Endpoint that receives a COSE object with a sequence number encoded with leading zeroes (i.e. longer than the minimum needed length) SHALL reject the corresponding message as malformed.
 
         * If the message is a CoAP request, the "kid" parameter. The value is set to the Context Identifier (see {{sec-context-section}}).
 
@@ -861,8 +862,7 @@ The COSE object SHALL be protected (encrypted) and verified (decrypted) as
 described in ({{I-D.ietf-cose-msg}}). 
 
 In the case of symmetric encryption, the
-same key and nonce SHALL NOT be used twice. The use of sequence numbers for
-partial IV as specified for OSCOAP MAY be used. of sequence numbers for replay protection as described in {{replay-protection-section}} MAY be used. The use of time stamps in the COSE header parameter
+same key and nonce SHALL NOT be used twice. Sequence numbers for partial IV as specified for OSCOAP MAY be used for replay protection as described in {{replay-protection-section}}. The use of time stamps in the COSE header parameter
 'operation time' {{I-D.ietf-cose-msg}} for freshness MAY be used.
 
 OSCON SHALL NOT be used in cases where CoAP header fields (such as Code or
