@@ -72,32 +72,33 @@ informative:
 #        - I-D.ietf-core-block
 #        - rfc7228
 #        - I-D.hartke-core-e2e-security-reqs
+#	       - I-D.bormann-6lo-coap-802-15-ie
 #        - selander-ace-cose-ecdhe
 
   I-D.selander-ace-cose-ecdhe:
   I-D.hartke-core-e2e-security-reqs:
+  I-D.bormann-6lo-coap-802-15-ie:
   I-D.ietf-ace-oauth-authz:
   I-D.ietf-core-block:
-  I-D.ietf-tls-tls13:
+  RFC5869:
   RFC7228:
 
 --- abstract
 <!--  FIXME: replace selander-ace-cose-ecdhe with I-D.selander-ace-cose-ecdhe everywhere, remove the text in the reference and replace it with correct reference. -->
 
-This memo defines Object Security of CoAP (OSCOAP), a method for application layer protection of message exchanges with the Constrained Application Protocol (CoAP), using the CBOR Encoded Message Syntax. OSCOAP provides end-to-end encryption, integrity and replay protection to CoAP payload, options, and header fields, as well as a secure binding between CoAP request and response messages. The use of OSCOAP is signaled with the CoAP option Object-Security, also defined in this memo.
-
+This memo defines Object Security of CoAP (OSCOAP), a method for application layer protection of message exchanges with the Constrained Application Protocol (CoAP), using the CBOR Object Signing and Encryption (COSE) format. OSCOAP provides end-to-end encryption, integrity and replay protection to CoAP payload, options, and header fields, as well as a secure binding between CoAP request and response messages. The use of OSCOAP is signaled with the CoAP option Object-Security, also defined in this memo.
 
 --- middle
 
 # Introduction # {#intro}
 
-The Constrained Application Protocol (CoAP) {{RFC7252}} is a web application protocol, designed for constrained nodes and networks {{RFC7228}}. CoAP specifies the use of proxies, to improve scalability, efficiency, and uses. At the same time CoAP references DTLS {{RFC6347}} for security. Proxy operations on CoAP messages require DTLS to be terminated at the proxy. The proxy therefore not only has access to the data required for performing the intended proxy functionality, but is also able to eavesdrop on, or manipulate any part of the CoAP payload and metadata, in transit between client and server. The proxy can also inject, delete, or reorder packages without being protected or detected by DTLS.
+The Constrained Application Protocol (CoAP) {{RFC7252}} is a web application protocol, designed for constrained nodes and networks {{RFC7228}}. CoAP specifies the use of proxies for scalability and efficiency. At the same time CoAP references DTLS {{RFC6347}} for security. Proxy operations on CoAP messages require DTLS to be terminated at the proxy. The proxy therefore not only has access to the data required for performing the intended proxy functionality, but is also able to eavesdrop on, or manipulate any part of the CoAP payload and metadata, in transit between client and server. The proxy can also inject, delete, or reorder packages without being protected or detected by DTLS.
 
-This memo defines Object Security of CoAP (OSCOAP), a data object based security protocol, protecting CoAP message exchanges end-to-end, across intermediary nodes. An analysis of end-to-end security for CoAP messages through intermediary nodes is performed in {{I-D.hartke-core-e2e-security-reqs}}; OSCOAP targets the requirements in Sections 3.1 and 3.2.
+This memo defines Object Security of CoAP (OSCOAP), a data object based security protocol, protecting CoAP message exchanges end-to-end, across intermediary nodes. An analysis of end-to-end security for CoAP messages through intermediary nodes is performed in {{I-D.hartke-core-e2e-security-reqs}}, this specification addresses the forwarding proxy case.
 
-OSCOAP builds on the CBOR Encoded Message Syntax (COSE) {{I-D.ietf-cose-msg}}, providing end-to-end encryption, integrity, and replay protection. The use of OSCOAP is signaled with the CoAP option Object-Security, also defined in this memo.
+The solution provides an in-layer security protocol for CoAP which does not depend on underlying layers and is therefore favorable for providing security for "CoAP over foo", e.g. translation between reliable and unreliable transport, CoAP over IEEE 802.15.4 IE {{I-D.bormann-6lo-coap-802-15-ie}}, etc. .
 
-OSCOAP transforms an unprotected CoAP message into a protected CoAP message in the following way: the unprotected CoAP message is protected by including payload (if present), certain options, and header fields in a COSE object. The message fields that have been encrypted are removed from the message whereas the Object-Security option and the COSE object are added. We call the result the "protected" CoAP message. Thus OSCOAP is a security protocol based on the exchange of protected CoAP messages (see {{oscoap-ex}}).
+OSCOAP builds on CBOR Object Signing and Encryption (COSE) {{I-D.ietf-cose-msg}}, providing end-to-end encryption, integrity, and replay protection. The use of OSCOAP is signaled with the CoAP option Object-Security, also defined in this memo. The solution transforms an unprotected CoAP message into a protected CoAP message in the following way: the unprotected CoAP message is protected by including payload (if present), certain options, and header fields in a COSE object. The message fields that have been encrypted are removed from the message whereas the Object-Security option and the COSE object are added. We call the result the "protected" CoAP message. Thus OSCOAP is a security protocol based on the exchange of protected CoAP messages (see {{oscoap-ex}}).
 
 ~~~~~~~~~~~
 Client                                           Server
@@ -116,12 +117,9 @@ Client                                           Server
 {: #oscoap-ex title="Sketch of OSCOAP"}
 {: artwork-align="center"}
 
-OSCOAP provides protection of CoAP payload, certain options, and header fields, as well as a secure binding between CoAP request and response messages, and freshness of requests and responses.
+OSCOAP provides protection of CoAP payload, certain options, and header fields, as well as a secure binding between CoAP request and response messages, and freshness of requests and responses. It may be used in extremely constrained settings, where DTLS cannot be supported. Alternatively, OSCOAP can be combined with DTLS, thereby enabling end-to-end security of CoAP payload, in combination with hop-by-hop protection of the entire CoAP message, during transport between end-point and intermediary node. Examples of the use of OSCOAP are given in {{appendix-d}}.
 
-OSCOAP may be used in constrained settings, where DTLS cannot be supported. Alternatively, OSCOAP can be combined with DTLS, thereby enabling end-to-end security of CoAP payload, in combination with hop-by-hop protection of the entire CoAP message, during transport between end-point and intermediary node. Examples of the use of OSCOAP are given in {{appendix-d}}.
-
-The message protection provided by OSCOAP can alternatively be applied to payload only of individual messages. We call this object security of content (OSCON) and it is defined in {{mode-payl}}. OSCON targets the requirements in Sections 3.3 - 3.5 of {{I-D.hartke-core-e2e-security-reqs}}.
-
+The message protection provided by OSCOAP can alternatively be applied to payload only of individual messages. We call this object security of content (OSCON) and it is defined in {{mode-payl}}. 
 
 
 
@@ -150,7 +148,7 @@ The Object-Security option indicates that OSCOAP is used to protect the CoAP mes
 
 The Object-Security option is critical, safe to forward, part of the cache key, and not repeatable. {{obj-sec-option}} illustrates the structure of the Object-Security option.
 
-A CoAP proxy SHOULD NOT cache a response to a request with an Object-Security option, since the response is only applicable to the original client's request. The Object-Security option is included in the cache key for backward compatibility with proxies not recognizing the Object-Security option.  The effect of this is that messages with the Object-Security option will never generate cache hits. To further prevent caching, a Max-Age option with value zero can be added to the protected CoAP responses.
+A CoAP proxy SHOULD NOT cache a response to a request with an Object-Security option, since the response is only applicable to the original client's request. The Object-Security option is included in the cache key for backward compatibility with proxies not recognizing the Object-Security option.  The effect of this is that messages with the Object-Security option will never generate cache hits. To further prevent caching, a Max-Age option with value zero SHOULD be added to the protected CoAP responses.
 
 ~~~~~~~~~~~
 +-----+---+---+---+---+-----------------+--------+--------+
@@ -174,15 +172,17 @@ An example of option length is given in {{appendix-a}}.
 
 
 
+
 # The Security Context # {#sec-context-section}
 
-The security context is the set of information elements necessary to carry out the cryptographic operations in OSCOAP.  A security context needs to be pre-established and agreed upon between client and server.  How this is done is out of scope of this memo, an example is given in the appendices of {{I-D.selander-ace-cose-ecdhe}}. Each security context is identified by a Context Identifier, which is unique within a given server. A Context Identifier that is no longer in use can be reassigned to a new security context.
+OSCOAP uses COSE with an Authenticated Encryption with Additional Data (AEAD) algorithm. The specification requires that client and server establish a security context to apply to the COSE objects protecting the CoAP messages. In this section we define the security context, and also specify how to establish a security context in client and server based on common keying material and key derivation function (KDF).  The EDHOC protocol {{I-D.selander-ace-cose-ecdhe}} enables the establishment of forward secret keying material, and negotiation of KDF and AEAD, thus provides all necessary pre-requisite steps for using OSCOAP as defined here.
+
+# Security Context Definition # {#sec-context-def-section}
+
+The security context is the set of information elements necessary to carry out the cryptographic operations in OSCOAP.   Each security context is identified by a Context Identifier, which is unique within a given server. A Context Identifier that is no longer in use can be reassigned to a new security context.
 
 The security context has a "Client Write" part and a "Server Write" part. The client initiating a transaction uses the Client Write part of the context to protect the request; the server receiving the request first uses the Client Write part of the context to verify the request, then the Server Write part of the context to protect the response.  Finally, the client uses the Server Write part of the context to verify the response.
 
-OSCOAP is very similar to TLS and borrows mechanisms such as key derivation, and nonce construction from {{I-D.ietf-tls-tls13}}. The main differences is that OSCOAP uses COSE {{I-D.ietf-cose-msg}} instead of the TLS record layer, which allows OSCOAP to use a context identifier, and sequence numbers of variable length.
-
-It should be noted that how the context is retrieved within the client and server is linked to the resource discovery, may be implementation specific, and is out of scope of this memo.
 
 An example is shown in {{sec-context-ex}}.
 
@@ -197,7 +197,7 @@ An example is shown in {{sec-context-ex}}.
                    Client                   Server
                       |                       |
 Retrieve context for  | request:              |
- target resource      |  [Token = Token1,    |
+ target resource      |  [Token = Token1,     |
 Protect request with  |    Cid=Cid1, ...]     |
  Client Write         +---------------------->| Retrieve context with
                       |                       |  Cid = Cid1
@@ -220,25 +220,51 @@ The security context structure contains the following parameters:
 
 * Client Write IV. Byte string containing the static IV to use in cryptographic operations on client-sent messages. Length is determined by Algorithm. Immutable.
 
-* Client Write Sequence Number.  Non-negative integer enumerating the COSE objects that the client sent, associated to the Context Identifier. It is used for replay protection, and to generate unique nonces. Initiated to 0. Maximum value is determined by Algorithm.
+* Client Write Sequence Number.  Non-negative integer enumerating the COSE objects that the client sent, associated to the Context Identifier. It is used for replay protection, and to generate unique IVs for the AEAD. Initiated to 0. Maximum value is determined by Algorithm.
 
 * Server Write Key.  Byte string containing the symmetric key to use in server-sent messages. Length is determined by the Algorithm. Immutable.
 
 * Server Write IV.  Byte string containing the static IV to use in cryptographic operations on server-sent messages. Length is determined by Algorithm. Immutable.
 
-* Server Write Sequence Number.  Non-negative integer enumerating the COSE objects that the server sent, associated to the Context Identifier. It is used for replay protection, and to generate unique nonces. Initiated to 0. Maximum value is determined by Algorithm.
+* Server Write Sequence Number.  Non-negative integer enumerating the COSE objects that the server sent, associated to the Context Identifier. It is used for replay protection, and to generate unique IVs for the AEAD. Initiated to 0. Maximum value is determined by Algorithm.
 
 * Replay Window.  The replay protection window for messages received, equivalent to the functionality described in Section 4.1.2.6 of {{RFC6347}}.  The default window size is 64.
 
-The size of Cid depends on the number of simultaneous clients, and must be chosen so that the server can uniquely identify the requesting client. Cids of different lengths can be used by different client. In the case of an ACE-based authentication and authorization model {{I-D.ietf-ace-oauth-authz}}, the Authorization Server can define the context identifier of all clients, interacting with a particular server, in which case the size of Cid can be proportional to the logarithm of the number of authorized clients. It is RECOMMENDED to start assigning Cids of length 1 byte (0x00, 0x01, ..., 0xff), and then when all 1 byte Cids are in use, start handling out Cids with a length of two bytes (0x0000, 0x0001, ..., 0xffff), and so on. 
+
 
 The ordered pair (Cid, Client Write Sequence Number) is called Transaction Identifier (Tid), and SHALL be unique for each COSE object and server. The Tid is used as a unique challenge in the COSE object of the protected CoAP request, and in part of the Additional Authenticated Data (AAD, see {{sec-obj-cose}}) of the protected CoAP response message.
 
+# Security Context Establishment # {#sec-context-est-section}
+
+Given a shared secret keying material and common key derivation function, the client and server can derive the same security context necssary to aun OSCOAP. The procedure described here follows Section 11 of {{I-D.ietf-cose-msg}}. 
+We assume that the keying material is uniformly random and that the key derivation function is HKDF {{RFC5869}}. (This is e.g. the case after having used EDHOC {{I-D.selander-ace-cose-ecdhe}}.)
+
+Assumptions:
+
+* Uniformly random keying material = traffic_secret_0
+* Key derivation function = HKDF with specified hash function, e.g. SHA-256
+
+The security context parameters SHALL be derived using the HKDF-Expand primitive {{RFC5869}}:
+
+Key = HKDF-Expand(traffic_secret_0, info, key_length),
+
+where info is specified in table XX and the length depends on the AEAD algorithm. With the mandatory OSCOAP algorithm AES-CCM-64-64-128 (see Section 10.2 in {{I-D.ietf-cose-msg}}), key_length for the keys is 128 bits and key_length for the static IVs is 56 bits.
+
+Table of label of key and info
+
+
+The context identifier SHALL be unique for all security contexts used by the server. This can be achieved by the server, or trusted party, assigns identifiers in a non-colliding way.
+
+The size of Cid depends on the number of simultaneous clients, and must be chosen so that the server can uniquely identify the requesting client. Cids of different lengths can be used by different clients. In the case of an ACE-based authentication and authorization model {{I-D.ietf-ace-oauth-authz}}, the Authorization Server can define the context identifier of all clients, interacting with a particular server, in which case the size of Cid can be proportional to the logarithm of the number of authorized clients. It is RECOMMENDED to start assigning Cids of length 1 byte (0x00, 0x01, ..., 0xff), and then when all 1 byte Cids are in use, start handling out Cids with a length of two bytes (0x0000, 0x0001, ..., 0xffff), and so on. 
+
+In case of EDHOC, party V (typically the server) can perform this assignment by using the key identifier of its ephemeral public key (kid_ev, using the terminology of {{I-D.selander-ace-cose-ecdhe}}), which is used to label the derived keying material, traffic_secret_0, and, in turn is inherited as identifier of the security context derived from traffic_secret_0.
+
+Alternatively, the derivation scheme above MAY be used to derive a random context identifier (say using info = "Context Identifier" and the key-length MUST be sufficiently long to make accidental collisions highly unlikely given the amount of security contexts that are derived in this way.
 
 
 # Protected CoAP Message Fields # {#coap-headers-and-options} 
 
-This section defines how the CoAP message fields are protected.  OSCOAP protects as much of the unprotected CoAP message as possible, while still allowing forward proxy operations {{I-D.hartke-core-e2e-security-reqs}}.
+This section defines how the CoAP message fields are protected.  OSCOAP protects as much of the unprotected CoAP message as possible, while still allowing forwarding proxy operations {{I-D.hartke-core-e2e-security-reqs}}.
 
 The CoAP Payload SHALL be encrypted and integrity protected.
 
@@ -267,6 +293,9 @@ Protection of CoAP Options can be summarized as follows:
 | 15 | x | x | - | x | Uri-Query      | string | 0-255  | x | x |   |
 | 17 | x |   |   |   | Accept         | uint   | 0-2    | x | x |   |
 | 20 |   |   |   | x | Location-Query | string | 0-255  | x | x |   |
+| 23 | x | x | - | - | Block2         | uint   | 0-3    | x | x | x |
+| 27 | x | x | - | - | Block1         | uint   | 0-3    | x | x | x |
+| 28 |   |   | x |   | Size2          | unit   | 0-4    | x | x |   |
 | 35 | x | x | - |   | Proxy-Uri      | string | 1-1034 |   |   |   |
 | 39 | x | x | - |   | Proxy-Scheme   | string | 1-255  |   |   |   |
 | 60 |   |   | x |   | Size1          | uint   | 0-4    | x | x |   |
@@ -286,9 +315,12 @@ The encrypted options are in general omitted from the protected CoAP message and
 However, some options which are encrypted need to be present in the protected CoAP message to support certain proxy functions. A CoAP option which may be both encrypted in the COSE object of the protected CoAP message, and also unencrypted as CoAP option in the protected CoAP message, is called "duplicate". The "encrypted" value of a duplicate option is intended for the destination endpoint and the "unecrypted" value is intended for a proxy. The unencrypted value is not integrity protected.
 
 * The Max-Age option is duplicate. The unencrypted Max-Age SHOULD have value zero to prevent caching of responses. The encrypted Max-Age is used as defined in {{RFC7252}} taking into account that it is not accessible proxies.
-* The Observe option is duplicate. If used, then the encrypted Observe and the unencrypted Observe SHALL have the same value.  The Observe option as used here targets the requirements of Section 3.2 of {{I-D.hartke-core-e2e-security-reqs}}.
 
-Specifications of new CoAP options SHOULD specify if the option is duplicate and how it are processed with OSCOAP. New COAP options SHOULD NOT be duplicate.
+* The Observe option is duplicate. If used, then the encrypted Observe and the unencrypted Observe SHALL have the same value.  The Observe option as used here targets the requirements on forwarding of {{I-D.hartke-core-e2e-security-reqs}}.
+
+* The block options Block1 and Block2 are duplicate. The encrypted block options enable end-to-end secure fragmentation of payload into blocks and protected information about the fragmentation (block number, last block, etc.) such that each block in ordered sequence from the first block can be verified as they arrive. The unencrypted block options allow for arbitrary proxy fragmentation operations which cannot be verified by the endpoints, but can be restricted in size since the encrypted options allow for secure fragmentation of very large messages. For more details about blockwise, see {{sec-considerations}}.
+
+Specifications of new CoAP options SHALL define if the new option is duplicate and how it are processed with OSCOAP. New COAP options SHOULD NOT be duplicate.
 
 
 
@@ -296,7 +328,7 @@ Specifications of new CoAP options SHOULD specify if the option is duplicate and
 
 This section defines how to use the COSE format {{I-D.ietf-cose-msg}} to wrap and protect data in the unprotected CoAP message. OSCOAP uses the COSE\_Encrypted structure with an Authenticated Encryption with Additional Data (AEAD) algorithm.
 
-The mandatory to support AEAD algorithm is AES-CCM-64-64-128 defined in Section 10.2 of {{I-D.ietf-cose-msg}}. For AES-CCM-64-64-128 the length of Client Write Key and the Server Write Key SHALL be 128 bits, the length of the nonce, Client Write IV, and the Server Write IV SHALL be 7 bytes, and the maximum Client Write Sequence Number and Server Write Sequence Number SHALL be 2^56-1. The nonce is constructed exactly like in Section 5.2.2 of {{I-D.ietf-tls-tls13}}, i.e. by padding the Client Write Sequence Number or the Server Write Sequence Number with zeroes and XORing it with the static Client Write IV or Server Write IV, respectively.
+The mandatory to support AEAD algorithm is AES-CCM-64-64-128 defined in Section 10.2 of {{I-D.ietf-cose-msg}}. For AES-CCM-64-64-128 the length of Client Write Key and the Server Write Key SHALL be 128 bits, the length of the IV, Client Write IV, and the Server Write IV SHALL be 7 bytes, and the maximum Client Write Sequence Number and Server Write Sequence Number SHALL be 2^56-1. The IV is constructed using a Partial Initialization Vector exactly like in Section 3.1 of {{I-D.ietf-cose-msg}}}, i.e. by padding the Client Write Sequence Number or the Server Write Sequence Number with zeroes and XORing it with the static Client Write IV or Server Write IV, respectively.
 
 Since OSCOAP only makes use of a single COSE structure, there is no need to explicitly specify the structure, and OSCOAP uses the untagged version of the COSE\_Encrypted structure (Section 2. of {{I-D.ietf-cose-msg}}). If the COSE object has a different structure, the receiver MUST reject the message, treating it as malformed.
 
@@ -349,11 +381,13 @@ The Additional Authenticated Data ("Enc_structure") as described is Section 5.3 
 
 * the "external\_aad" includes:
 
-    * the two first bytes of the CoAP header in the unprotected message (including Version and Code) with Type and Token Length bits set to 0;
+    * the CoAP version number and Code of the message formatted as two bytes, see {{aad-enc-figure}}. This corresponds to the first two bytes of the CoAP header in the unprotected message with Type and Token Length bits set to 0 in the case of CoAP over UDP, but the same format is also used in case of CoAP over TCP;
 
     * The Algorithm from the security context used for the exchange;
 
-    * the plaintext request URI composed from the request scheme and Uri-\* options according to the method described in Section 6.5 of {{RFC7252}}, if the message is a CoAP request; and
+    * the plaintext request URI composed from the request scheme and Uri-\* options according to the method described in Section 6.5 of {{RFC7252}}, if the message is a CoAP request; 
+    
+    * the MAC of the message containing the previous block in the sequence, as enumerated by Block1 in the case of a request and Block2 in the case of a response; if the message is fragmented using a block option {{I-D.ietf-core-block}}, and
         
     * the Transaction Identifier (Tid) of the associated CoAP request, if the message is a CoAP response (see {{sec-context-section}}).
 
@@ -381,7 +415,7 @@ The encryption process is described in Section 5.3 of {{I-D.ietf-cose-msg}}.
 
 In order to protect from replay of messages and verify freshness, a CoAP endpoint SHALL maintain a Client Write Sequence Number, and a Server Write Sequence Number associated to a security context, which is identified with a Context Identifier (Cid). The two sequence numbers are the highest sequence number the endpoint has sent and the highest sequence number the endpoint has received. A client uses the Client Write Sequence Number for protecting sent messages and the Server Write Sequence Number for verifying received messages, and vice versa for the server, as described in {{sec-context-section}}.
 
-Depending on use case and ordering of messages provided by underlying layers, an endpoint MAY maintain a sliding replay window for Sequence Numbers of received messages associated to each Cid.
+Depending on use case and ordering of messages provided by underlying layers, an endpoint MAY maintain a sliding replay window for Sequence Numbers of received messages associated to each Cid. In case of reliable transport, the receiving endpoint MAY require that the Sequence Number of a received message equals last Sequence Number + 1. 
 
 A receiving endpoint SHALL verify that the Sequence Number received in the COSE object has not been received before in the security context identified by the Cid. The receiving endpoint SHALL also
 reject messages with a sequence number greater than 2^56-1. Note that for the server, the relevant Sequence Number here is the Client Write Sequence Number and vice versa for the client.
@@ -402,7 +436,7 @@ Given an unprotected CoAP request, including header, options and payload, the cl
 
 2. Compute the COSE object as specified in {{sec-obj-cose}}
 
-    * the nonce in the AEAD is created by XORing the static IV (Client Write IV) with the partial IV (Client Write Sequence Number).
+    * the IV in the AEAD is created by XORing the static IV (Client Write IV) with the partial IV (Client Write Sequence Number).
 
 3. Format the protected CoAP message as an ordinary CoAP message, with the following Header, Options, and Payload, based on the unprotected CoAP message:
 
@@ -423,7 +457,7 @@ A CoAP server receiving a message containing the Object-Security option SHALL pe
 
 2. Recreate the Additional Authenticated Data, as described in {{sec-obj-cose}}.
 
-3. Compose the nonce by XORing the static IV (Client Write IV) with the Partial IV parameter, received in the COSE Object.
+3. Compose the IV by XORing the static IV (Client Write IV) with the Partial IV parameter, received in the COSE Object.
 
 4. Retrieve the Client Write Key.
 
@@ -445,7 +479,7 @@ Given an unprotected CoAP response, including header, options, and payload, the 
 
 2. Compute the COSE object as specified in Section {{sec-obj-cose}}
     
-    * The nonce in the AEAD is created by XORing the static IV (Server Write IV) and the Server Write Sequence Number.
+    * The IV in the AEAD is created by XORing the static IV (Server Write IV) and the Server Write Sequence Number.
 
 3. Format the protected CoAP message as an ordinary CoAP message, with the following Header, Options, and Payload based on the unprotected CoAP message:
 
@@ -466,7 +500,7 @@ A CoAP client receiving a message containing the Object-Security option SHALL pe
 
 2. Recreate the Additional Authenticated Data as described in {{sec-obj-cose}}.
     
-3. Compose the nonce by XORing the static IV (Server Write IV) with the Partial IV parameter, received in the COSE Object.
+3. Compose the IV by XORing the static IV (Server Write IV) with the Partial IV parameter, received in the COSE Object.
 
 4. Retrieve the Server Write Key.
 
@@ -486,13 +520,19 @@ DTLS protects hop-by-hop the entire CoAP message, including header, options, and
 
 The CoAP message layer, however, cannot be protected end-to-end through intermediary devices since the parameters Type and Message ID, as well as Token and Token Length may be changed by a proxy. Moreover, messages that are not possible to verify should for security reasons not always be acknowledged but in some cases be silently dropped. This would not comply with CoAP message layer, but does not have an impact on the application layer security solution, since message layer is excluded from that.
 
-The specification in this memo assumes that there is an established security context. {{I-D.ietf-ace-oauth-authz}} presents a method for a trusted third party (Authorization Server) to enable key establishment between potentially constrained nodes, using OAuth and PoP Tokens. {{I-D.selander-ace-cose-ecdhe}} describes a Diffie-Hellman key exchange, authenticated with pre-established keys, and a key derivation method for producing a security context, suitable for OSCOAP. The two methods can be combined, enabling a client and server with relation to a trusted third party to establish a security context with forward secrecy. 
+The use of COSE to protected CoAP messages as specified in this document requires an established security context. The method for establishing the security context described in {{sec-context-est-section}} is based on a common keying material and key derivation function in client and server. EDHOC {{I-D.selander-ace-cose-ecdhe}} describes an augmented Diffie-Hellman key exchange for producing forward secret keying material and agreeing on crypto algorithms necessary for OSCOAP, authenticated with pre-established credentials. These pre-established credentials may, in turn, be provisioned using a trusted third party such as described in the OAuth-based ACE framework {{I-D.ietf-ace-oauth-authz}}. An OSCOAP profile of ACE is described in (I-D.seitz-ace-ocsoap-profile).
 
-For symmetric encryption it is required to have a unique nonce for each message, for which the sequence numbers in the COSE message field "Partial IV" is used. The nonce SHALL be the XOR of a static IV and the sequence number. The static IVs (Client Write IV and Server Write IV) SHOULD be established between sender and receiver before the message is sent, to avoid the overhead of sending it in each message, for example using the method in {{I-D.selander-ace-cose-ecdhe}}.
+For symmetric encryption it is required to have a unique IV for each message, for which the sequence numbers in the COSE message field "Partial IV" is used. The IV SHALL be the XOR of a static IV and the sequence number. The static IVs (Client Write IV and Server Write IV) SHOULD be established between sender and receiver before the message is sent, for example using the method in {{I-D.selander-ace-cose-ecdhe}}, to avoid the overhead of sending it in each message.
 
-As the receiver accepts any sequence number larger than the one previously received, the problem of sequence number synchronization is avoided. The alternatives have issues: very constrained devices may not be able to support accurate time, or to generate and store large numbers of random nonces. The requirement to change key at counter wrap is a complication, but it also forces the user of this specification to think about implementing key renewal.
+If the receiver accepts any sequence number larger than the one previously received, the problem of sequence number synchronization is avoided. (With reliable transport it may be required that only messages with sequence number which equal previous number + 1 are accepted.) The alternatives to sequence numbers have its issues: very constrained devices may not be able to support accurate time, or to generate and store large numbers of random IVs. The requirement to change key at counter wrap is a complication, but it also forces the user of this specification to think about implementing key renewal.
 
-Block-wise transfers as currently defined in {{I-D.ietf-core-block}} cannot be protected end-to-end because the payload as well as the Block1/Block2 options may be changed in an unpredictable way by a proxy. Since {{I-D.ietf-core-block}} allows for any proxy to fragment the payload, an endpoint receiving a message fragment with a block option is not able to verify integrity of that fragment. As a consequence, block-wise disables end-to-end security: an adversary may inject an unlimited number of messages with a block option claiming it to be a sequence of message fragments without the receiving endpoint being able to disprove the claim.
+The unencrypted block options allow for arbitrary proxy fragmentation operations which cannot be verified by the endpoints, since no trustworthy information about total size of message can be retrieved by the receiving endpoint.
+An intermediate device to generate an arbitrarily long sequence of blocks which cannot be verified and thus not  discarded. Since the
+
+ but can be restricted in size since the encrypted options allow for secure fragmentation of very large messages. For more details about blockwise, see {{sec-considerations}}.
+
+
+Integrity protection of Block-wise transfers as currently defined in {{I-D.ietf-core-block}} cannot be protected end-to-end because the payload as well as the Block1/Block2 options may be changed in an unpredictable way by a proxy. Since {{I-D.ietf-core-block}} allows for any proxy to fragment the payload, an endpoint receiving a message fragment with a block option is not able to verify integrity of that fragment. As a consequence, block-wise disables end-to-end security: an adversary may inject an unlimited number of messages with a block option claiming it to be a sequence of message fragments without the receiving endpoint being able to disprove the claim.
 
 If instead the payload and block options Block1/Block2 were not allowed to be changed by intermediate devices, then the message fragments could be integrity protected end-to-end. In that case each individual block can be securely verified by the receiver, retransmission securely requested etc. Since the blocks are enumerated sequentially, and carry information about whether this fragment is the last, when all blocks have been securely received is enough to prove that the entire message has been securely transferred. 
 
@@ -631,7 +671,7 @@ Let's analyse the contributions one at a time:
 
     * The size of Seq is variable, and increases with the number of messages exchanged.
 
-    * As the nonce is generated from the padded Sequence Number and a previously agreed upon static IV  it is not required to send the whole nonce in the message.
+    * As the IV is generated from the padded Sequence Number and a previously agreed upon static IV  it is not required to send the whole IV in the message.
 
 * The Ciphertext, excluding the Tag, is the encryption of the payload and the encrypted options {{coap-headers-and-options}}, which are present in the unprotected CoAP message.
 
@@ -862,7 +902,7 @@ The COSE object SHALL be protected (encrypted) and verified (decrypted) as
 described in ({{I-D.ietf-cose-msg}}). 
 
 In the case of symmetric encryption, the
-same key and nonce SHALL NOT be used twice. Sequence numbers for partial IV as specified for OSCOAP MAY be used for replay protection as described in {{replay-protection-section}}. The use of time stamps in the COSE header parameter
+same key and IV SHALL NOT be used twice. Sequence numbers for partial IV as specified for OSCOAP MAY be used for replay protection as described in {{replay-protection-section}}. The use of time stamps in the COSE header parameter
 'operation time' {{I-D.ietf-cose-msg}} for freshness MAY be used.
 
 OSCON SHALL NOT be used in cases where CoAP header fields (such as Code or
@@ -981,9 +1021,9 @@ This COSE object encodes to a total size of 83 bytes.
 
 This example is based on AES-CCM with the MAC truncated to 8 bytes. 
 
-It is assumed that the nonce is generated from the Sequence
+It is assumed that the IV is generated from the Sequence
 Number and some previously agreed upon static IV. This means it is not
-required to explicitly send the whole nonce in the message.
+required to explicitly send the whole IV in the message.
 
 Since the key is implicitly known by the recipient, the COSE_Encrypted_Tagged 
 structure is used (Section 5.2 of {{I-D.ietf-cose-msg}}).
