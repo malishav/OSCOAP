@@ -392,9 +392,9 @@ The Additional Authenticated Data ("Enc_structure") as described is Section 5.3 
 
     * the plaintext request URI composed from the request scheme and Uri-\* options according to the method described in Section 6.5 of {{RFC7252}}, if the message is a CoAP request; 
     
-    * the MAC of the message containing the previous block in the sequence, as enumerated by Block1 in the case of a request and Block2 in the case of a response; if the message is fragmented using a block option {{I-D.ietf-core-block}}, and
-        
-    * the Transaction Identifier (Tid) of the associated CoAP request, if the message is a CoAP response (see {{sec-context-section}}).
+    * the Transaction Identifier (Tid) of the associated CoAP request, if the message is a CoAP response (see {{sec-context-section}}), and
+    
+    * the MAC of the message containing the previous block in the sequence, as enumerated by Block1 in the case of a request and Block2 in the case of a response; if the message is fragmented using a block option {{I-D.ietf-core-block}}.
 
 ~~~~~~~~~~~
  0                   1                   2                   3
@@ -402,7 +402,9 @@ The Additional Authenticated Data ("Enc_structure") as described is Section 5.3 
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |Ver|0 0 0 0 0 0|      Code     |      Alg      |      ...      ~
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-~   request URI (if request) / request Tid (if response)   ~
+~   request URI (if request) / request Tid (if response)        ~
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+~   MAC of previous block (if Block1 or Block2 present)         ~
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ~~~~~~~~~~~
 {: #aad-enc-figure title="Additional Authenticated Data" }
@@ -410,11 +412,7 @@ The Additional Authenticated Data ("Enc_structure") as described is Section 5.3 
 
 The encryption process is described in Section 5.3 of {{I-D.ietf-cose-msg}}. 
 
-
-
 # Protecting CoAP Messages # {#coap-protected-generate}
-
-
 
 ## Replay and Freshness Protection ## {#replay-protection-section}
 
