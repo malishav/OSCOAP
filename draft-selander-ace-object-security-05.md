@@ -384,7 +384,7 @@ The Additional Authenticated Data ("Enc_structure") as described is Section 5.3 
 
 * the "protected" parameter, which includes the "protected" part of the "Headers" field;
 
-* the "external\_aad" includes:
+* the "external\_aad" includes, in the given order:
 
     * the CoAP version number and Code of the message formatted as two bytes, see {{aad-enc-figure}}. This corresponds to the first two bytes of the CoAP header in the unprotected message with Type and Token Length bits set to 0 in the case of CoAP over UDP, but the same format is also used in case of CoAP over TCP;
 
