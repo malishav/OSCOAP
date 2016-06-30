@@ -535,7 +535,7 @@ The unencrypted block options allow for arbitrary proxy fragmentation operations
 
 # Privacy Considerations #
 
-Privacy threats executed through intermediate nodes are considerably reduced by means of OSCOAP. End-to-end integrity protection and encryption of CoAP payload and all options that are not used for forwarding, provides mitigation against attacks on sensor and actuator communication, which may have a direct impact the personal sphere.
+Privacy threats executed through intermediate nodes are considerably reduced by means of OSCOAP. End-to-end integrity protection and encryption of CoAP payload and all options that are not used for forwarding, provide mitigation against attacks on sensor and actuator communication, which may have a direct impact on the personal sphere.
 
 CoAP headers sent in plaintext allow for example matching of CON and ACK (CoAP Message Identifier), matching of request and responses (Token) and traffic analysis.
 
@@ -623,7 +623,7 @@ The "application/oscon" content format is added to the CoAP Content Format regis
 
 # Acknowledgments #
 
-Klaus Hartke has independently been working on the same problem and a similar solution: establishing end-to-end security across proxies by adding a CoAP option. We are grateful to Malisa Vucinic for providing helpful and timely reviews of previous versions of the draft.
+Klaus Hartke has independently been working on the same problem and a similar solution: establishing end-to-end security across proxies by adding a CoAP option. We are grateful to Malisa Vucinic for providing helpful and timely reviews of previous versions of the draft. We are also grateful to Carsten Bormann and Jim Schaad for providing input and interesting discussions.
 
 
 
@@ -747,7 +747,7 @@ This section gives examples of OSCOAP. The message exchanges are made, based on 
 
 ## Secure Access to Actuator ##
 
-Here is an example targeting the scenario in Section 3.1 of {{I-D.hartke-core-e2e-security-reqs}}.  The example illustrates a client requesting valve 34 to be turned to position 3 (PUT /valve34 with payload value "3"), and getting a confirmation. The CoAP options Uri-Path and Payload are encrypted and integrity protected, and the CoAP header field Code is integrity protected (see {{coap-headers-and-options}}).
+Here is an example targeting the scenario in the forwarding proxy section of {{I-D.hartke-core-e2e-security-reqs}}. The example illustrates a client requesting valve 34 to be turned to position 3 (PUT /valve34 with payload value "3"), and getting a confirmation. The CoAP options Uri-Path and Payload are encrypted and integrity protected, and the CoAP header field Code is integrity protected (see {{coap-headers-and-options}}).
 
 ~~~~~~~~~~~
 Client  Proxy  Server
@@ -794,7 +794,7 @@ The server verifies that the Sequence Number has not been received before (see {
 
 ## Secure Subscribe to Sensor ##
 
-Here is an example targeting the scenario in Section 3.2 of {{I-D.hartke-core-e2e-security-reqs}}.  The example illustrates a client requesting subscription to a blood sugar measurement resource (GET /glucose), and first receiving the value 220 mg/dl, and then a second reading with value 180 mg/dl. The CoAP options Observe, Uri-Path, Content-Format, and Payload are encrypted and integrity protected, and the CoAP header field Code is integrity protected (see {{coap-headers-and-options}}).
+Here is an example targeting the scenario in the forwarding proxy with observe case of {{I-D.hartke-core-e2e-security-reqs}}.  The example illustrates a client requesting subscription to a blood sugar measurement resource (GET /glucose), and first receiving the value 220 mg/dl, and then a second reading with value 180 mg/dl. The CoAP options Observe, Uri-Path, Content-Format, and Payload are encrypted and integrity protected, and the CoAP header field Code is integrity protected (see {{coap-headers-and-options}}).
 
 ~~~~~~~~~~~
 Client  Proxy  Server
@@ -862,55 +862,39 @@ The server verifies that the Sequence Number has not been received before (see {
 
 # Object Security of Content (OSCON) # {#mode-payl}
 
-<!--  FIXME version 05: no normative text in this section [FP]
+<!--  TODO: check that all ref to {{I-D.hartke-core-e2e-security-reqs}} has ref to the right section before submitting [FP]
 -->
 
 OSCOAP protects message exchanges end-to-end between a certain client and a
-certain server, targeting the security requirements in Section 3.1 and 3.2
-of {{I-D.hartke-core-e2e-security-reqs}}. In contrast, many use cases require one and
+certain server, targeting the security requirements for forwarding proxy of {{I-D.hartke-core-e2e-security-reqs}}. In contrast, many use cases require one and
 the same message to be protected for, and verified by, multiple endpoints, see
-Sections 3.3 - 3.5 of {{I-D.hartke-core-e2e-security-reqs}}. Those security requirements 
-can be addressed by protecting essentially the payload/content of individual
-messages using the COSE format ({{I-D.ietf-cose-msg}}), rather than the entire
-request/response message exchange. This is referred to as Object Security of
-Content (OSCON). 
+caching proxy section of {{I-D.hartke-core-e2e-security-reqs}}. Those security requirements can be addressed by protecting essentially the payload/content of individual messages using the COSE format ({{I-D.ietf-cose-msg}}), rather than the entire request/response message exchange. This is referred to as Object Security of Content (OSCON). 
 
 OSCON transforms an unprotected CoAP message into a protected CoAP message in
 the following way: the payload of the unprotected CoAP message is wrapped by
 a COSE object, which replaces the payload of the unprotected CoAP message. We
 call the result the "protected" CoAP message.
 
-The unprotected payload SHALL be the plaintext/payload of the COSE object. 
-The 'protected' field of the COSE object 'Headers' SHALL include the context identifier, both for requests and responses.
+The unprotected payload shall be the plaintext/payload of the COSE object. 
+The 'protected' field of the COSE object 'Headers' shall include the context identifier, both for requests and responses.
 If the unprotected CoAP message includes a Content-Format option, then the COSE
-object SHALL include a protected 'content type' field, whose value is set to the
-unprotected message Content-Format value. The Content-Format option of the
-protected CoAP message SHALL be replaced with "application/oscon" ({{iana}})
-<!--  TODO: Why is it not sufficient with application/cose+cbor or similar?
-  FP: because we want to have some particular processing for OSCON, for example for replay and freshness.
--->
+object shall include a protected 'content type' field, whose value is set to the unprotected message Content-Format value. The Content-Format option of the
+protected CoAP message shall be replaced with "application/oscon" ({{iana}})
 
-The COSE object SHALL be protected (encrypted) and verified (decrypted) as
+The COSE object shall be protected (encrypted) and verified (decrypted) as
 described in ({{I-D.ietf-cose-msg}}). 
 
-In the case of symmetric encryption, the
-same key and IV SHALL NOT be used twice. Sequence numbers for partial IV as specified for OSCOAP MAY be used for replay protection as described in {{replay-protection-section}}. The use of time stamps in the COSE header parameter
-'operation time' {{I-D.ietf-cose-msg}} for freshness MAY be used.
+In the case of symmetric encryption, the same key and IV shall not be used twice. Sequence numbers for partial IV as specified for OSCOAP may be used for replay protection as described in {{replay-protection-section}}. The use of time stamps in the COSE header parameter 'operation time' {{I-D.ietf-cose-msg}} for freshness may be used.
 
-OSCON SHALL NOT be used in cases where CoAP header fields (such as Code or
-Version) or CoAP options need to be integrity protected or encrypted. OSCON
-SHALL NOT be used in cases which require a secure binding between request and
+OSCON shall not be used in cases where CoAP header fields (such as Code or
+Version) or CoAP options need to be integrity protected or encrypted. OSCON shall not be used in cases which require a secure binding between request and
 response.
 
-The scenarios in Sections 3.3 - 3.5 of {{I-D.hartke-core-e2e-security-reqs}} assume
-multiple receivers for a particular content. In this case the use of symmetric
-keys does not provide data origin authentication. Therefore the COSE object
-SHOULD in general be protected with a digital signature.
+The scenarios in Sections 3.3 - 3.5 of {{I-D.hartke-core-e2e-security-reqs}} assume multiple receivers for a particular content. In this case the use of symmetric keys does not provide data origin authentication. Therefore the COSE object should in general be protected with a digital signature.
 
 ## Overhead OSCON ## {#appendix-c}
 
-In general there are four different kinds of ciphersuites that need to be supported: message authentication code, digital signature, authenticated encryption, and symmetric encryption + digital
-signature. The use of digital signature is necessary for applications with many legitimate recipients of a given message, and where data origin authentication is required.
+In general there are four different kinds of ciphersuites that need to be supported: message authentication code, digital signature, authenticated encryption, and symmetric encryption + digital signature. The use of digital signature is necessary for applications with many legitimate recipients of a given message, and where data origin authentication is required.
 
 To distinguish between these different cases, the tagged structures of 
 COSE are used (see Section 2 of {{I-D.ietf-cose-msg}}).
@@ -924,23 +908,18 @@ all examples, with these values:
 * Cid: 0xa1534e3c
 * Seq: 0xa3
 
-For each scheme, we indicate the fixed length of these two parameters
-("Cid+Seq" column) and of the Tag ("MAC"/"SIG"/"TAG"). The "Message OH" column
-shows the total expansions of the CoAP message size, while the "COSE OH" column is 
-calculated from the previous columns following the formula in {{mess-exp-formula}}.
+For each scheme, we indicate the fixed length of these two parameters ("Cid+Seq" column) and of the Tag ("MAC"/"SIG"/"TAG"). The "Message OH" column
+shows the total expansions of the CoAP message size, while the "COSE OH" column is  calculated from the previous columns following the formula in {{mess-exp-formula}}.
 
 Overhead incurring from CBOR encoding is also included in the COSE overhead count. 
 
-To make it easier to read, COSE objects are represented
-using CBOR's diagnostic notation rather than a binary dump.
+To make it easier to read, COSE objects are represented using CBOR's diagnostic notation rather than a binary dump.
 
 ##  MAC Only ## {#ssm-mac}
 
-This example is based on HMAC-SHA256, with truncation 
-to 8 bytes (HMAC 256/64).
+This example is based on HMAC-SHA256, with truncation to 8 bytes (HMAC 256/64).
 
-Since the key is implicitly known by the recipient, the COSE_Mac0_Tagged 
-structure is used (Section 6.2 of {{I-D.ietf-cose-msg}}).
+Since the key is implicitly known by the recipient, the COSE_Mac0_Tagged structure is used (Section 6.2 of {{I-D.ietf-cose-msg}}).
 
 The object in COSE encoding gives:
 
@@ -1013,12 +992,9 @@ This COSE object encodes to a total size of 83 bytes.
 
 This example is based on AES-CCM with the MAC truncated to 8 bytes. 
 
-It is assumed that the IV is generated from the Sequence
-Number and some previously agreed upon static IV. This means it is not
-required to explicitly send the whole IV in the message.
+It is assumed that the IV is generated from the Sequence Number and some previously agreed upon static IV. This means it is not required to explicitly send the whole IV in the message.
 
-Since the key is implicitly known by the recipient, the COSE_Encrypted_Tagged 
-structure is used (Section 5.2 of {{I-D.ietf-cose-msg}}).
+Since the key is implicitly known by the recipient, the COSE_Encrypted_Tagged structure is used (Section 5.2 of {{I-D.ietf-cose-msg}}).
 
 The object in COSE encoding gives:
 
@@ -1052,8 +1028,7 @@ This COSE object encodes to a total size of 25 bytes.
 ## Symmetric Encryption with Asymmetric Signature (SEAS) ## {#sem-seds}
 
 This example is based on AES-CCM and ECDSA with 64 bytes signature. The same assumption on the security context as in {{sem-auth-enc}}.
-COSE defines the field 'counter signature' that is used here to sign a 
-COSE_Encrypted_Tagged message (see Section 3 of {{I-D.ietf-cose-msg}}).
+COSE defines the field 'counter signature w/o headers' that is used here to sign a COSE_Encrypted_Tagged message (see Section 3 of {{I-D.ietf-cose-msg}}).
 <!--  FIXME version 05: right label for counter signature TBD appendix a.2 of cose draft -11  [FP]
 -->
 
@@ -1065,8 +1040,8 @@ The object in COSE encoding gives:
     h'a20444a1534e3c0641a3', # protected:
                                {04:h'a1534e3c',
                                 06:h'a3'}
-    {7:SIG},                 # unprotected: 
-                                07: 64 bytes signature
+    {9:SIG},                 # unprotected: 
+                                09: 64 bytes signature
     TAG                      # cipher text + truncated 8-byte TAG
   ]
 )
