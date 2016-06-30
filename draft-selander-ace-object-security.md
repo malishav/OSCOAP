@@ -136,9 +136,7 @@ Two different scopes of object security are defined:
 
 * OSCOAP = object security of CoAP, signaled with the Object-Security option.
 
-* OSCON = object security of content, signaled with Content Format/Media Type set to application/oscon.
-
-OSCON is defined in {{mode-payl}}.
+* OSCON = object security of content, signaled with Content Format/Media Type set to application/oscon (defined in {{mode-payl}}).
 
 
 
@@ -161,15 +159,13 @@ A CoAP proxy SHOULD NOT cache a response to a request with an Object-Security op
 {: #obj-sec-option title="The Object-Security Option"}
 {: artwork-align="center"}
 
-The length of the Object-Security option depends on whether the unprotected message has payload, on the set of options that are included in the unprotected message, the length of the integrity tag, and the length of the information identifying the security context. An endpoint receiving a CoAP message with payload, that also contains a non-empty Object-Security option SHALL treat it as malformed.
-
+The length of the Object-Security option depends on whether the unprotected message has payload, on the set of options that are included in the unprotected message, the length of the integrity tag, and the length of the information identifying the security context. An endpoint receiving a CoAP message with payload, that also contains a non-empty Object-Security option SHALL treat it as malformed and reject it.
 
 * If the unprotected message has payload, then the COSE object is the payload of the protected message (see {{protected-coap-formatting-req}} and {{protected-coap-formatting-resp}}), and the Object-Security option has length zero.
 
 * If the unprotected message does not have payload, then the COSE object is the value of the Object-Security option and the length of the Object-Security option is equal to the size of the COSE object.
 
 An example of option length is given in {{appendix-a}}.
-
 
 
 
@@ -184,7 +180,7 @@ The EDHOC protocol {{I-D.selander-ace-cose-ecdhe}} enables the establishment of 
 The security context is the set of information elements necessary to carry out the cryptographic operations in OSCOAP.   Each security context is identified by a Context Identifier. A Context Identifier that is no longer in use can be reassigned to a new security context.
 
 For each endpoint, the security context has a "Sender" part and a "Receiver" part. The endpoint protects the messages sent using the Sender part of the context. The endpoint verifies the message received using the Receiver part.
-In communication between two endpoints, the Sender part of one endpoint matches the Receiver part of the other endpoint, and vice versa. 
+In communication between two endpoints, the Sender part of one endpoint matches the Receiver part of the other endpoint, and vice versa. Note that because of that, the two security contexts identified by the same Context Identifiers in the two endpoints are not the same, but they are partly mirrored.
 
 An example is shown in {{sec-context-ex}}.
 
@@ -195,7 +191,6 @@ An example is shown in {{sec-context-ex}}.
                |  Sender,   |            |  Receiver, |
                |  Receiver  |            |  Sender    |
                '------------'            '------------'
-
                    Client                   Server
                       |                       |
 Retrieve context for  | request:              |
@@ -204,9 +199,12 @@ Protect request with  |    Cid=Cid1, ...]     |
   Sender              +---------------------->| Retrieve context with
                       |                       |  Cid = Cid1
                       |                       | Verify request with
-Retrieve context with | response:             |  Recevier
- Token = Token1       |  [Token = Token1, ...]| Protect response with
-Verify request with   |<----------------------+  Sender 
+                      |                       |  Receiver
+                      | response:             | Protect response with
+                      |  [Token = Token1, ...]|  Sender 
+Retrieve context with |<----------------------+
+ Token = Token1       |                       |
+Verify request with   |                       |
  Receiver             |                       |
 ~~~~~~~~~~~
 {: #sec-context-ex title="Retrieval and use of the Security Context"}
@@ -238,7 +236,7 @@ The client and server may change roles using the same security context. The form
 
 ## Security Context Derivation ## {#sec-context-est-section}
 
-Given a shared secret keying material and common key derivation function, the client and server can derive the security context necessary to run OSCOAP. The procedure described here assume that the keying material is uniformly random and that the key derivation function is HKDF {{RFC5869}}. (This is e.g. the case after having used EDHOC {{I-D.selander-ace-cose-ecdhe}}.)
+Given a shared secret keying material and common key derivation function, the client and server can derive the security context necessary to run OSCOAP. The procedure described here assumes that the keying material is uniformly random and that the key derivation function is HKDF {{RFC5869}}. (This is e.g. the case after having used EDHOC {{I-D.selander-ace-cose-ecdhe}}.)
 
 Assumptions:
 
@@ -251,19 +249,20 @@ The security context parameters SHALL be derived using the HKDF-Expand primitive
 
 where:
 
-* traffic_secret_0 is defined above
+* traffic\_secret\_0 is defined above
 * info = "Party U Key" / "Party U IV" / "Party V Key" / "Party V IV"
 * key_length is the key size of the AEAD algorithm
 
 The party being initially client will use "Party U" derived key material for Sending and "Party V" derived keying material for receiveing and v.v. for the server. 
 
-With the mandatory OSCOAP algorithm AES-CCM-64-64-128 (see Section 10.2 in {{I-D.ietf-cose-msg}}), key_length for the keys is 128 bits and key_length for the static IVs is 56 bits.
+With the mandatory OSCOAP algorithm AES-CCM-64-64-128 (see Section 10.2 in {{I-D.ietf-cose-msg}}), key\_length for the keys is 128 bits and key\_length for the static IVs is 56 bits.
 
-The context identifier SHALL be unique for all security contexts used by the party being server. This can be achieved by the server, or trusted third party, assigns identifiers in a non-colliding way.
+The context identifier SHALL be unique for all security contexts used by the party being server. This can be achieved by the server, or trusted third party, assigning identifiers in a non-colliding way.
+TODO: if they change roles, the former client-new server can have 2 contexts with the same cid. How to avoid this?
 
-The size of Cid depends on the number of simultaneous clients, and must be chosen so that the server can uniquely identify the requesting client. Cids of different lengths can be used by different clients. In the case of an ACE-based authentication and authorization model {{I-D.ietf-ace-oauth-authz}}, the Authorization Server can define the context identifier of all clients, interacting with a particular server, in which case the size of Cid can be proportional to the logarithm of the number of authorized clients. It is RECOMMENDED to start assigning Cids of length 1 byte (0x00, 0x01, ..., 0xff), and then when all 1 byte Cids are in use, start handling out Cids with a length of two bytes (0x0000, 0x0001, ..., 0xffff), and so on. 
+The size of Cid depends on the number of simultaneous clients, and must be chosen so that the server can uniquely identify the requesting client. Cids of different lengths can be used by different clients. In the case of an ACE-based authentication and authorization model {{I-D.ietf-ace-oauth-authz}}, the Authorization Server can define the context identifier of all clients interacting with a particular server, in which case the size of Cid can be proportional to the logarithm of the number of authorized clients. It is RECOMMENDED to start assigning Cids of length 1 byte (0x00, 0x01, ..., 0xff), and then when all 1 byte Cids are in use, start handling out Cids with a length of two bytes (0x0000, 0x0001, ..., 0xffff), and so on. Note that a Cid with the value 0x00 is considered different from the Cid with the value 0x0000.
 
-In case of EDHOC, party V (typically the server) can perform this assignment by using the key identifier of its ephemeral public key (kid_ev, using the terminology of {{I-D.selander-ace-cose-ecdhe}}), which is used to label the derived keying material, traffic_secret_0, and, in turn is inherited as identifier of the security context derived from traffic_secret_0.
+In case of EDHOC, party V (typically the server) can use the key identifier of its ephemeral public key (kid\_ev in {{I-D.selander-ace-cose-ecdhe}}) to label the derived keying material, traffic\_secret\_0, and to identify the security context derived from traffic\_secret\_0. In this case, Cid would be assigned the value kid\_ev.
 
 Alternatively, the derivation scheme above MAY be used to derive a random context identifier (using info = "Context Identifier" and the key-length SHALL be sufficiently long to make accidental collisions highly unlikely given the number of security contexts being derived in this way.
 
@@ -666,8 +665,7 @@ Let's analyse the contributions one at a time:
 
 * The header parameters of the COSE object are the Context Identifier (Cid) and the Sequence Number (Seq) (also known as the Transaction Identifier (Tid)) if the message is a request, and Seq only if the message is a response (see {{sec-obj-cose}}).
 
-    * The size of Cid depends on the number of simultaneous clients, and must be chosen so that the server can uniquely identify the requesting client. For example, in the case of an ACE-based authentication and authorization model {{I-D.ietf-ace-oauth-authz}}, the Authorization Server or the server itself can define the context identifier of all clients interacting with a particular server, in which case the size of Cid can be proportional to the logarithm of number of authorized clients. 
-      * As Cids of different lengths can be used by different client, it is RECOMMENDED to start assigning Cids of length 1 byte (0x00, 0x01, ..., 0xff), and then when all 1 byte Cids are in use, start handling out Cids with a length of two bytes (0x0000, 0x0001, ..., 0xffff). Note that a Cid with the value 0x00 is considered different from the Cid with the value 0x0000.
+    * The size of Cid depends on the number of simultaneous clients, as discussed in {{sec-context-est-section}}
 
     * The size of Seq is variable, and increases with the number of messages exchanged.
 
