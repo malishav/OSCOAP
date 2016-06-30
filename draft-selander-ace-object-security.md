@@ -171,9 +171,9 @@ An example of option length is given in {{appendix-a}}.
 
 # The Security Context # {#sec-context-section}
 
-OSCOAP uses COSE with an Authenticated Encryption with Additional Data (AEAD) algorithm. The specification requires that client and server establish a security context to apply to the COSE objects protecting the CoAP messages. In this section we define the security context, and also specify how to establish a security context in client and server based on common keying material and key derivation function (KDF).  
+OSCOAP uses COSE with an Authenticated Encryption with Additional Data (AEAD) algorithm. The specification requires that client and server establish a security context to apply to the COSE objects protecting the CoAP messages. In this section we define the security context, and also specify how to establish a security context in client and server based on common keying material and a key derivation function (KDF).  
 
-The EDHOC protocol {{I-D.selander-ace-cose-ecdhe}} enables the establishment of forward secret keying material, and negotiation of KDF and AEAD, thus provides all necessary pre-requisite steps for using OSCOAP as defined here.
+The EDHOC protocol {{I-D.selander-ace-cose-ecdhe}} enables the establishment of forward secret keying material, and negotiation of KDF and AEAD, it thus provides all necessary pre-requisite steps for using OSCOAP as defined here.
 
 ## Security Context Definition ## {#sec-context-def-section}
 
@@ -220,13 +220,13 @@ The security context structure contains the following parameters:
 
 * Sender IV. Byte string containing the static IV to protect messages to send. Length is determined by Algorithm. Immutable.
 
-* Sender Sequence Number.  Non-negative integer enumerating the COSE objects that the endpoint sends, associated to the Context Identifier. It is used for replay protection, and to generate unique IVs for the AEAD. Initiated to 0. Maximum value is determined by Algorithm.
+* Sender Sequence Number.  Non-negative integer enumerating the COSE objects that the endpoint sends, associated to the Context Identifier. It is used for replay protection, and to generate unique IVs for the AEAD. Initialized to 0. Maximum value is determined by Algorithm.
 
 * Receiver Key.  Byte string containing the symmetric key to verify messages received. Length is determined by the Algorithm. Immutable.
 
 * Receiver IV.  Byte string containing the static IV to verify messages received. Length is determined by Algorithm. Immutable.
 
-* Receiver Sequence Number.  Non-negative integer enumerating the COSE objects received, associated to the Context Identifier. It is used for replay protection, and to generate unique IVs for the AEAD. Initiated to 0. Maximum value is determined by Algorithm.
+* Receiver Sequence Number.  Non-negative integer enumerating the COSE objects received, associated to the Context Identifier. It is used for replay protection, and to generate unique IVs for the AEAD. Initialized to 0. Maximum value is determined by Algorithm.
 
 * Replay Window.  The replay protection window for messages received, equivalent to the functionality described in Section 4.1.2.6 of {{RFC6347}}.  The default window size is 64.
 
@@ -236,7 +236,10 @@ The client and server may change roles using the same security context. The form
 
 ## Security Context Derivation ## {#sec-context-est-section}
 
-Given a shared secret keying material and common key derivation function, the client and server can derive the security context necessary to run OSCOAP. The procedure described here assumes that the keying material is uniformly random and that the key derivation function is HKDF {{RFC5869}}. (This is e.g. the case after having used EDHOC {{I-D.selander-ace-cose-ecdhe}}.)
+Given a shared secret keying material and a common key derivation function, the
+client and server can derive the security context necessary to run OSCOAP. The
+procedure described here assumes that the keying material is uniformly random
+and that the key derivation function is HKDF {{RFC5869}}. This is for example the case after having used EDHOC {{I-D.selander-ace-cose-ecdhe}}.
 
 Assumptions:
 
@@ -279,7 +282,10 @@ Protection of CoAP Options can be summarized as follows:
 
 * To prevent information leakage, Uri-Path and Uri-Query SHALL be encrypted. As a consequence, if Proxy-Uri is used, those parts of the URI SHALL be removed from the Proxy-Uri.  The CoAP Options Uri-Host, Uri-Port, Proxy-Uri, and Proxy-Scheme SHALL neither be encrypted, nor integrity protected (cf. protection of request URI in {{AAD}}).
 
-* The other CoAP options listed in {{protected-coap-options}} SHALL be encrypted and integrity protected.
+* The other CoAP options SHALL be encrypted and integrity protected.
+
+A summary of which options are encrypted or integrity protected is shown in
+{{protected-coap-options}}.
 
 ~~~~~~~~~~~
 +----+---+---+---+---+----------------+--------+--------+---+---+---+
