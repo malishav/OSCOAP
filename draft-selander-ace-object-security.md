@@ -323,7 +323,7 @@ However, some options which are encrypted need to be present in the protected Co
 
 * The Observe option is duplicate. If used, then the encrypted Observe and the unencrypted Observe SHALL have the same value.  The Observe option as used here targets the requirements on forwarding of {{I-D.hartke-core-e2e-security-reqs}}.
 
-* The block options Block1 and Block2 are duplicate. The encrypted block options enable end-to-end secure fragmentation of payload into blocks and protected information about the fragmentation (block number, last block, etc.) such that each block in ordered sequence from the first block can be verified as they arrive. The unencrypted block options allow for arbitrary proxy fragmentation operations which cannot be verified by the endpoints, but can be restricted in size since the encrypted options allow for secure fragmentation of very large messages. For more details about blockwise, see {{sec-considerations}}.
+* The block options Block1 and Block2 are duplicate. The encrypted block options enable end-to-end secure fragmentation of payload into blocks and protected information about the fragmentation (block number, last block, etc.) such that each block in ordered sequence from the first block can be verified as they arrive. The unencrypted block options allow for arbitrary proxy fragmentation operations which cannot be verified by the endpoints. An intermediary node can generate an arbitrarily long sequence of blocks. However, since it is possible to protect fragmentation of large messages, there SHALL be a security policy defining a maximum unfragmented message size such that messages exceeding this size SHALL be fragmented by the sending endpoint. Hence an endpoint receiving fragments of a message that exceeds maximum message size SHALL discard this message.
 
 Specifications of new CoAP options SHALL define if the new option is duplicate and how it are processed with OSCOAP. New COAP options SHOULD NOT be duplicate.
 
@@ -531,7 +531,7 @@ If the receiver accepts any sequence number larger than the one previously recei
 
 The encrypted block options enable the sender to split large messages into protected fragments such that the receiving node can verify blocks before having received the complete message. In order to protect from attacks replacing fragments from a different message with the same block number between same endpoints and same resource at roughly the same time, the MAC from the message containing one block is included in the external_aad of the message containing the next block. 
 
-The unencrypted block options allow for arbitrary proxy fragmentation operations which cannot be verified by the endpoints. An intermediary node can generate an arbitrarily long sequence of blocks. However, since it is possible to protect fragmentation of large messages, there SHALL be a security policy defining a maximum unfragmented message size such that messages exceeding this size SHALL be fragmented by the sending endpoint. Hence an endpoint receiving fragments of a message that exceeds maximum message size SHALL discard this message.
+The unencrypted block options allow for arbitrary proxy fragmentation operations which cannot be verified by the endpoints, but can be restricted in size since the encrypted options allow for secure fragmentation of very large messages.
 
 # Privacy Considerations #
 
@@ -539,13 +539,9 @@ Privacy threats executed through intermediate nodes are considerably reduced by 
 
 CoAP headers sent in plaintext allow for example matching of CON and ACK (CoAP Message Identifier), matching of request and responses (Token) and traffic analysis.
 
-
-
 # IANA Considerations # {#iana}
 
 Note to RFC Editor: Please replace all occurrences of "\[\[this document\]\]" with the RFC number of this specification.
-
-
 
 ## CoAP Option Number Registration ## 
 
