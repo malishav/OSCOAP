@@ -253,7 +253,7 @@ where:
 * info = "Party U Key" / "Party U IV" / "Party V Key" / "Party V IV"
 * key_length is the key size of the AEAD algorithm
 
-The party being initially client will use "Party U" derived key material for Sending and "Party V" derived keying material for receiveing and v.v. for the server. 
+The party being initially client SHALL use "Party U" info to derive Sender keying material and "Party V" info to derive Receiver keying material, and vice versa for the server. 
 
 With the mandatory OSCOAP algorithm AES-CCM-64-64-128 (see Section 10.2 in {{I-D.ietf-cose-msg}}), key\_length for the keys is 128 bits and key\_length for the static IVs is 56 bits.
 
