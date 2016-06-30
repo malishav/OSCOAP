@@ -319,7 +319,7 @@ The encrypted options are in general omitted from the protected CoAP message and
 
 However, some options which are encrypted need to be present in the protected CoAP message to support certain proxy functions. A CoAP option which may be both encrypted in the COSE object of the protected CoAP message, and also unencrypted as CoAP option in the protected CoAP message, is called "duplicate". The "encrypted" value of a duplicate option is intended for the destination endpoint and the "unecrypted" value is intended for a proxy. The unencrypted value is not integrity protected.
 
-* The Max-Age option is duplicate. The unencrypted Max-Age SHOULD have value zero to prevent caching of responses. The encrypted Max-Age is used as defined in {{RFC7252}} taking into account that it is not accessible proxies.
+* The Max-Age option is duplicate. The unencrypted Max-Age SHOULD have value zero to prevent caching of responses. The encrypted Max-Age is used as defined in {{RFC7252}} taking into account that it is not accessible to proxies.
 
 * The Observe option is duplicate. If used, then the encrypted Observe and the unencrypted Observe SHALL have the same value.  The Observe option as used here targets the requirements on forwarding of {{I-D.hartke-core-e2e-security-reqs}}.
 
@@ -333,7 +333,7 @@ Specifications of new CoAP options SHALL define if the new option is duplicate a
 
 This section defines how to use the COSE format {{I-D.ietf-cose-msg}} to wrap and protect data in the unprotected CoAP message. OSCOAP uses the COSE\_Encrypted structure with an Authenticated Encryption with Additional Data (AEAD) algorithm.
 
-The mandatory to support AEAD algorithm is AES-CCM-64-64-128 defined in Section 10.2 of {{I-D.ietf-cose-msg}}. For AES-CCM-64-64-128 the length of Sender Key and the Receiver Key SHALL be 128 bits, the length of the IV, Sender IV, and the Receiver IV SHALL be 7 bytes, and the maximum Sender Sequence Number and Receiver Sequence Number SHALL be 2^56-1. The IV is constructed using a Partial Initialization Vector exactly like in Section 3.1 of {{I-D.ietf-cose-msg}}}, i.e. by padding the Sender Sequence Number or the Receiver Sequence Number with zeroes and XORing it with the static Sender IV or Receiver IV, respectively.
+The mandatory to support AEAD algorithm is AES-CCM-64-64-128 defined in Section 10.2 of {{I-D.ietf-cose-msg}}. For AES-CCM-64-64-128 the length of  Sender Key and Receiver Key SHALL be 128 bits, the length of IV, Sender IV, and Receiver IV SHALL be 7 bytes, and the maximum Sender Sequence Number and Receiver Sequence Number SHALL be 2^56-1. The IV is constructed using a Partial Initialization Vector exactly like in Section 3.1 of {{I-D.ietf-cose-msg}}}, i.e. by padding the Sender Sequence Number or the Receiver Sequence Number with zeroes and XORing it with the static Sender IV or Receiver IV, respectively.
 
 Since OSCOAP only makes use of a single COSE structure, there is no need to explicitly specify the structure, and OSCOAP uses the untagged version of the COSE\_Encrypted structure (Section 2. of {{I-D.ietf-cose-msg}}). If the COSE object has a different structure, the receiver MUST reject the message, treating it as malformed.
 
@@ -351,7 +351,7 @@ The fields of COSE\_Encrypted structure are defined as follows (see example in {
 
     - The "unprotected" field, which SHALL be empty.
 
-* The "ciphertext" field is computed from the Plaintext and the Additional Authenticated Data (AAD) and encoded as a byte string (type: bstr), following Section 5.2 of {{I-D.ietf-cose-msg}}.
+* The "cipher text" field is computed from the Plaintext and the Additional Authenticated Data (AAD) and encoded as a byte string (type: bstr), following Section 5.2 of {{I-D.ietf-cose-msg}}.
 
 ## Plaintext ## {#plaintext}
 
@@ -369,8 +369,8 @@ The Plaintext is formatted as a CoAP message without Header (see {{plaintext-fig
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 |1 1 1 1 1 1 1 1|    Payload (if any) ...                       ~
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-(only if there 
- is payload)
+ (only if there 
+   is payload)
 ~~~~~~~~~~~
 {: #plaintext-figure title="Plaintext" }
 {: artwork-align="center"}
@@ -655,7 +655,7 @@ The size of the COSE object is the sum of the sizes of
 
 * the Header parameters,
 
-* the Ciphertext (excluding the Tag),
+* the Cipher Text (excluding the Tag),
 
 * the Tag, and 
 
@@ -671,7 +671,7 @@ Let's analyse the contributions one at a time:
 
     * As the IV is generated from the padded Sequence Number and a previously agreed upon static IV  it is not required to send the whole IV in the message.
 
-* The Ciphertext, excluding the Tag, is the encryption of the payload and the encrypted options {{coap-headers-and-options}}, which are present in the unprotected CoAP message.
+* The Cipher Text, excluding the Tag, is the encryption of the payload and the encrypted options {{coap-headers-and-options}}, which are present in the unprotected CoAP message.
 
 * The size of the Tag depends on the Algorithm. For the OSCOAP mandatory algorithm AES-CCM-64-64-128, the Tag is 8 bytes.
 
@@ -681,7 +681,7 @@ Let's analyse the contributions one at a time:
 
 ## Message Expansion ## {#appendix-a3}
 
-The message expansion is not the size of the COSE object. The ciphertext in the COSE object is encrypted payload and options of the unprotected CoAP message - the plaintext of which is removed from the protected CoAP message. Since the size of the ciphertext is the same as the corresponding plaintext, there is no message expansion due to encryption; payload and options are just represented in a different way in the protected CoAP message: 
+The message expansion is not the size of the COSE object. The cipher text in the COSE object is encrypted payload and options of the unprotected CoAP message - the plaintext of which is removed from the protected CoAP message. Since the size of the cipher text is the same as the corresponding plaintext, there is no message expansion due to encryption; payload and options are just represented in a different way in the protected CoAP message: 
 
 * The encrypted payload is in the payload of the protected CoAP message
 
@@ -721,13 +721,13 @@ The COSE object is represented in {{mess-exp-ex}} using CBOR's diagnostic notati
                              {04:h'a1534e3c',
                               06:h'e2'}
   {},                      # unprotected: -
-  Tag                      # ciphertext + 8 byte authentication tag
+  Tag                      # cipher text + 8 byte authentication tag
 ]
 ~~~~~~~~~~~
 {: #mess-exp-ex title="Example of message expansion" }
 {: artwork-align="center"}
 
-Note that the encrypted CoAP options and payload are omitted since we target the message expansion (see {{appendix-a3}}). Therefore the size of the COSE Ciphertext equals the size of the Tag, which is 8 bytes.
+Note that the encrypted CoAP options and payload are omitted since we target the message expansion (see {{appendix-a3}}). Therefore the size of the COSE Cipher Text equals the size of the Tag, which is 8 bytes.
 
 The COSE object encodes to a total size of 22 bytes, which is the message expansion in this example. The COSE overhead in this example is 22 - (4 + 1 + 8) = 9 bytes, according to the formula in {{mess-exp-formula}}. Note that in this example two bytes in the COSE overhead are used to encode the length of Cid and the length of Seq. 
 
@@ -792,7 +792,7 @@ Since the unprotected request message (PUT) has payload ("3"), the COSE object (
 
 The COSE header of the request contains a Context Identifier (cid:5fdc), indicating which security context was used to protect the message and a Sequence Number (seq:42).  
 
-The option Uri-Path (valve34) and payload ("3") are formatted as indicated in {{sec-obj-cose}}, and encrypted in the COSE Ciphertext (indicated with \{ ... \}).
+The option Uri-Path (valve34) and payload ("3") are formatted as indicated in {{sec-obj-cose}}, and encrypted in the COSE Cipher Text (indicated with \{ ... \}).
 
 The server verifies that the Sequence Number has not been received before (see {{replay-protection-section}}). The client verifies that the Sequence Number has not been received before and that the response message is generated as a response to the sent request message (see {{replay-protection-section}}).
 
@@ -860,7 +860,7 @@ Since the unprotected request message (GET) has no payload, the COSE object (ind
 
 The COSE header of the request contains a Context Identifier (cid:ca), indicating which security context was used to protect the message and a Sequence Number (seq:15b7).   
 
-The options Observe, Content-Format and the payload are formatted as indicated in {{sec-obj-cose}}, and encrypted in the COSE ciphertext (indicated with \{ ... \}). 
+The options Observe, Content-Format and the payload are formatted as indicated in {{sec-obj-cose}}, and encrypted in the COSE cipher text (indicated with \{ ... \}). 
 
 The server verifies that the Sequence Number has not been received before (see {{replay-protection-section}}). The client verifies that the Sequence Number has not been received before and that the response message is generated as a response to the subscribe request.
 
@@ -1035,7 +1035,7 @@ The object in COSE encoding gives:
                                {04:h'a1534e3c',
                                 06:h'a3'}
     {},                      # unprotected
-    TAG                      # ciphertext + truncated 8-byte TAG
+    TAG                      # cipher text + truncated 8-byte TAG
   ]
 )
 ~~~~~~~~~~~
@@ -1073,7 +1073,7 @@ The object in COSE encoding gives:
                                 06:h'a3'}
     {7:SIG},                 # unprotected: 
                                 07: 64 bytes signature
-    TAG                      # ciphertext + truncated 8-byte TAG
+    TAG                      # cipher text + truncated 8-byte TAG
   ]
 )
 ~~~~~~~~~~~
