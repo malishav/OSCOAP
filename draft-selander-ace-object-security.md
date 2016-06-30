@@ -314,7 +314,7 @@ A summary of which options are encrypted or integrity protected is shown in
          C=Critical, U=Unsafe, N=NoCacheKey, R=Repeatable,
          E=Encrypt, I=Integrity Protect, D=Duplicate.
 ~~~~~~~~~~~
-{: #protected-coap-options title="Protected CoAP Options" }
+{: #protected-coap-options title="Protection of CoAP Options" }
 {: artwork-align="center"}
 
 Unless specified otherwise, CoAP options not listed in {{protected-coap-options}} SHALL be encrypted and integrity protected.
@@ -529,7 +529,7 @@ DTLS protects hop-by-hop the entire CoAP message, including header, options, and
 
 The CoAP message layer, however, cannot be protected end-to-end through intermediary devices since the parameters Type and Message ID, as well as Token and Token Length may be changed by a proxy. Moreover, messages that are not possible to verify should for security reasons not always be acknowledged but in some cases be silently dropped. This would not comply with CoAP message layer, but does not have an impact on the application layer security solution, since message layer is excluded from that.
 
-The use of COSE to protected CoAP messages as specified in this document requires an established security context. The method for establishing the security context described in {{sec-context-est-section}} is based on a common keying material and key derivation function in client and server. EDHOC {{I-D.selander-ace-cose-ecdhe}} describes an augmented Diffie-Hellman key exchange for producing forward secret keying material and agreeing on crypto algorithms necessary for OSCOAP, authenticated with pre-established credentials. These pre-established credentials may, in turn, be provisioned using a trusted third party such as described in the OAuth-based ACE framework {{I-D.ietf-ace-oauth-authz}}. An OSCOAP profile of ACE is described in (I-D.seitz-ace-oscoap-profile).
+The use of COSE to protected CoAP messages as specified in this document requires an established security context. The method for establishing the security context described in {{sec-context-est-section}} is based on a common keying material and key derivation function in client and server. EDHOC {{I-D.selander-ace-cose-ecdhe}} describes an augmented Diffie-Hellman key exchange for producing forward secret keying material and agreeing on crypto algorithms necessary for OSCOAP, authenticated with pre-established credentials. These pre-established credentials may, in turn, be provisioned using a trusted third party such as described in the OAuth-based ACE framework {{I-D.ietf-ace-oauth-authz}}. An OSCOAP profile of ACE is described in FIXME(I-D.seitz-ace-oscoap-profile).
 
 For symmetric encryption it is required to have a unique IV for each message, for which the sequence numbers in the COSE message field "Partial IV" is used. The static IVs (Sender IV and Receiver IV) SHOULD be established between sender and receiver before the message is sent, for example using the method in {{I-D.selander-ace-cose-ecdhe}}, to avoid the overhead of sending it in each message.
 
