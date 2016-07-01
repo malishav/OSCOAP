@@ -173,7 +173,7 @@ The EDHOC protocol {{I-D.selander-ace-cose-ecdhe}} enables the establishment of 
 The security context is the set of information elements necessary to carry out the cryptographic operations in OSCOAP. Each security context is identified by a Context Identifier. A Context Identifier that is no longer in use can be reassigned to a new security context.
 
 For each endpoint, the security context has a "Sender" part and a "Receiver" part. The endpoint protects the messages sent using the Sender part of the context. The endpoint verifies the message received using the Receiver part.
-In communication between two endpoints, the Sender part of one endpoint matches the Receiver part of the other endpoint, and vice versa. Note that because of that, the two security contexts identified by the same Context Identifiers in the two endpoints are not the same, but they are partly mirrored.
+In communication between two endpoints, the Sender part of one endpoint matches the Receiver part of the other endpoint, and vice versa. Note that, because of that, the two security contexts identified by the same Context Identifiers in the two endpoints are not the same, but they are partly mirrored.
 
 An example is shown in {{sec-context-ex}}.
 
@@ -253,8 +253,7 @@ The party being initially client SHALL use "Party U" info to derive Sender keyin
 
 With the mandatory OSCOAP algorithm AES-CCM-64-64-128 (see Section 10.2 in {{I-D.ietf-cose-msg}}), key\_length for the keys is 128 bits and key\_length for the static IVs is 56 bits.
 
-The context identifier SHALL be unique for all security contexts used by the party being server. This can be achieved by the server, or trusted third party, assigning identifiers in a non-colliding way.
-TODO: if they change roles, the former client-new server can have 2 contexts with the same cid. How to avoid this?
+The Context Identifier SHALL be unique for all security contexts used by the party being server. This can be achieved by the server, or trusted third party, assigning identifiers in a non-colliding way. In case it is acceptable for the application that the client and server switch roles, the application SHALL also ensure that the Context Identifier is unique for all contexts used by the party being the client. This can be achieved by storing the Cid paired with some sort of communication identifier (e.g. the server's address).
 
 The size of Cid depends on the number of simultaneous clients, and must be chosen so that the server can uniquely identify the requesting client. Cids of different lengths can be used by different clients. In the case of an ACE-based authentication and authorization model {{I-D.ietf-ace-oauth-authz}}, the Authorization Server can define the context identifier of all clients interacting with a particular server, in which case the size of Cid can be proportional to the logarithm of the number of authorized clients. It is RECOMMENDED to start assigning Cids of length 1 byte (0x00, 0x01, ..., 0xff), and then when all 1 byte Cids are in use, start handling out Cids with a length of two bytes (0x0000, 0x0001, ..., 0xffff), and so on. Note that a Cid with the value 0x00 is considered different from the Cid with the value 0x0000.
 
