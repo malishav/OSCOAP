@@ -121,10 +121,7 @@ OSCOAP provides protection of CoAP payload, certain options, and header fields, 
 
 The message protection provided by OSCOAP can alternatively be applied only to the payload of individual messages. We call this object security of content (OSCON) and it is defined in {{mode-payl}}. 
 
-
-
-
-## Terminology ##  {#terminology}
+## Terminology ## {#terminology}
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in {{RFC2119}}. These words may also appear in this document in lowercase, absent their normative meanings.
 
@@ -137,8 +134,6 @@ Two different scopes of object security are defined:
 * OSCOAP = object security of CoAP, signaled with the Object-Security option.
 
 * OSCON = object security of content, signaled with Content Format/Media Type set to application/oscon (defined in {{mode-payl}}).
-
-
 
 # The Object-Security Option # {#obj-sec-option-section}
 
@@ -167,17 +162,15 @@ The length of the Object-Security option depends on whether the unprotected mess
 
 An example of option length is given in {{appendix-a}}.
 
-
-
 # The Security Context # {#sec-context-section}
 
-OSCOAP uses COSE with an Authenticated Encryption with Additional Data (AEAD) algorithm. The specification requires that client and server establish a security context to apply to the COSE objects protecting the CoAP messages. In this section we define the security context, and also specify how to establish a security context in client and server based on common keying material and a key derivation function (KDF).  
+OSCOAP uses COSE with an Authenticated Encryption with Additional Data (AEAD) algorithm. The specification requires that client and server establish a security context to apply to the COSE objects protecting the CoAP messages. In this section we define the security context, and also specify how to establish a security context in client and server based on common keying material and a key derivation function (KDF).
 
 The EDHOC protocol {{I-D.selander-ace-cose-ecdhe}} enables the establishment of forward secret keying material, and negotiation of KDF and AEAD, it thus provides all necessary pre-requisite steps for using OSCOAP as defined here.
 
 ## Security Context Definition ## {#sec-context-def-section}
 
-The security context is the set of information elements necessary to carry out the cryptographic operations in OSCOAP.   Each security context is identified by a Context Identifier. A Context Identifier that is no longer in use can be reassigned to a new security context.
+The security context is the set of information elements necessary to carry out the cryptographic operations in OSCOAP. Each security context is identified by a Context Identifier. A Context Identifier that is no longer in use can be reassigned to a new security context.
 
 For each endpoint, the security context has a "Sender" part and a "Receiver" part. The endpoint protects the messages sent using the Sender part of the context. The endpoint verifies the message received using the Receiver part.
 In communication between two endpoints, the Sender part of one endpoint matches the Receiver part of the other endpoint, and vice versa. Note that because of that, the two security contexts identified by the same Context Identifiers in the two endpoints are not the same, but they are partly mirrored.
@@ -212,23 +205,23 @@ Verify request with   |                       |
 
 The security context structure contains the following parameters:
 
-* Context Identifier (Cid).  Variable length byte string that identifies the security context. Immutable.
+* Context Identifier (Cid). Variable length byte string that identifies the security context. Immutable.
 
-* Algorithm (Alg).  Value that identifies the COSE AEAD algorithm to use for encryption. Immutable.
+* Algorithm (Alg). Value that identifies the COSE AEAD algorithm to use for encryption. Immutable.
 
-* Sender Key.  Byte string containing the symmetric key to protect messages to send. Length is determined by Algorithm. Immutable.
+* Sender Key. Byte string containing the symmetric key to protect messages to send. Length is determined by Algorithm. Immutable.
 
 * Sender IV. Byte string containing the static IV to protect messages to send. Length is determined by Algorithm. Immutable.
 
-* Sender Sequence Number.  Non-negative integer enumerating the COSE objects that the endpoint sends, associated to the Context Identifier. It is used for replay protection, and to generate unique IVs for the AEAD. Initialized to 0. Maximum value is determined by Algorithm.
+* Sender Sequence Number. Non-negative integer enumerating the COSE objects that the endpoint sends, associated to the Context Identifier. It is used for replay protection, and to generate unique IVs for the AEAD. Initialized to 0. Maximum value is determined by Algorithm.
 
-* Receiver Key.  Byte string containing the symmetric key to verify messages received. Length is determined by the Algorithm. Immutable.
+* Receiver Key. Byte string containing the symmetric key to verify messages received. Length is determined by the Algorithm. Immutable.
 
-* Receiver IV.  Byte string containing the static IV to verify messages received. Length is determined by Algorithm. Immutable.
+* Receiver IV. Byte string containing the static IV to verify messages received. Length is determined by Algorithm. Immutable.
 
-* Receiver Sequence Number.  Non-negative integer enumerating the COSE objects received, associated to the Context Identifier. It is used for replay protection, and to generate unique IVs for the AEAD. Initialized to 0. Maximum value is determined by Algorithm.
+* Receiver Sequence Number. Non-negative integer enumerating the COSE objects received, associated to the Context Identifier. It is used for replay protection, and to generate unique IVs for the AEAD. Initialized to 0. Maximum value is determined by Algorithm.
 
-* Replay Window.  The replay protection window for messages received, equivalent to the functionality described in Section 4.1.2.6 of {{RFC6347}}.  The default window size is 64.
+* Replay Window. The replay protection window for messages received, equivalent to the functionality described in Section 4.1.2.6 of {{RFC6347}}. The default window size is 64.
 
 The ordered pair (Cid, Sender Sequence Number) is called Transaction Identifier (Tid), and SHALL be unique for each COSE object and server. The Tid is used as a unique challenge in the COSE object of the protected CoAP request. The Tid is part of the Additional Authenticated Data (AAD, see {{sec-obj-cose}}) of the protected CoAP response message, which is how the challenge becomes signed by the server.
 
@@ -248,7 +241,7 @@ Assumptions:
 
 The security context parameters SHALL be derived using the HKDF-Expand primitive {{RFC5869}}:
 
-   Key = HKDF-Expand(traffic_secret_0, info, key_length),
+Key = HKDF-Expand(traffic_secret_0, info, key_length),
 
 where:
 
@@ -269,18 +262,17 @@ In case of EDHOC, party V (typically the server) can use the key identifier of i
 
 Alternatively, the derivation scheme above MAY be used to derive a random context identifier (using info = "Context Identifier" and the key-length SHALL be sufficiently long to make accidental collisions highly unlikely given the number of security contexts being derived in this way.
 
-
 # Protected CoAP Message Fields # {#coap-headers-and-options} 
 
-This section defines how the CoAP message fields are protected.  OSCOAP protects as much of the unprotected CoAP message as possible, while still allowing forwarding proxy operations {{I-D.hartke-core-e2e-security-reqs}}.
+This section defines how the CoAP message fields are protected. OSCOAP protects as much of the unprotected CoAP message as possible, while still allowing forwarding proxy operations {{I-D.hartke-core-e2e-security-reqs}}.
 
 The CoAP Payload SHALL be encrypted and integrity protected.
 
-The CoAP Header fields Version and Code SHALL be integrity protected but not encrypted.  The CoAP Message Layer parameters, Type and Message ID, as well as Token and Token Length SHALL neither be integrity protected nor encrypted.
+The CoAP Header fields Version and Code SHALL be integrity protected but not encrypted. The CoAP Message Layer parameters, Type and Message ID, as well as Token and Token Length SHALL neither be integrity protected nor encrypted.
 
 Protection of CoAP Options can be summarized as follows:
 
-* To prevent information leakage, Uri-Path and Uri-Query SHALL be encrypted. As a consequence, if Proxy-Uri is used, those parts of the URI SHALL be removed from the Proxy-Uri.  The CoAP Options Uri-Host, Uri-Port, Proxy-Uri, and Proxy-Scheme SHALL neither be encrypted, nor integrity protected (cf. protection of request URI in {{AAD}}).
+* To prevent information leakage, Uri-Path and Uri-Query SHALL be encrypted. As a consequence, if Proxy-Uri is used, those parts of the URI SHALL be removed from the Proxy-Uri. The CoAP Options Uri-Host, Uri-Port, Proxy-Uri, and Proxy-Scheme SHALL neither be encrypted, nor integrity protected (cf. protection of request URI in {{AAD}}).
 
 * The other CoAP options SHALL be encrypted and integrity protected.
 
@@ -327,7 +319,7 @@ However, some options which are encrypted need to be present in the protected Co
 
 * The Max-Age option is duplicate. The unencrypted Max-Age SHOULD have value zero to prevent caching of responses. The encrypted Max-Age is used as defined in {{RFC7252}} taking into account that it is not accessible to proxies.
 
-* The Observe option is duplicate. If used, then the encrypted Observe and the unencrypted Observe SHALL have the same value.  The Observe option as used here targets the requirements on forwarding of {{I-D.hartke-core-e2e-security-reqs}}.
+* The Observe option is duplicate. If used, then the encrypted Observe and the unencrypted Observe SHALL have the same value. The Observe option as used here targets the requirements on forwarding of {{I-D.hartke-core-e2e-security-reqs}}.
 
 * The block options Block1 and Block2 are duplicate. The encrypted block options enable end-to-end secure fragmentation of payload into blocks and protected information about the fragmentation (block number, last block, etc.) such that each block in ordered sequence from the first block can be verified as they arrive. The unencrypted block options allow for arbitrary proxy fragmentation operations which cannot be verified by the endpoints. An intermediary node can generate an arbitrarily long sequence of blocks. However, since it is possible to protect fragmentation of large messages, there SHALL be a security policy defining a maximum unfragmented message size such that messages exceeding this size SHALL be fragmented by the sending endpoint. Hence an endpoint receiving fragments of a message that exceeds maximum message size SHALL discard this message.
 
@@ -339,7 +331,7 @@ Specifications of new CoAP options SHALL define if the new option is duplicate a
 
 This section defines how to use the COSE format {{I-D.ietf-cose-msg}} to wrap and protect data in the unprotected CoAP message. OSCOAP uses the COSE\_Encrypted structure with an Authenticated Encryption with Additional Data (AEAD) algorithm.
 
-The mandatory to support AEAD algorithm is AES-CCM-64-64-128 defined in Section 10.2 of {{I-D.ietf-cose-msg}}. For AES-CCM-64-64-128 the length of  Sender Key and Receiver Key SHALL be 128 bits, the length of IV, Sender IV, and Receiver IV SHALL be 7 bytes, and the maximum Sender Sequence Number and Receiver Sequence Number SHALL be 2^56-1. The IV is constructed using a Partial Initialization Vector exactly like in Section 3.1 of {{I-D.ietf-cose-msg}}}, i.e. by padding the Sender Sequence Number or the Receiver Sequence Number with zeroes and XORing it with the static Sender IV or Receiver IV, respectively.
+The mandatory to support AEAD algorithm is AES-CCM-64-64-128 defined in Section 10.2 of {{I-D.ietf-cose-msg}}. For AES-CCM-64-64-128 the length of Sender Key and Receiver Key SHALL be 128 bits, the length of IV, Sender IV, and Receiver IV SHALL be 7 bytes, and the maximum Sender Sequence Number and Receiver Sequence Number SHALL be 2^56-1. The IV is constructed using a Partial Initialization Vector exactly like in Section 3.1 of {{I-D.ietf-cose-msg}}}, i.e. by padding the Sender Sequence Number or the Receiver Sequence Number with zeroes and XORing it with the static Sender IV or Receiver IV, respectively.
 
 Since OSCOAP only makes use of a single COSE structure, there is no need to explicitly specify the structure, and OSCOAP uses the untagged version of the COSE\_Encrypted structure (Section 2. of {{I-D.ietf-cose-msg}}). If the COSE object has a different structure, the receiver MUST reject the message, treating it as malformed.
 
@@ -380,7 +372,6 @@ The Plaintext is formatted as a CoAP message without Header (see {{plaintext-fig
 ~~~~~~~~~~~
 {: #plaintext-figure title="Plaintext" }
 {: artwork-align="center"}
-
 
 ## Additional Authenticated Data ## {#AAD}
 
@@ -433,7 +424,7 @@ OSCOAP is a challenge-response protocol, where the response is verified to match
 
 If a CoAP server receives a request with the Object-Security option, then the server SHALL include the Tid of the request in the AAD of the response, as described in {{protected-coap-formatting-resp}}.
 
-If the CoAP client receives a response with the Object-Security option, then the client SHALL verify the integrity of the response, using the Tid of its own associated request in the AAD, as described in  {{verif-coap-resp}}.
+If the CoAP client receives a response with the Object-Security option, then the client SHALL verify the integrity of the response, using the Tid of its own associated request in the AAD, as described in {{verif-coap-resp}}.
 
 
 
@@ -453,7 +444,7 @@ Given an unprotected CoAP request, including header, options and payload, the cl
 
     * The CoAP options which are encrypted and not duplicate ({{coap-headers-and-options}}) are removed. Any duplicate option which is present has its unencrypted value. The Object-Security option is added.
 
-    * If the unprotected CoAP message has no Payload, then the value of the Object-Security option is the COSE object.  If the unprotected CoAP message has Payload, then the Object-Security option is empty and the Payload of the protected CoAP message is the COSE object.
+    * If the unprotected CoAP message has no Payload, then the value of the Object-Security option is the COSE object. If the unprotected CoAP message has Payload, then the Object-Security option is empty and the Payload of the protected CoAP message is the COSE object.
 
 The Client SHALL be able to find the correct security context with use of the Token of the message exchange.
 
@@ -476,8 +467,6 @@ A CoAP server receiving a message containing the Object-Security option SHALL pe
 
 7. Restore the unprotected request by adding any decrypted options or payload from the plaintext. Any duplicate options ({{coap-headers-and-options}}) are overwritten. The Object-Security option is removed.
 
-
-
 ## Protecting the Response ## {#protected-coap-formatting-resp}
 
 A server receiving a valid request with a protected CoAP message (i.e. containing an Object-Security option) SHALL respond with a protected CoAP message.
@@ -487,17 +476,17 @@ Given an unprotected CoAP response, including header, options, and payload, the 
 1. Increment the Sender Sequence Number by one (note that this means that sequence number 0 is never used). If the Sender Sequence Number exceeds the maximum number for the AEAD algorithm, the server MUST NOT process any more responses with the given security context. The server SHOULD acquire a new security context before this happens. The latter is out of scope of this memo. 
 
 2. Compute the COSE object as specified in Section {{sec-obj-cose}}
-    
-    * The IV in the AEAD is created by XORing the static IV (Sender IV) and the Sender Sequence Number.
+
+  * The IV in the AEAD is created by XORing the static IV (Sender IV) and the Sender Sequence Number.
 
 3. Format the protected CoAP message as an ordinary CoAP message, with the following Header, Options, and Payload based on the unprotected CoAP message:
 
-    * The CoAP header is the same as the unprotected CoAP message.
-    
-    * The CoAP options which are encrypted and not duplicate ({{coap-headers-and-options}}) are removed. Any duplicate option which is present has its unencrypted value. The Object-Security option is added. 
+  * The CoAP header is the same as the unprotected CoAP message.
 
-    * If the unprotected CoAP message has no Payload, then the value of the Object-Security option is the COSE object.  If the unprotected CoAP message has Payload, then the Object-Security option is empty, and the Payload of the protected CoAP message is the COSE object.
-    
+  * The CoAP options which are encrypted and not duplicate ({{coap-headers-and-options}}) are removed. Any duplicate option which is present has its unencrypted value. The Object-Security option is added. 
+
+  * If the unprotected CoAP message has no Payload, then the value of the Object-Security option is the COSE object. If the unprotected CoAP message has Payload, then the Object-Security option is empty, and the Payload of the protected CoAP message is the COSE object.
+
 Note the differences between generating a protected request, and a protected response, for example whether "kid" is present in the header, or whether Destination URI or Tid is present in the AAD, of the COSE object. 
 
 
@@ -505,10 +494,10 @@ Note the differences between generating a protected request, and a protected res
 
 A CoAP client receiving a message containing the Object-Security option SHALL perform the following steps, using the security context identified by the Token of the received response:
 
-1. Verify the Sequence Number in the Partial IV parameter as described in {{replay-protection-section}}.  If it cannot be verified that the Sequence Number has not been received before, the client MUST stop processing the response.
+1. Verify the Sequence Number in the Partial IV parameter as described in {{replay-protection-section}}. If it cannot be verified that the Sequence Number has not been received before, the client MUST stop processing the response.
 
 2. Recreate the Additional Authenticated Data as described in {{sec-obj-cose}}.
-    
+
 3. Compose the IV by XORing the static IV (Receiver IV) with the Partial IV parameter, received in the COSE Object.
 
 4. Retrieve the Receiver Key.
@@ -562,8 +551,6 @@ The Object-Security option is added to the CoAP Option Numbers registry:
 ~~~~~~~~~~~
 {: artwork-align="center"}
 
-
-
 ## Media Type Registrations ## 
 
 The "application/oscon" media type is added to the Media Types registry:
@@ -610,8 +597,6 @@ The "application/oscon" media type is added to the Media Types registry:
 
         Provisional registration? No
 
-
-
 ## CoAP Content Format Registration ## 
 
 The "application/oscon" content format is added to the CoAP Content Format registry:
@@ -625,13 +610,9 @@ The "application/oscon" content format is added to the CoAP Content Format regis
 ~~~~~~~~~~~
 {: artwork-align="center"}
 
-
-
 # Acknowledgments #
 
 Klaus Hartke has independently been working on the same problem and a similar solution: establishing end-to-end security across proxies by adding a CoAP option. We are grateful to Malisa Vucinic for providing helpful and timely reviews of previous versions of the draft. We are also grateful to Carsten Bormann and Jim Schaad for providing input and interesting discussions.
-
-
 
 --- back
 
@@ -639,15 +620,11 @@ Klaus Hartke has independently been working on the same problem and a similar so
 
 OSCOAP transforms an unprotected CoAP message to a protected CoAP message, and the protected CoAP message is larger than the unprotected CoAP message. This appendix illustrates the message expansion.
 
-
-
 ## Length of the Object-Security Option ## {#appendix-a1}
 
 The protected CoAP message contains the COSE object. The COSE object is included in the payload if the unprotected CoAP message has payload or else in the Object-Security option. In the former case the Object-Security option is empty. So the length of the Object-Security option is either zero or the size of the COSE object, depending on whether the CoAP message has payload or not.
 
 Length of Object-Security option = \{ 0, size of COSE Object \}
-
-
 
 ## Size of the COSE Object ## {#appendix-a2}
 
@@ -665,11 +642,11 @@ Let's analyse the contributions one at a time:
 
 * The header parameters of the COSE object are the Context Identifier (Cid) and the Sequence Number (Seq) (also known as the Transaction Identifier (Tid)) if the message is a request, and Seq only if the message is a response (see {{sec-obj-cose}}).
 
-    * The size of Cid depends on the number of simultaneous clients, as discussed in {{sec-context-est-section}}
+  * The size of Cid depends on the number of simultaneous clients, as discussed in {{sec-context-est-section}}
 
-    * The size of Seq is variable, and increases with the number of messages exchanged.
+  * The size of Seq is variable, and increases with the number of messages exchanged.
 
-    * As the IV is generated from the padded Sequence Number and a previously agreed upon static IV  it is not required to send the whole IV in the message.
+  * As the IV is generated from the padded Sequence Number and a previously agreed upon static IV it is not required to send the whole IV in the message.
 
 * The Cipher Text, excluding the Tag, is the encryption of the payload and the encrypted options {{coap-headers-and-options}}, which are present in the unprotected CoAP message.
 
@@ -691,7 +668,7 @@ Therefore the OSCOAP message expansion is due to Cid (if present), Seq, Tag, and
 
 
 ~~~~~~~~~~~
-Message Overhead  =  Cid + Seq + Tag + COSE Overhead
+Message Overhead = Cid + Seq + Tag + COSE Overhead
 ~~~~~~~~~~~
 {: #mess-exp-formula title="OSCOAP message expansion" }
 {: artwork-align="center"}
@@ -743,13 +720,9 @@ The COSE object encodes to a total size of 22 bytes, which is the message expans
 {: #table-aes-ccm title="Message overhead for a 5-byte Tid and 8-byte Tag."}
 {: artwork-align="center"}
 
-
-
 # Examples # {#appendix-d}
 
 This section gives examples of OSCOAP. The message exchanges are made, based on the assumption that there is a security context established between client and server. For simplicity, these examples only indicate the content of the messages without going into detail of the COSE message format. 
-
-
 
 ## Secure Access to Actuator ##
 
@@ -790,7 +763,7 @@ Client  Proxy  Server
 
 Since the unprotected request message (PUT) has payload ("3"), the COSE object (indicated with \[ ... \]) is carried as the CoAP payload. Since the unprotected response message (Changed) has no payload, the Object-Security option carries the COSE object as its value.
 
-The COSE header of the request contains a Context Identifier (cid:5fdc), indicating which security context was used to protect the message and a Sequence Number (seq:42).  
+The COSE header of the request contains a Context Identifier (cid:5fdc), indicating which security context was used to protect the message and a Sequence Number (seq:42).
 
 The option Uri-Path (valve34) and payload ("3") are formatted as indicated in {{sec-obj-cose}}, and encrypted in the COSE Cipher Text (indicated with \{ ... \}).
 
@@ -800,7 +773,7 @@ The server verifies that the Sequence Number has not been received before (see {
 
 ## Secure Subscribe to Sensor ##
 
-Here is an example targeting the scenario in the forwarding proxy with observe case of {{I-D.hartke-core-e2e-security-reqs}}.  The example illustrates a client requesting subscription to a blood sugar measurement resource (GET /glucose), and first receiving the value 220 mg/dl, and then a second reading with value 180 mg/dl. The CoAP options Observe, Uri-Path, Content-Format, and Payload are encrypted and integrity protected, and the CoAP header field Code is integrity protected (see {{coap-headers-and-options}}).
+Here is an example targeting the scenario in the forwarding proxy with observe case of {{I-D.hartke-core-e2e-security-reqs}}. The example illustrates a client requesting subscription to a blood sugar measurement resource (GET /glucose), and first receiving the value 220 mg/dl, and then a second reading with value 180 mg/dl. The CoAP options Observe, Uri-Path, Content-Format, and Payload are encrypted and integrity protected, and the CoAP header field Code is integrity protected (see {{coap-headers-and-options}}).
 
 ~~~~~~~~~~~
 Client  Proxy  Server
@@ -858,7 +831,7 @@ Client  Proxy  Server
 
 Since the unprotected request message (GET) has no payload, the COSE object (indicated with \[ ... \]) is carried in the Object-Security option value. Since the unprotected response message (Content) has payload, the Object-Security option is empty, and the COSE object is carried as the payload.
 
-The COSE header of the request contains a Context Identifier (cid:ca), indicating which security context was used to protect the message and a Sequence Number (seq:15b7).   
+The COSE header of the request contains a Context Identifier (cid:ca), indicating which security context was used to protect the message and a Sequence Number (seq:15b7).
 
 The options Observe, Content-Format and the payload are formatted as indicated in {{sec-obj-cose}}, and encrypted in the COSE cipher text (indicated with \{ ... \}). 
 
@@ -915,13 +888,13 @@ all examples, with these values:
 * Seq: 0xa3
 
 For each scheme, we indicate the fixed length of these two parameters ("Cid+Seq" column) and of the Tag ("MAC"/"SIG"/"TAG"). The "Message OH" column
-shows the total expansions of the CoAP message size, while the "COSE OH" column is  calculated from the previous columns following the formula in {{mess-exp-formula}}.
+shows the total expansions of the CoAP message size, while the "COSE OH" column is calculated from the previous columns following the formula in {{mess-exp-formula}}.
 
 Overhead incurring from CBOR encoding is also included in the COSE overhead count. 
 
 To make it easier to read, COSE objects are represented using CBOR's diagnostic notation rather than a binary dump.
 
-##  MAC Only ## {#ssm-mac}
+## MAC Only ## {#ssm-mac}
 
 This example is based on HMAC-SHA256, with truncation to 8 bytes (HMAC 256/64).
 
@@ -1035,7 +1008,7 @@ This COSE object encodes to a total size of 25 bytes.
 
 This example is based on AES-CCM and ECDSA with 64 bytes signature. The same assumption on the security context as in {{sem-auth-enc}}.
 COSE defines the field 'counter signature w/o headers' that is used here to sign a COSE_Encrypted_Tagged message (see Section 3 of {{I-D.ietf-cose-msg}}).
-<!--  FIXME version 05: right label for counter signature TBD appendix a.2 of cose draft -11  [FP]
+<!--  FIXME version 05: right label for counter signature TBD appendix a.2 of cose draft -11 [FP]
 -->
 
 The object in COSE encoding gives:
