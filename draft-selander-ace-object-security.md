@@ -80,11 +80,11 @@ informative:
   I-D.bormann-6lo-coap-802-15-ie:
   I-D.ietf-ace-oauth-authz:
   I-D.ietf-core-block:
+  I-D.seitz-ace-ocsoap-profile:
   RFC5869:
   RFC7228:
 
 --- abstract
-<!--  FIXME: replace selander-ace-cose-ecdhe with I-D.selander-ace-cose-ecdhe everywhere, remove the text in the reference and replace it with correct reference. -->
 
 This memo defines Object Security of CoAP (OSCOAP), a method for application layer protection of message exchanges with the Constrained Application Protocol (CoAP), using the CBOR Object Signing and Encryption (COSE) format. OSCOAP provides end-to-end encryption, integrity and replay protection to CoAP payload, options, and header fields, as well as a secure binding between CoAP request and response messages. The use of OSCOAP is signaled with the CoAP option Object-Security, also defined in this memo.
 
@@ -517,7 +517,7 @@ DTLS protects hop-by-hop the entire CoAP message, including header, options, and
 
 The CoAP message layer, however, cannot be protected end-to-end through intermediary devices since the parameters Type and Message ID, as well as Token and Token Length may be changed by a proxy. Moreover, messages that are not possible to verify should for security reasons not always be acknowledged but in some cases be silently dropped. This would not comply with CoAP message layer, but does not have an impact on the application layer security solution, since message layer is excluded from that.
 
-The use of COSE to protected CoAP messages as specified in this document requires an established security context. The method for establishing the security context described in {{sec-context-est-section}} is based on a common keying material and key derivation function in client and server. EDHOC {{I-D.selander-ace-cose-ecdhe}} describes an augmented Diffie-Hellman key exchange for producing forward secret keying material and agreeing on crypto algorithms necessary for OSCOAP, authenticated with pre-established credentials. These pre-established credentials may, in turn, be provisioned using a trusted third party such as described in the OAuth-based ACE framework {{I-D.ietf-ace-oauth-authz}}. An OSCOAP profile of ACE is described in FIXME(I-D.seitz-ace-oscoap-profile).
+The use of COSE to protected CoAP messages as specified in this document requires an established security context. The method for establishing the security context described in {{sec-context-est-section}} is based on a common keying material and key derivation function in client and server. EDHOC {{I-D.selander-ace-cose-ecdhe}} describes an augmented Diffie-Hellman key exchange for producing forward secret keying material and agreeing on crypto algorithms necessary for OSCOAP, authenticated with pre-established credentials. These pre-established credentials may, in turn, be provisioned using a trusted third party such as described in the OAuth-based ACE framework {{I-D.ietf-ace-oauth-authz}}. An OSCOAP profile of ACE is described in {{I-D.seitz-ace-ocsoap-profile}}.
 
 For symmetric encryption it is required to have a unique IV for each message, for which the sequence numbers in the COSE message field "Partial IV" is used. The static IVs (Sender IV and Receiver IV) SHOULD be established between sender and receiver before the message is sent, for example using the method in {{I-D.selander-ace-cose-ecdhe}}, to avoid the overhead of sending it in each message.
 
@@ -1007,8 +1007,6 @@ This COSE object encodes to a total size of 25 bytes.
 
 This example is based on AES-CCM and ECDSA with 64 bytes signature. The same assumption on the security context as in {{sem-auth-enc}}.
 COSE defines the field 'counter signature w/o headers' that is used here to sign a COSE_Encrypted_Tagged message (see Section 3 of {{I-D.ietf-cose-msg}}).
-<!--  FIXME version 05: right label for counter signature TBD appendix a.2 of cose draft -11 [FP]
--->
 
 The object in COSE encoding gives:
 
