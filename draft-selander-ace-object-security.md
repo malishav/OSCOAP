@@ -236,8 +236,8 @@ and that the key derivation function is HKDF {{RFC5869}}. This is for example th
 
 Assumptions:
 
-* The hash function, denoted HKDF, is the HMAC based key derivation function defined in {{RFC5869}} with specified hash function, the length of the output is denoted hash_len
-* The shared secret keying material, denoted traffic_secret_0, is uniformly pseudo-random of length at least hash_len
+* The hash function, denoted HKDF, is the HMAC based key derivation function defined in {{RFC5869}} with specified hash function
+* The shared secret keying material, denoted traffic_secret_0, is uniformly pseudo-random of length at least equal to the output of the specified hash function
 
 The security context parameters SHALL be derived using the HKDF-Expand primitive {{RFC5869}}:
 
@@ -257,9 +257,9 @@ The Context Identifier SHALL be unique for all security contexts used by the par
 
 The size of Cid depends on the number of simultaneous clients, and must be chosen so that the server can uniquely identify the requesting client. Cids of different lengths can be used by different clients. In the case of an ACE-based authentication and authorization model {{I-D.ietf-ace-oauth-authz}}, the Authorization Server can define the context identifier of all clients interacting with a particular server, in which case the size of Cid can be proportional to the logarithm of the number of authorized clients. It is RECOMMENDED to start assigning Cids of length 1 byte (0x00, 0x01, ..., 0xff), and then when all 1 byte Cids are in use, start handling out Cids with a length of two bytes (0x0000, 0x0001, ..., 0xffff), and so on. Note that a Cid with the value 0x00 is considered different from the Cid with the value 0x0000.
 
-In case of EDHOC, party V (typically the server) can use the key identifier of its ephemeral public key (kid\_ev in {{I-D.selander-ace-cose-ecdhe}}) to label the derived keying material, traffic\_secret\_0, and to identify the security context derived from traffic\_secret\_0. In this case, Cid would be assigned the value kid\_ev.
+In case of EDHOC, party V (typically the server) can use the key identifier of its ephemeral public key (kid\_ev, Section 1.1 of {{I-D.selander-ace-cose-ecdhe}}) to label the derived keying material, traffic\_secret\_0, and to identify the security context derived from traffic\_secret\_0. In this case, Cid would be assigned the value kid\_ev.
 
-Alternatively, the derivation scheme above MAY be used to derive a random context identifier (using info = "Context Identifier" and the key-length SHALL be sufficiently long to make accidental collisions highly unlikely given the number of security contexts being derived in this way.
+Alternatively, the derivation scheme above MAY be used to derive a random context identifier (using info = "Context Identifier". In this case key\_length SHALL be sufficiently large so that accidental collisions are negligable given the number of security contexts being derived in this way.
 
 # Protected CoAP Message Fields # {#coap-headers-and-options} 
 
@@ -271,7 +271,7 @@ The CoAP Header fields Version and Code SHALL be integrity protected but not enc
 
 Protection of CoAP Options can be summarized as follows:
 
-* To prevent information leakage, Uri-Path and Uri-Query SHALL be encrypted. As a consequence, if Proxy-Uri is used, those parts of the URI SHALL be removed from the Proxy-Uri. The CoAP Options Uri-Host, Uri-Port, Proxy-Uri, and Proxy-Scheme SHALL neither be encrypted, nor integrity protected (cf. protection of request URI in {{AAD}}).
+* To prevent information leakage, Uri-Path and Uri-Query SHALL be encrypted. As a consequence, if Proxy-Uri is used, those parts of the URI SHALL be removed from the Proxy-Uri. The CoAP Options Uri-Host, Uri-Port, Proxy-Uri, and Proxy-Scheme SHALL neither be encrypted, nor integrity protected (cf. protection of the effective request URI in {{AAD}}).
 
 * The other CoAP options SHALL be encrypted and integrity protected.
 
@@ -386,7 +386,7 @@ The Additional Authenticated Data ("Enc_structure") as described is Section 5.3 
 
     * The Algorithm from the security context used for the exchange;
 
-    * the plaintext request URI composed from the request scheme and Uri-\* options according to the method described in Section 6.5 of {{RFC7252}}, if the message is a CoAP request; 
+    * the plaintext "effective" request URI composed from the request scheme and Uri-\* options according to the method described in Section 6.5 of {{RFC7252}}, if the message is a CoAP request; 
     
     * the Transaction Identifier (Tid) of the associated CoAP request, if the message is a CoAP response (see {{sec-context-section}}), and
     
@@ -525,7 +525,7 @@ If the receiver accepts any sequence number larger than the one previously recei
 
 The encrypted block options enable the sender to split large messages into protected fragments such that the receiving node can verify blocks before having received the complete message. In order to protect from attacks replacing fragments from a different message with the same block number between same endpoints and same resource at roughly the same time, the MAC from the message containing one block is included in the external_aad of the message containing the next block. 
 
-The unencrypted block options allow for arbitrary proxy fragmentation operations which cannot be verified by the endpoints, but can be restricted in size since the encrypted options allow for secure fragmentation of very large messages.
+The unencrypted block options allow for arbitrary proxy fragmentation operations which cannot be verified by the endpoints, but can by policy be restricted in size since the encrypted options allow for secure fragmentation of very large messages. A maximum message size (above which the sending endpoint fragments the message and the receiving endpoint discards the message, if complying to the policy) may be obtained as part of normal resource discovery.
 
 # Privacy Considerations #
 
