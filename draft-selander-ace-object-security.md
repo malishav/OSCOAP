@@ -320,7 +320,7 @@ However, some options which are encrypted need to be present in the protected Co
 
 * The Observe option is duplicate. If used, then the encrypted Observe and the unencrypted Observe SHALL have the same value. The Observe option as used here targets the requirements on forwarding of {{I-D.hartke-core-e2e-security-reqs}} (Section 2.2.1.2).
 
-* The block options Block1 and Block2 are duplicate. The encrypted block options enable end-to-end secure fragmentation of payload into blocks and protected information about the fragmentation (block number, last block, etc.) such that each block in ordered sequence from the first block can be verified as they arrive. The unencrypted block options allow for arbitrary proxy fragmentation operations which cannot be verified by the endpoints. An intermediary node can generate an arbitrarily long sequence of blocks. However, since it is possible to protect fragmentation of large messages, there SHALL be a security policy defining a maximum unfragmented message size such that messages exceeding this size SHALL be fragmented by the sending endpoint. Hence an endpoint receiving fragments of a message that exceeds maximum message size SHALL discard this message.
+* The block options Block1 and Block2 are duplicate. The encrypted block options enable end-to-end secure fragmentation of payload into blocks and protected information about the fragmentation (block number, last block, etc.) such that each block in ordered sequence from the first block can be verified as it arrives. The unencrypted block option allows for arbitrary proxy fragmentation operations which cannot be verified by the endpoints. An intermediary node can generate an arbitrarily long sequence of blocks. However, since it is possible to protect fragmentation of large messages, there SHALL be a security policy defining a maximum unfragmented message size such that messages exceeding this size SHALL be fragmented by the sending endpoint. Hence an endpoint receiving fragments of a message that exceeds maximum message size SHALL discard this message.
 
 Specifications of new CoAP options SHALL define if the new option is duplicate and how it is processed with OSCOAP. New COAP options SHOULD NOT be duplicate.
 
@@ -390,7 +390,7 @@ The Additional Authenticated Data ("Enc_structure") as described is Section 5.3 
     
     * the Transaction Identifier (Tid) of the associated CoAP request, if the message is a CoAP response (see {{sec-context-section}}), and
     
-    * the MAC of the message containing the previous block in the sequence, as enumerated by Block1 in the case of a request and Block2 in the case of a response; if the message is fragmented using a block option {{I-D.ietf-core-block}}.
+    * the MAC of the message containing the previous block in the sequence, as enumerated by Block1 in the case of a request and Block2 in the case of a response, if the message is fragmented using a block option {{I-D.ietf-core-block}}.
 
 ~~~~~~~~~~~
  0                   1                   2                   3
@@ -436,6 +436,7 @@ Given an unprotected CoAP request, including header, options and payload, the cl
 2. Compute the COSE object as specified in {{sec-obj-cose}}
 
     * the IV in the AEAD is created by XORing the static IV (Sender IV) with the partial IV (Sender Sequence Number).
+    * If the block option is used, the AAD includes the MAC from the previous fragment sent (from the second fragment and following) {{AAD}}. This means that the endpoint MUST store the MAC of each fragment to compute the following.
 
 3. Format the protected CoAP message as an ordinary CoAP message, with the following Header, Options, and Payload, based on the unprotected CoAP message:
 
@@ -455,6 +456,7 @@ A CoAP server receiving a message containing the Object-Security option SHALL pe
 1. Verify the Sequence Number in the Partial IV parameter, as described in {{replay-protection-section}}. If it cannot be verified that the Sequence Number has not been received before, the server MUST stop processing the request.
 
 2. Recreate the Additional Authenticated Data, as described in {{sec-obj-cose}}.
+    * If the block option is used, the AAD includes the MAC from the previous fragment received (from the second fragment and following) {{AAD}}. This means that the endpoint MUST store the MAC of each fragment to compute the following.
 
 3. Compose the IV by XORing the static IV (Receiver IV) with the Partial IV parameter, received in the COSE Object.
 
@@ -475,6 +477,7 @@ Given an unprotected CoAP response, including header, options, and payload, the 
 1. Increment the Sender Sequence Number by one (note that this means that sequence number 0 is never used). If the Sender Sequence Number exceeds the maximum number for the AEAD algorithm, the server MUST NOT process any more responses with the given security context. The server SHOULD acquire a new security context before this happens. The latter is out of scope of this memo. 
 2. Compute the COSE object as specified in Section {{sec-obj-cose}}
   * The IV in the AEAD is created by XORing the static IV (Sender IV) and the Sender Sequence Number.
+  * If the block option is used, the AAD includes the MAC from the previous fragment sent (from the second fragment and following) {{AAD}}. This means that the endpoint MUST store the MAC of each fragment to compute the following.
 3. Format the protected CoAP message as an ordinary CoAP message, with the following Header, Options, and Payload based on the unprotected CoAP message:
   * The CoAP header is the same as the unprotected CoAP message.
   * The CoAP options which are encrypted and not duplicate ({{coap-headers-and-options}}) are removed. Any duplicate option which is present has its unencrypted value. The Object-Security option is added. 
@@ -490,6 +493,7 @@ A CoAP client receiving a message containing the Object-Security option SHALL pe
 1. Verify the Sequence Number in the Partial IV parameter as described in {{replay-protection-section}}. If it cannot be verified that the Sequence Number has not been received before, the client MUST stop processing the response.
 
 2. Recreate the Additional Authenticated Data as described in {{sec-obj-cose}}.
+  * If the block option is used, the AAD includes the MAC from the previous fragment received (from the second fragment and following) {{AAD}}. This means that the endpoint MUST store the MAC of each fragment to compute the following.
 
 3. Compose the IV by XORing the static IV (Receiver IV) with the Partial IV parameter, received in the COSE Object.
 
