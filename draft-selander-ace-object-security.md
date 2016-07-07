@@ -259,7 +259,7 @@ The size of Cid depends on the number of simultaneous clients, and must be chose
 
 In case of EDHOC, party V (typically the server) can use the key identifier of its ephemeral public key (kid\_ev, Section 1.1 of {{I-D.selander-ace-cose-ecdhe}}) to label the derived keying material, traffic\_secret\_0, and to identify the security context derived from traffic\_secret\_0. In this case, Cid would be assigned the value kid\_ev.
 
-Alternatively, the derivation scheme above MAY be used to derive a random context identifier (using info = "Context Identifier". In this case key\_length SHALL be sufficiently large so that accidental collisions are negligable given the number of security contexts being derived in this way.
+Alternatively, the derivation scheme above MAY be used to derive a random context identifier (using info = "Context Identifier". In this case key\_length SHALL be sufficiently large so that accidental collisions are negligible given the number of security contexts being derived in this way.
 
 # Protected CoAP Message Fields # {#coap-headers-and-options} 
 
@@ -314,7 +314,7 @@ Specifications of new CoAP options SHOULD specify how they are processed with OS
 
 The encrypted options are in general omitted from the protected CoAP message and not visible to intermediary nodes (see {{protected-coap-formatting-req}} and {{protected-coap-formatting-resp}}). Hence the actions resulting from the use of corresponding options is analogous to the case of communicating directly with the endpoint. For example, a client using an ETag option will not be served by a proxy.
 
-However, some options which are encrypted need to be present in the protected CoAP message to support certain proxy functions. A CoAP option which may be both encrypted in the COSE object of the protected CoAP message, and also unencrypted as CoAP option in the protected CoAP message, is called "duplicate". The "encrypted" value of a duplicate option is intended for the destination endpoint and the "unecrypted" value is intended for a proxy. The unencrypted value is not integrity protected.
+However, some options which are encrypted need to be present in the protected CoAP message to support certain proxy functions. A CoAP option which may be both encrypted in the COSE object of the protected CoAP message, and also unencrypted as CoAP option in the protected CoAP message, is called "duplicate". The "encrypted" value of a duplicate option is intended for the destination endpoint and the "unencrypted" value is intended for a proxy. The unencrypted value is not integrity protected.
 
 * The Max-Age option is duplicate. The unencrypted Max-Age SHOULD have value zero to prevent caching of responses. The encrypted Max-Age is used as defined in {{RFC7252}} taking into account that it is not accessible to proxies.
 
@@ -412,7 +412,7 @@ The encryption process is described in Section 5.3 of {{I-D.ietf-cose-msg}}.
 
 ## Replay and Freshness Protection ## {#replay-protection-section}
 
-In order to protect from replay of messages and verify freshness, a CoAP endpoint SHALL maintain a Sender Sequence Number, and a Receiver Sequence Number associated to a security context, which is identified with a Context Identifier (Cid). The two sequence numbers are the highest sequence number the endpoint has sent and the highest sequence number the endpoint has received. An endpoint uses the Sender Sequence Number for protecting sent messages and the Receiver Sequence Number for verifying received messages, as described in {{sec-context-section}}.
+In order to protect from replay of messages and verify freshness, a CoAP endpoint SHALL maintain a Sender Sequence Number, and a Receiver Sequence Number associated to a security context, which is identified with a Context Identifier (Cid). The two sequence numbers are the highest sequence number the endpoint has sent and the highest sequence number the endpoint has received. An endpoint uses the Sender Sequence Number to protect messages to send and the Receiver Sequence Number to verify received messages, as described in {{sec-context-section}}.
 
 Depending on use case and ordering of messages provided by underlying layers, an endpoint MAY maintain a sliding replay window for Sequence Numbers of received messages associated to each Cid. In case of reliable transport, the receiving endpoint MAY require that the Sequence Number of a received message equals last Sequence Number + 1. 
 
@@ -511,7 +511,7 @@ DTLS protects hop-by-hop the entire CoAP message, including header, options, and
 
 The CoAP message layer, however, cannot be protected end-to-end through intermediary devices since the parameters Type and Message ID, as well as Token and Token Length may be changed by a proxy. Moreover, messages that are not possible to verify should for security reasons not always be acknowledged but in some cases be silently dropped. This would not comply with CoAP message layer, but does not have an impact on the application layer security solution, since message layer is excluded from that.
 
-The use of COSE to protected CoAP messages as specified in this document requires an established security context. The method for establishing the security context described in {{sec-context-est-section}} is based on a common keying material and key derivation function in client and server. EDHOC {{I-D.selander-ace-cose-ecdhe}} describes an augmented Diffie-Hellman key exchange for producing forward secret keying material and agreeing on crypto algorithms necessary for OSCOAP, authenticated with pre-established credentials. These pre-established credentials may, in turn, be provisioned using a trusted third party such as described in the OAuth-based ACE framework {{I-D.ietf-ace-oauth-authz}}. An OSCOAP profile of ACE is described in {{I-D.seitz-ace-ocsoap-profile}}.
+The use of COSE to protected CoAP messages as specified in this document requires an established security context. The method to establish the security context described in {{sec-context-est-section}} is based on a common keying material and key derivation function in client and server. EDHOC {{I-D.selander-ace-cose-ecdhe}} describes an augmented Diffie-Hellman key exchange to produce forward secret keying material and agree on crypto algorithms necessary for OSCOAP, authenticated with pre-established credentials. These pre-established credentials may, in turn, be provisioned using a trusted third party such as described in the OAuth-based ACE framework {{I-D.ietf-ace-oauth-authz}}. An OSCOAP profile of ACE is described in {{I-D.seitz-ace-ocsoap-profile}}.
 
 For symmetric encryption it is required to have a unique IV for each message, for which the sequence numbers in the COSE message field "Partial IV" is used. The static IVs (Sender IV and Receiver IV) SHOULD be established between sender and receiver before the message is sent, for example using the method in {{I-D.selander-ace-cose-ecdhe}}, to avoid the overhead of sending it in each message.
 
@@ -741,13 +741,13 @@ Client  Proxy  Server
    |      |<-----+            Code: 2.05 (Content)
    |      | 2.05 |           Token: 0x7b
    |      |      |         Max-Age: 0
-   |      |      | Object-Security: []
+   |      |      | Object-Security: -
    |      |      |         Payload: [seq:56, {"OFF"}, <Tag>]
    |      |      |
    |<-----+      |            Code: 2.05 (Content)
    | 2.05 |      |           Token: 0x8c
    |      |      |         Max-Age: 0
-   |      |      | Object-Security: []
+   |      |      | Object-Security: -
    |      |      |         Payload: [seq:56, {"OFF"}, <Tag>]
    |      |      |
 ~~~~~~~~~~~
@@ -788,7 +788,7 @@ Client  Proxy  Server
    |      | 2.05 |           Token: 0xbe
    |      |      |         Max-Age: 0
    |      |      |         Observe: 1
-   |      |      | Object-Security: []
+   |      |      | Object-Security: -
    |      |      |         Payload: [seq:32c2, {Observe:1, 
    |      |      |                   Content-Format:0, "220"}, <Tag>]
    |      |      |
@@ -796,7 +796,7 @@ Client  Proxy  Server
    | 2.05 |      |           Token: 0x83
    |      |      |         Max-Age: 0
    |      |      |         Observe: 1
-   |      |      | Object-Security: []
+   |      |      | Object-Security: -
    |      |      |         Payload: [seq:32c2, {Observe:1,
    |      |      |                   Content-Format:0, "220"}, <Tag>]
   ...    ...    ...
@@ -805,7 +805,7 @@ Client  Proxy  Server
    |      | 2.05 |           Token: 0xbe
    |      |      |         Max-Age: 0
    |      |      |         Observe: 2
-   |      |      | Object-Security: []
+   |      |      | Object-Security: -
    |      |      |         Payload: [seq:32c6, {Observe:2, 
    |      |      |                   Content-Format:0, "180"}, <Tag>]
    |      |      |
@@ -813,7 +813,7 @@ Client  Proxy  Server
    | 2.05 |      |           Token: 0x83
    |      |      |         Max-Age: 0
    |      |      |         Observe: 2
-   |      |      | Object-Security: []
+   |      |      | Object-Security: -
    |      |      |         Payload: [seq:32c6, {Observe:2,
    |      |      |                   Content-Format:0, "180"}, <Tag>]
    |      |      |
