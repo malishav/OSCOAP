@@ -723,52 +723,51 @@ The COSE object encodes to a total size of 22 bytes, which is the message expans
 
 This section gives examples of OSCOAP. The message exchanges are made, based on the assumption that there is a security context established between client and server. For simplicity, these examples only indicate the content of the messages without going into detail of the COSE message format. 
 
-## Secure Access to Actuator ##
+## Secure Access to Sensor ##
 
-Here is an example targeting the scenario in the Section 2.2.1. - Forwarding of {{I-D.hartke-core-e2e-security-reqs}}. The example illustrates a client requesting valve 34 to be turned to position 3 (PUT /valve34 with payload value "3"), and getting a confirmation. The CoAP options Uri-Path and Payload are encrypted and integrity protected, and the CoAP header field Code is integrity protected (see {{coap-headers-and-options}}).
+Here is an example targeting the scenario in the Section 2.2.1. - Forwarding of {{I-D.hartke-core-e2e-security-reqs}}. The example illustrates a client requesting the alarm status from a server. In the request, CoAP option Uri-Path is encrypted and integrity protected, and the CoAP header fields Code and Version are integrity protected (see {{coap-headers-and-options}}). In the response, the CoAP Payload is encrypted and integrity protected, and the CoAP header fields Code and Version are integrity protected.
 
 ~~~~~~~~~~~
 Client  Proxy  Server
    |      |      |
-   +----->|      |            Code: 0.03 (PUT)
-   | PUT  |      |           Token: 0x8c
-   |      |      | Object-Security: -
-   |      |      |         Payload: [cid:5fdc, seq:42,
-   |      |      |                   {Uri-Path:"valve34", "3"},
+   +----->|      |            Code: 0.01 (GET)
+   | GET  |      |           Token: 0x8c
+   |      |      | Object-Security: [cid:5fdc, seq:42,
+   |      |      |                   {Uri-Path:"alarm_status"},
    |      |      |                   <Tag>]
-   |      |      |
-   |      +----->|            Code: 0.03 (PUT)
-   |      | PUT  |           Token: 0x7b
-   |      |      | Object-Security: -
-   |      |      |         Payload: [cid:5fdc, seq:42,
-   |      |      |                   {Uri-Path:"valve34", "3"},
-   |      |      |                   <Tag>]
-   |      |      |
-   |      |<-----+            Code: 2.04 (Changed)
-   |      | 2.04 |           Token: 0x7b
-   |      |      |         Max-Age: 0
-   |      |      | Object-Security: [seq:56, <Tag>]
    |      |      |         Payload: -
    |      |      |
-   |<-----+      |            Code: 2.04 (Changed)
-   | 2.04 |      |           Token: 0x8c
-   |      |      |         Max-Age: 0
-   |      |      | Object-Security: [seq:56, <Tag>]
+   |      +----->|            Code: 0.01 (GET)
+   |      | GET  |           Token: 0x7b
+   |      |      | Object-Security: [cid:5fdc, seq:42,
+   |      |      |                   {Uri-Path:"alarm_status"},
+   |      |      |                   <Tag>]
    |      |      |         Payload: -
+   |      |      |
+   |      |<-----+            Code: 2.05 (Content)
+   |      | 2.05 |           Token: 0x7b
+   |      |      |         Max-Age: 0
+   |      |      | Object-Security: []
+   |      |      |         Payload: [seq:56, {"OFF"}, <Tag>]
+   |      |      |
+   |<-----+      |            Code: 2.05 (Content)
+   | 2.05 |      |           Token: 0x8c
+   |      |      |         Max-Age: 0
+   |      |      | Object-Security: []
+   |      |      |         Payload: [seq:56, {"OFF"}, <Tag>]
    |      |      |
 ~~~~~~~~~~~
-{: #put-protected-sig title="Indication of CoAP PUT protected with OSCOAP. The brackets [ ... ] indicate a COSE object. The brackets { ... \} indicate encrypted data." } 
+{: #get-protected-sig title="Indication of CoAP GET protected with OSCOAP. The brackets [ ... ] indicate a COSE object. The brackets { ... \} indicate encrypted data." } 
 {: artwork-align="center"}
 
-Since the unprotected request message (PUT) has payload ("3"), the COSE object (indicated with \[ ... \]) is carried as the CoAP payload. Since the unprotected response message (Changed) has no payload, the Object-Security option carries the COSE object as its value.
+Since the unprotected request message (GET) has no payload, the Object-Security option carries the COSE object as its value.
+Since the unprotected response message (Content) has payload ("OFF"), the COSE object (indicated with \[ ... \]) is carried as the CoAP payload.
 
 The COSE header of the request contains a Context Identifier (cid:5fdc), indicating which security context was used to protect the message and a Sequence Number (seq:42).
 
-The option Uri-Path (valve34) and payload ("3") are formatted as indicated in {{sec-obj-cose}}, and encrypted in the COSE Cipher Text (indicated with \{ ... \}).
+The option Uri-Path (alarm_status) and payload ("OFF") are formatted as indicated in {{sec-obj-cose}}, and encrypted in the COSE Cipher Text (indicated with \{ ... \}).
 
 The server verifies that the Sequence Number has not been received before (see {{replay-protection-section}}). The client verifies that the Sequence Number has not been received before and that the response message is generated as a response to the sent request message (see {{replay-protection-section}}).
-
-
 
 ## Secure Subscribe to Sensor ##
 
@@ -795,7 +794,7 @@ Client  Proxy  Server
    |      | 2.05 |           Token: 0xbe
    |      |      |         Max-Age: 0
    |      |      |         Observe: 1
-   |      |      | Object-Security: -
+   |      |      | Object-Security: []
    |      |      |         Payload: [seq:32c2, {Observe:1, 
    |      |      |                   Content-Format:0, "220"}, <Tag>]
    |      |      |
@@ -803,7 +802,7 @@ Client  Proxy  Server
    | 2.05 |      |           Token: 0x83
    |      |      |         Max-Age: 0
    |      |      |         Observe: 1
-   |      |      | Object-Security: -
+   |      |      | Object-Security: []
    |      |      |         Payload: [seq:32c2, {Observe:1,
    |      |      |                   Content-Format:0, "220"}, <Tag>]
   ...    ...    ...
@@ -812,7 +811,7 @@ Client  Proxy  Server
    |      | 2.05 |           Token: 0xbe
    |      |      |         Max-Age: 0
    |      |      |         Observe: 2
-   |      |      | Object-Security: -
+   |      |      | Object-Security: []
    |      |      |         Payload: [seq:32c6, {Observe:2, 
    |      |      |                   Content-Format:0, "180"}, <Tag>]
    |      |      |
@@ -820,7 +819,7 @@ Client  Proxy  Server
    | 2.05 |      |           Token: 0x83
    |      |      |         Max-Age: 0
    |      |      |         Observe: 2
-   |      |      | Object-Security: -
+   |      |      | Object-Security: []
    |      |      |         Payload: [seq:32c6, {Observe:2,
    |      |      |                   Content-Format:0, "180"}, <Tag>]
    |      |      |
