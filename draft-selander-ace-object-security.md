@@ -137,7 +137,7 @@ Two different scopes of object security are defined:
 
 # The Object-Security Option # {#obj-sec-option-section}
 
-The Object-Security option indicates that OSCOAP is used to protect the CoAP message exchange.
+The Object-Security option indicates that OSCOAP is used to protect the CoAP message exchange. The protection is achieved by means of a COSE object included in the protected CoAP message, as detailed in {{sec-obj-cose}}.
 
 The Object-Security option is critical, safe to forward, part of the cache key, and not repeatable. {{obj-sec-option}} illustrates the structure of the Object-Security option.
 
@@ -154,11 +154,11 @@ A CoAP proxy SHOULD NOT cache a response to a request with an Object-Security op
 {: #obj-sec-option title="The Object-Security Option"}
 {: artwork-align="center"}
 
-The length of the Object-Security option depends on whether the unprotected message has payload, on the set of options that are included in the unprotected message, the length of the integrity tag, and the length of the information identifying the security context. An endpoint receiving a CoAP message with payload, that also contains a non-empty Object-Security option SHALL treat it as malformed and reject it.
+The length of the Object-Security option depends on whether the unprotected message has payload, on the set of options that are included in the unprotected message, the length of the integrity tag, and the length of the information identifying the security context.
 
-* If the unprotected message has payload, then the COSE object is the payload of the protected message (see {{protected-coap-formatting-req}} and {{protected-coap-formatting-resp}}), and the Object-Security option has length zero.
+* If the unprotected message has payload, then the COSE object is the payload of the protected message (see {{protected-coap-formatting-req}} and {{protected-coap-formatting-resp}}), and the Object-Security option has length zero. An endpoint receiving a CoAP message with payload, that also contains a non-empty Object-Security option SHALL treat it as malformed and reject it.
 
-* If the unprotected message does not have payload, then the COSE object is the value of the Object-Security option and the length of the Object-Security option is equal to the size of the COSE object.
+* If the unprotected message does not have payload, then the COSE object is the value of the Object-Security option and the length of the Object-Security option is equal to the size of the COSE object. An endpoint receiving a CoAP message without payload, that also contains an empty Object-Security option SHALL treat it as malformed and reject it.
 
 An example of option length is given in {{appendix-a}}.
 
@@ -172,7 +172,7 @@ The EDHOC protocol {{I-D.selander-ace-cose-ecdhe}} enables the establishment of 
 
 The security context is the set of information elements necessary to carry out the cryptographic operations in OSCOAP. Each security context is identified by a Context Identifier. A Context Identifier that is no longer in use can be reassigned to a new security context.
 
-For each endpoint, the security context has a "Sender" part and a "Receiver" part. The endpoint protects the messages sent using the Sender part of the context. The endpoint verifies the message received using the Receiver part.
+For each endpoint, the security context has a "Sender" part and a "Receiver" part. The endpoint protects the messages sent using the Sender part of the context. The endpoint verifies the messages received using the Receiver part.
 In communication between two endpoints, the Sender part of one endpoint matches the Receiver part of the other endpoint, and vice versa. Note that, because of that, the two security contexts identified by the same Context Identifiers in the two endpoints are not the same, but they are partly mirrored.
 
 An example is shown in {{sec-context-ex}}.
@@ -348,7 +348,7 @@ The fields of COSE\_Encrypted structure are defined as follows (see example in {
 
     - The "unprotected" field, which SHALL be empty.
 
-* The "cipher text" field is computed from the Plaintext and the Additional Authenticated Data (AAD) and encoded as a byte string (type: bstr), following Section 5.2 of {{I-D.ietf-cose-msg}}.
+* The "cipher text" field is computed from the Plaintext (see {{plaintext}}) and the Additional Authenticated Data (AAD) (see {{AAD}}) and encoded as a byte string (type: bstr), following Section 5.2 of {{I-D.ietf-cose-msg}}.
 
 ## Plaintext ## {#plaintext}
 
@@ -431,12 +431,12 @@ If the CoAP client receives a response with the Object-Security option, then the
 
 Given an unprotected CoAP request, including header, options and payload, the client SHALL perform the following steps to create a protected CoAP request using a security context associated with the target resource:
 
-1. Increment the Sender Sequence Number by one (note that this means that sequence number 0 is never used). If the Sender Sequence Number exceeds the maximum number for the AEAD algorithm, the client MUST NOT process any requests with the given security context. The client SHOULD acquire a new security context before this happens. The latter is out of scope of this memo.
+1. Increment the Sender Sequence Number by one (note that this means that sequence number 0 is never used). If the Sender Sequence Number exceeds the maximum number for the AEAD algorithm, the client MUST NOT process any requests with the given security context. The client SHOULD acquire a new security context (and consequently inform the server about it) before this happens. The latter is out of scope of this memo.
 
 2. Compute the COSE object as specified in {{sec-obj-cose}}
 
     * the IV in the AEAD is created by XORing the static IV (Sender IV) with the partial IV (Sender Sequence Number).
-    * If the block option is used, the AAD includes the MAC from the previous fragment sent (from the second fragment and following) {{AAD}}. This means that the endpoint MUST store the MAC of each fragment to compute the following.
+    * If the block option is used, the AAD includes the MAC from the previous fragment sent (from the second fragment and following) {{AAD}}. This means that the endpoint MUST store the MAC of each last-sent fragment to compute the following.
 
 3. Format the protected CoAP message as an ordinary CoAP message, with the following Header, Options, and Payload, based on the unprotected CoAP message:
 
@@ -456,7 +456,7 @@ A CoAP server receiving a message containing the Object-Security option SHALL pe
 1. Verify the Sequence Number in the Partial IV parameter, as described in {{replay-protection-section}}. If it cannot be verified that the Sequence Number has not been received before, the server MUST stop processing the request.
 
 2. Recreate the Additional Authenticated Data, as described in {{sec-obj-cose}}.
-    * If the block option is used, the AAD includes the MAC from the previous fragment received (from the second fragment and following) {{AAD}}. This means that the endpoint MUST store the MAC of each fragment to compute the following.
+    * If the block option is used, the AAD includes the MAC from the previous fragment received (from the second fragment and following) {{AAD}}. This means that the endpoint MUST store the MAC of each last-received fragment to compute the following.
 
 3. Compose the IV by XORing the static IV (Receiver IV) with the Partial IV parameter, received in the COSE Object.
 
@@ -474,10 +474,10 @@ A server receiving a valid request with a protected CoAP message (i.e. containin
 
 Given an unprotected CoAP response, including header, options, and payload, the server SHALL perform the following steps to create a protected CoAP response, using the security context identified by the Context Identifier of the received request:
 
-1. Increment the Sender Sequence Number by one (note that this means that sequence number 0 is never used). If the Sender Sequence Number exceeds the maximum number for the AEAD algorithm, the server MUST NOT process any more responses with the given security context. The server SHOULD acquire a new security context before this happens. The latter is out of scope of this memo. 
+1. Increment the Sender Sequence Number by one (note that this means that sequence number 0 is never used). If the Sender Sequence Number exceeds the maximum number for the AEAD algorithm, the server MUST NOT process any more responses with the given security context. The server SHOULD acquire a new security context (and consequently inform the client about it) before this happens. The latter is out of scope of this memo. 
 2. Compute the COSE object as specified in Section {{sec-obj-cose}}
   * The IV in the AEAD is created by XORing the static IV (Sender IV) and the Sender Sequence Number.
-  * If the block option is used, the AAD includes the MAC from the previous fragment sent (from the second fragment and following) {{AAD}}. This means that the endpoint MUST store the MAC of each fragment to compute the following.
+  * If the block option is used, the AAD includes the MAC from the previous fragment sent (from the second fragment and following) {{AAD}}. This means that the endpoint MUST store the MAC of each last-sent fragment to compute the following.
 3. Format the protected CoAP message as an ordinary CoAP message, with the following Header, Options, and Payload based on the unprotected CoAP message:
   * The CoAP header is the same as the unprotected CoAP message.
   * The CoAP options which are encrypted and not duplicate ({{coap-headers-and-options}}) are removed. Any duplicate option which is present has its unencrypted value. The Object-Security option is added. 
@@ -493,7 +493,7 @@ A CoAP client receiving a message containing the Object-Security option SHALL pe
 1. Verify the Sequence Number in the Partial IV parameter as described in {{replay-protection-section}}. If it cannot be verified that the Sequence Number has not been received before, the client MUST stop processing the response.
 
 2. Recreate the Additional Authenticated Data as described in {{sec-obj-cose}}.
-  * If the block option is used, the AAD includes the MAC from the previous fragment received (from the second fragment and following) {{AAD}}. This means that the endpoint MUST store the MAC of each fragment to compute the following.
+  * If the block option is used, the AAD includes the MAC from the previous fragment received (from the second fragment and following) {{AAD}}. This means that the endpoint MUST store the MAC of each last-received fragment to compute the following.
 
 3. Compose the IV by XORing the static IV (Receiver IV) with the Partial IV parameter, received in the COSE Object.
 
@@ -511,11 +511,11 @@ A CoAP client receiving a message containing the Object-Security option SHALL pe
 
 In scenarios with intermediary nodes such as proxies or brokers, transport layer security such as DTLS only protects data hop-by-hop. As a consequence the intermediary nodes can read and modify information. The trust model where all intermediate nodes are considered trustworthy is problematic, not only from a privacy perspective, but also from a security perspective, as the intermediaries are free to delete resources on sensors and falsify commands to actuators (such as "unlock door", "start fire alarm", "raise bridge"). Even in the rare cases, where all the owners of the intermediary nodes are fully trusted, attacks and data breaches make such an architecture brittle.
 
-DTLS protects hop-by-hop the entire CoAP message, including header, options, and payload. OSCOAP protects end-to-end the payload, and all information in the options and header, that is not required for forwarding (see {{coap-headers-and-options}}). DTLS and OSCOAP can be combined.
+DTLS protects hop-by-hop the entire CoAP message, including header, options, and payload. OSCOAP protects end-to-end the payload, and all information in the options and header, that is not required for forwarding (see {{coap-headers-and-options}}). DTLS and OSCOAP can be combined, thereby enabling end-to-end security of CoAP payload, in combination with hop-by-hop protection of the entire CoAP message, during transport between end-point and intermediary node.
 
 The CoAP message layer, however, cannot be protected end-to-end through intermediary devices since the parameters Type and Message ID, as well as Token and Token Length may be changed by a proxy. Moreover, messages that are not possible to verify should for security reasons not always be acknowledged but in some cases be silently dropped. This would not comply with CoAP message layer, but does not have an impact on the application layer security solution, since message layer is excluded from that.
 
-The use of COSE to protected CoAP messages as specified in this document requires an established security context. The method to establish the security context described in {{sec-context-est-section}} is based on a common keying material and key derivation function in client and server. EDHOC {{I-D.selander-ace-cose-ecdhe}} describes an augmented Diffie-Hellman key exchange to produce forward secret keying material and agree on crypto algorithms necessary for OSCOAP, authenticated with pre-established credentials. These pre-established credentials may, in turn, be provisioned using a trusted third party such as described in the OAuth-based ACE framework {{I-D.ietf-ace-oauth-authz}}. An OSCOAP profile of ACE is described in {{I-D.seitz-ace-ocsoap-profile}}.
+The use of COSE to protect CoAP messages as specified in this document requires an established security context. The method to establish the security context described in {{sec-context-est-section}} is based on a common keying material and key derivation function in client and server. EDHOC {{I-D.selander-ace-cose-ecdhe}} describes an augmented Diffie-Hellman key exchange to produce forward secret keying material and agree on crypto algorithms necessary for OSCOAP, authenticated with pre-established credentials. These pre-established credentials may, in turn, be provisioned using a trusted third party such as described in the OAuth-based ACE framework {{I-D.ietf-ace-oauth-authz}}. An OSCOAP profile of ACE is described in {{I-D.seitz-ace-ocsoap-profile}}.
 
 For symmetric encryption it is required to have a unique IV for each message, for which the sequence numbers in the COSE message field "Partial IV" is used. The static IVs (Sender IV and Receiver IV) SHOULD be established between sender and receiver before the message is sent, for example using the method in {{I-D.selander-ace-cose-ecdhe}}, to avoid the overhead of sending it in each message.
 
@@ -609,7 +609,7 @@ The "application/oscon" content format is added to the CoAP Content Format regis
 
 # Acknowledgments #
 
-Klaus Hartke has independently been working on the same problem and a similar solution: establishing end-to-end security across proxies by adding a CoAP option. We are grateful to Malisa Vucinic for providing helpful and timely reviews of previous versions of the draft. We are also grateful to Carsten Bormann and Jim Schaad for providing input and interesting discussions.
+Klaus Hartke has independently been working on the same problem and a similar solution: establishing end-to-end security across proxies by adding a CoAP option. We are grateful to Malisa Vucinic and Marco Tiloca for providing helpful and timely reviews of previous versions of the draft. We are also grateful to Carsten Bormann and Jim Schaad for providing input and interesting discussions.
 
 --- back
 
