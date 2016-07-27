@@ -297,10 +297,10 @@ A summary of which options are encrypted or integrity protected is shown in
 | 20 |   |   |   | x | Location-Query | string | 0-255  | x | x |   |
 | 23 | x | x | - | - | Block2         | uint   | 0-3    | x | x | x |
 | 27 | x | x | - | - | Block1         | uint   | 0-3    | x | x | x |
-| 28 |   |   | x |   | Size2          | unit   | 0-4    | x | x |   |
+| 28 |   |   | x |   | Size2          | unit   | 0-4    | x | x | x |
 | 35 | x | x | - |   | Proxy-Uri      | string | 1-1034 |   |   |   |
 | 39 | x | x | - |   | Proxy-Scheme   | string | 1-255  |   |   |   |
-| 60 |   |   | x |   | Size1          | uint   | 0-4    | x | x |   |
+| 60 |   |   | x |   | Size1          | uint   | 0-4    | x | x | x |
 +----+---+---+---+---+----------------+--------+--------+---+---+---+
          C=Critical, U=Unsafe, N=NoCacheKey, R=Repeatable,
          E=Encrypt, I=Integrity Protect, D=Duplicate.
@@ -321,6 +321,8 @@ However, some options which are encrypted need to be present in the protected Co
 * The Observe option is duplicate. If used, then the encrypted Observe and the unencrypted Observe SHALL have the same value. The Observe option as used here targets the requirements on forwarding of {{I-D.hartke-core-e2e-security-reqs}} (Section 2.2.1.2).
 
 * The block options Block1 and Block2 are duplicate. The encrypted block options enable end-to-end secure fragmentation of payload into blocks and protected information about the fragmentation (block number, last block, etc.) such that each block in ordered sequence from the first block can be verified as it arrives. The unencrypted block option allows for arbitrary proxy fragmentation operations which cannot be verified by the endpoints. An intermediary node can generate an arbitrarily long sequence of blocks. However, since it is possible to protect fragmentation of large messages, there SHALL be a security policy defining a maximum unfragmented message size such that messages exceeding this size SHALL be fragmented by the sending endpoint. Hence an endpoint receiving fragments of a message that exceeds maximum message size SHALL discard this message.
+
+* The size options Size1 and Size2 are duplicate, analogously to the block options.
 
 Specifications of new CoAP options SHALL define if the new option is duplicate and how it is processed with OSCOAP. New COAP options SHOULD NOT be duplicate.
 
