@@ -328,15 +328,15 @@ Specifications of new CoAP options SHALL define if the new option is duplicate a
 
 # The COSE Object # {#sec-obj-cose}
 
-This section defines how to use the COSE format {{I-D.ietf-cose-msg}} to wrap and protect data in the unprotected CoAP message. OSCOAP uses the COSE\_Encrypted structure with an Authenticated Encryption with Additional Data (AEAD) algorithm.
+This section defines how to use the COSE format {{I-D.ietf-cose-msg}} to wrap and protect data in the unprotected CoAP message. OSCOAP uses the COSE\_Encrypt0 structure with an Authenticated Encryption with Additional Data (AEAD) algorithm.
 
 The mandatory to support AEAD algorithm is AES-CCM-64-64-128 defined in Section 10.2 of {{I-D.ietf-cose-msg}}. For AES-CCM-64-64-128 the length of Sender Key and Receiver Key SHALL be 128 bits, the length of IV, Sender IV, and Receiver IV SHALL be 7 bytes, and the maximum Sender Sequence Number and Receiver Sequence Number SHALL be 2^56-1. The IV is constructed using a Partial Initialization Vector exactly like in Section 3.1 of {{I-D.ietf-cose-msg}}, i.e. by padding the Sender Sequence Number or the Receiver Sequence Number with zeroes and XORing it with the static Sender IV or Receiver IV, respectively.
 
-Since OSCOAP only makes use of a single COSE structure, there is no need to explicitly specify the structure, and OSCOAP uses the untagged version of the COSE\_Encrypted structure (Section 2. of {{I-D.ietf-cose-msg}}). If the COSE object has a different structure, the receiver MUST reject the message, treating it as malformed.
+Since OSCOAP only makes use of a single COSE structure, there is no need to explicitly specify the structure, and OSCOAP uses the untagged version of the COSE\_Encrypt0 structure (Section 2. of {{I-D.ietf-cose-msg}}). If the COSE object has a different structure, the receiver MUST reject the message, treating it as malformed.
 
 We denote by Plaintext the data that is encrypted and integrity protected, and by Additional Authenticated Data (AAD) the data that is integrity protected only, in the COSE object.
 
-The fields of COSE\_Encrypted structure are defined as follows (see example in {{sem-auth-enc}}).
+The fields of COSE\_Encrypt0 structure are defined as follows (see example in {{sem-auth-enc}}).
 
 * The "Headers" field is formed by:
 
@@ -969,12 +969,12 @@ This example is based on AES-CCM with the MAC truncated to 8 bytes.
 
 It is assumed that the IV is generated from the Sequence Number and some previously agreed upon static IV. This means it is not required to explicitly send the whole IV in the message.
 
-Since the key is implicitly known by the recipient, the COSE_Encrypted_Tagged structure is used (Section 5.2 of {{I-D.ietf-cose-msg}}).
+Since the key is implicitly known by the recipient, the COSE_Encrypt0_Tagged structure is used (Section 5.2 of {{I-D.ietf-cose-msg}}).
 
 The object in COSE encoding gives:
 
 ~~~~~~~~~~~
-993(                         # COSE_Encrypted_Tagged
+993(                         # COSE_Encrypt0_Tagged
   [
     h'a20444a1534e3c0641a3', # protected:
                                {04:h'a1534e3c',
@@ -991,11 +991,11 @@ This COSE object encodes to a total size of 25 bytes.
 {{comp-aes-ccm}} summarizes these results.
 
 ~~~~~~~~~~~
-+-----------------------+-----+-----+---------+------------+
-|       Structure       | Tid | TAG | COSE OH | Message OH |
-+-----------------------+-----+-----+---------+------------+
-| COSE_Encrypted_Tagged | 5 B | 8 B |   12 B  |  25 bytes  |
-+-----------------------+-----+-----+---------+------------+
++----------------------+-----+-----+---------+------------+
+|       Structure      | Tid | TAG | COSE OH | Message OH |
++----------------------+-----+-----+---------+------------+
+| COSE_Encrypt0_Tagged | 5 B | 8 B |   12 B  |  25 bytes  |
++----------------------+-----+-----+---------+------------+
 ~~~~~~~~~~~
 {: #comp-aes-ccm title="Message overhead for a 5-byte Tid using AES_128_CCM_8."}
 {: artwork-align="center"}
@@ -1003,12 +1003,12 @@ This COSE object encodes to a total size of 25 bytes.
 ## Symmetric Encryption with Asymmetric Signature (SEAS) ## {#sem-seds}
 
 This example is based on AES-CCM and ECDSA with 64 bytes signature. The same assumption on the security context as in {{sem-auth-enc}}.
-COSE defines the field 'counter signature w/o headers' that is used here to sign a COSE_Encrypted_Tagged message (see Section 3 of {{I-D.ietf-cose-msg}}).
+COSE defines the field 'counter signature w/o headers' that is used here to sign a COSE_Encrypt0_Tagged message (see Section 3 of {{I-D.ietf-cose-msg}}).
 
 The object in COSE encoding gives:
 
 ~~~~~~~~~~~
-993(                         # COSE_Encrypted_Tagged
+993(                         # COSE_Encrypt0_Tagged
   [
     h'a20444a1534e3c0641a3', # protected:
                                {04:h'a1534e3c',
@@ -1026,11 +1026,11 @@ This COSE object encodes to a total size of 92 bytes.
 {{comp-aes-ccm-ecdsa}} summarizes these results.
 
 ~~~~~~~~~~~
-+-----------------------+-----+-----+------+---------+------------+
-|       Structure       | Tid | TAG | SIG  | COSE OH | Message OH |
-+-----------------------+-----+-----+------+---------+------------+
-| COSE_Encrypted_Tagged | 5 B | 8 B | 64 B |   15 B  |    92 B    |
-+-----------------------+-----+-----+------+---------+------------+
++----------------------+-----+-----+------+---------+------------+
+|       Structure      | Tid | TAG | SIG  | COSE OH | Message OH |
++----------------------+-----+-----+------+---------+------------+
+| COSE_Encrypt0_Tagged | 5 B | 8 B | 64 B |   15 B  |    92 B    |
++----------------------+-----+-----+------+---------+------------+
 ~~~~~~~~~~~
 {: #comp-aes-ccm-ecdsa title="Message overhead for a 5-byte Tid using AES-CCM countersigned with ECDSA."}
 {: artwork-align="center"}
