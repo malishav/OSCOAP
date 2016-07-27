@@ -81,6 +81,7 @@ informative:
   I-D.ietf-ace-oauth-authz:
   I-D.ietf-core-block:
   I-D.seitz-ace-ocsoap-profile:
+  I-D.ietf-core-coap-tcp-tls:
   RFC5869:
   RFC7228:
 
@@ -384,7 +385,7 @@ The Additional Authenticated Data ("Enc_structure") as described is Section 5.3 
 
 * the "external\_aad" includes, in the given order:
 
-    * the CoAP version number and Code of the message formatted as two bytes, see {{aad-enc-figure}}. This corresponds to the first two bytes of the CoAP header in the unprotected message with Type and Token Length bits set to 0 in the case of CoAP over UDP, but the same format is also used in case of CoAP over TCP;
+    * the CoAP version number and Code of the message formatted as two bytes: the first 2 digits in the first byte indicate the version number, the other digits are set to 0, the second byte indicates the Code (see {{aad-enc-figure}}). This corresponds to the first two bytes of the CoAP header in the unprotected message with Type and Token Length bits set to 0 in the case of CoAP over UDP. In the case of CoAP over TCP, even though the CoAP message format is different (see {{I-D.ietf-core-coap-tcp-tls}}), the version number and Code are still included in the external\_aad formatted as indicated above;
 
     * The Algorithm from the security context used for the exchange;
 
