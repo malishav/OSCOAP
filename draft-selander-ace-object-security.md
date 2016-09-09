@@ -257,10 +257,10 @@ Key = HKDF-Expand(base_key, info, key_length),
 where:
 
 * base_key is defined above
-* info = "Party U Key" / "Party U IV" / "Party V Key" / "Party V IV"
+* info = Sender ID/Recipient ID || "IV"/"Key"
 * key_length is the key size of the AEAD algorithm
 
-The party being initially client SHALL use "Party U" info to derive Sender keying material and "Party V" info to derive Recipient keying material, and vice versa for the server. 
+The Sender/Recipient Key shall be derived using the Sender/Recipient ID concatenated with the label "Key". The Sender/Recipient IV shall be derived using the Sender/Recipient ID concatenated with the label "IV".
 
 With the mandatory OSCOAP algorithm AES-CCM-64-64-128 (see Section 10.2 in {{I-D.ietf-cose-msg}}), key\_length for the keys is 128 bits and key\_length for the static IVs is 56 bits.
 
