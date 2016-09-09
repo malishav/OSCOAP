@@ -238,15 +238,15 @@ and that the key derivation function is HKDF {{RFC5869}}. This is for example th
 Assumptions:
 
 * The hash function, denoted HKDF, is the HMAC based key derivation function defined in {{RFC5869}} with specified hash function
-* The shared secret keying material, denoted traffic_secret_0, is uniformly pseudo-random of length at least equal to the output of the specified hash function
+* The shared secret keying material, denoted base_key, is uniformly pseudo-random of length at least equal to the output of the specified hash function
 
 The security context parameters SHALL be derived using the HKDF-Expand primitive {{RFC5869}}:
 
-Key = HKDF-Expand(traffic_secret_0, info, key_length),
+Key = HKDF-Expand(base_key, info, key_length),
 
 where:
 
-* traffic\_secret\_0 is defined above
+* base_key is defined above
 * info = "Party U Key" / "Party U IV" / "Party V Key" / "Party V IV"
 * key_length is the key size of the AEAD algorithm
 
@@ -258,7 +258,7 @@ The Context Identifier SHALL be unique for all security contexts used by the par
 
 The size of Cid depends on the number of simultaneous clients, and must be chosen so that the server can uniquely identify the requesting client. Cids of different lengths can be used by different clients. In the case of an ACE-based authentication and authorization model {{I-D.ietf-ace-oauth-authz}}, the Authorization Server can define the context identifier of all clients interacting with a particular server, in which case the size of Cid can be proportional to the logarithm of the number of authorized clients. It is RECOMMENDED to start assigning Cids of length 1 byte (0x00, 0x01, ..., 0xff), and then when all 1 byte Cids are in use, start handling out Cids with a length of two bytes (0x0000, 0x0001, ..., 0xffff), and so on. Note that a Cid with the value 0x00 is considered different from the Cid with the value 0x0000.
 
-In case of EDHOC, party V (typically the server) can use the key identifier of its ephemeral public key (kid\_ev, Section 1.1 of {{I-D.selander-ace-cose-ecdhe}}) to label the derived keying material, traffic\_secret\_0, and to identify the security context derived from traffic\_secret\_0. In this case, Cid would be assigned the value kid\_ev.
+In case of EDHOC, party V (typically the server) can use the key identifier of its ephemeral public key (kid\_ev, Section 1.1 of {{I-D.selander-ace-cose-ecdhe}}) to label the derived keying material, base\_key, and to identify the security context derived from base\_key. In this case, Cid would be assigned the value kid\_ev.
 
 Alternatively, the derivation scheme above MAY be used to derive a random context identifier (using info = "Context Identifier". In this case key\_length SHALL be sufficiently large so that accidental collisions are negligible given the number of security contexts being derived in this way.
 
