@@ -214,6 +214,8 @@ The Common Context structure contains the following parameters:
 
 The Sender Context structure contains the following parameters:
 
+* Sender ID. Variable length byte string identifying the sending endpoint. Immutable.
+
 * Sender Key. Byte string containing the symmetric key to protect messages to send. Length is determined by Algorithm. Immutable.
 
 * Sender IV. Byte string containing the static IV to protect messages to send. Length is determined by Algorithm. Immutable.
@@ -221,6 +223,8 @@ The Sender Context structure contains the following parameters:
 * Sender Sequence Number. Non-negative integer enumerating the COSE objects that the endpoint sends, associated to the Context Identifier. It is used for replay protection, and to generate unique IVs for the AEAD. Initialized to 0. Maximum value is determined by Algorithm.
 
 The Recipient Context structure contains the following parameters:
+
+* Recipient ID. Variable length byte string identifying the sending endpoint. Immutable.
 
 * Recipient Key. Byte string containing the symmetric key to verify messages received. Length is determined by the Algorithm. Immutable.
 
