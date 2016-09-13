@@ -257,7 +257,7 @@ Key = HKDF-Expand(base_key, info, key_length),
 where:
 
 * base_key is defined above
-* info = Sender ID/Recipient ID || "IV"/"Key"
+* info = Sender ID/Recipient ID \|\| "IV"/"Key"
 * key_length is the key size of the AEAD algorithm
 
 The Sender/Recipient Key shall be derived using the Sender/Recipient ID concatenated with the label "Key". The Sender/Recipient IV shall be derived using the Sender/Recipient ID concatenated with the label "IV".
