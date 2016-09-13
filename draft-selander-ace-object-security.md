@@ -1,7 +1,7 @@
 ---
 title: Object Security of CoAP (OSCOAP)
 # abbrev: OSCOAP
-docname: draft-selander-ace-object-security-05
+docname: draft-selander-ace-object-security-latest
 
 # stand_alone: true
 
