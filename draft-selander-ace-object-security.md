@@ -80,7 +80,7 @@ informative:
   I-D.bormann-6lo-coap-802-15-ie:
   I-D.ietf-ace-oauth-authz:
   I-D.ietf-core-block:
-  I-D.seitz-ace-ocsoap-profile:
+  I-D.seitz-ace-oscoap-profile:
   I-D.ietf-core-coap-tcp-tls:
   RFC5869:
   RFC7228:
