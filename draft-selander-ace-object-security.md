@@ -206,37 +206,37 @@ Verify request with   |                       |
 
 The Common Context structure contains the following parameters:
 
-* Context Identifier (Cid). Variable length byte string that identifies the security context. Its value is immutable once the Security Context is set up.
+* Context Identifier (Cid). Variable length byte string that identifies the security context. Its value is immutable once the security context is set up.
 
-* Algorithm (Alg). Value that identifies the COSE AEAD algorithm to use for encryption. Its value is immutable once the Security Context is set up.
+* Algorithm (Alg). Value that identifies the COSE AEAD algorithm to use for encryption. Its value is immutable once the security context is set up.
 
 * Base Key (base_key). Byte string containing the key used to derive the security context {{sec-context-est-section}}.
 
 The Sender Context structure contains the following parameters:
 
-* Sender ID. Variable length byte string identifying the sending endpoint. Its value is immutable once the Security Context is set up.
+* Sender ID. Variable length byte string identifying the sending endpoint. Its value is immutable once the security context is set up.
 
-* Sender Key. Byte string containing the symmetric key to protect messages to send. Length is determined by Algorithm. Its value is immutable once the Security Context is set up.
+* Sender Key. Byte string containing the symmetric key to protect messages to send. Length is determined by Algorithm. Its value is immutable once the security context is set up.
 
-* Sender IV. Byte string containing the fixed portion of IV (context IV in {{I-D.ietf-cose-msg}}) to protect messages to send. Length is determined by Algorithm. Its value is immutable once the Security Context is set up.
+* Sender IV. Byte string containing the fixed portion of IV (context IV in {{I-D.ietf-cose-msg}}) to protect messages to send. Length is determined by Algorithm. Its value is immutable once the security context is set up.
 
-* Sender Sequence Number. Non-negative integer enumerating the COSE objects that the endpoint sends, associated to the Context Identifier. It is used for replay protection, and to generate unique IVs for the AEAD. Its value is initialized to 0 during set up of the Security Context. Maximum value is determined by Algorithm.
+* Sender Sequence Number. Non-negative integer enumerating the COSE objects that the endpoint sends, associated to the Context Identifier. It is used for replay protection, and to generate unique IVs for the AEAD. Its value is initialized to 0 during set up of the security context. Maximum value is determined by Algorithm.
 
 The Recipient Context structure contains the following parameters:
 
-* Recipient ID. Variable length byte string identifying the sending endpoint. Its value is immutable once the Security Context is set up.
+* Recipient ID. Variable length byte string identifying the sending endpoint. Its value is immutable once the security context is set up.
 
-* Recipient Key. Byte string containing the symmetric key to verify messages received. Length is determined by the Algorithm. Its value is immutable once the Security Context is set up.
+* Recipient Key. Byte string containing the symmetric key to verify messages received. Length is determined by the Algorithm. Its value is immutable once the security context is set up.
 
-* Recipient IV. Byte string containing the context IV to verify messages received. Length is determined by Algorithm. Its value is immutable once the Security Context is set up.
+* Recipient IV. Byte string containing the context IV to verify messages received. Length is determined by Algorithm. Its value is immutable once the security context is set up.
 
-* Recipient Sequence Number. Non-negative integer enumerating the COSE objects received, associated to the Context Identifier. It is used for replay protection, and to generate unique IVs for the AEAD. Its value is initialized to 0 during set up of the Security Context. Maximum value is determined by Algorithm.
+* Recipient Sequence Number. Non-negative integer enumerating the COSE objects received, associated to the Context Identifier. It is used for replay protection, and to generate unique IVs for the AEAD. Its value is initialized to 0 during set up of the security context. Maximum value is determined by Algorithm.
 
 * Replay Window. The replay protection window for messages received, equivalent to the functionality described in Section 4.1.2.6 of {{RFC6347}}. The default window size is 64.
 
 The ordered 3-tuple (Cid, Sender ID, Sender Sequence Number) is called Transaction Identifier (Tid), and SHALL be unique for each COSE object and server. The Tid is used as a unique challenge in the COSE object of the protected CoAP request. The Tid is part of the Additional Authenticated Data (AAD, see {{sec-obj-cose}}) of the protected CoAP response message, which is how the challenge becomes signed by the server.
 
-The client and server may change roles using the same security context. The former server will then make the request using the Sender Context, the former client will verify the request using its Recipient Context etc.
+The client and server may change roles while maintaining the same security context. The former server will then make the request using the Sender Context, the former client will verify the request using its Recipient Context etc.
 
 ## Security Context Derivation ## {#sec-context-est-section}
 
