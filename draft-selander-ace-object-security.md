@@ -240,15 +240,14 @@ The client and server may change roles while maintaining the same security conte
 
 ## Security Context Derivation ## {#sec-context-est-section}
 
-Given a shared secret keying material and a common key derivation function, the
-client and server can derive the security context necessary to run OSCOAP. The
-procedure described here assumes that the keying material is uniformly random
-and that the key derivation function is HKDF {{RFC5869}}. This is for example the case after having used EDHOC {{I-D.selander-ace-cose-ecdhe}}.
+Given a common shared secret material and a common key derivation function, the client and server can derive the security context necessary to run OSCOAP. The derivation procedure described here is only run once on a set of common secret material. 
+
+The procedure assumes that the common shared secret material is uniformly random and that the key derivation function is HKDF {{RFC5869}}. This is for example the case after having used EDHOC {{I-D.selander-ace-cose-ecdhe}}.
 
 Assumptions:
 
 * The hash function, denoted HKDF, is the HMAC based key derivation function defined in {{RFC5869}} with specified hash function
-* The shared secret keying material, denoted base_key, is uniformly pseudo-random of length at least equal to the output of the specified hash function
+* The common shared secret material, denoted base_key, is uniformly pseudo-random of length at least equal to the output of the specified hash function
 
 The security context parameters SHALL be derived using the HKDF-Expand primitive {{RFC5869}}:
 
