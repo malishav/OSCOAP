@@ -206,31 +206,31 @@ Verify request with   |                       |
 
 The Common Context structure contains the following parameters:
 
-* Context Identifier (Cid). Variable length byte string that identifies the security context. Immutable.
+* Context Identifier (Cid). Variable length byte string that identifies the security context. Its value is immutable once the Security Context is set up.
 
-* Algorithm (Alg). Value that identifies the COSE AEAD algorithm to use for encryption. Immutable.
+* Algorithm (Alg). Value that identifies the COSE AEAD algorithm to use for encryption. Its value is immutable once the Security Context is set up.
 
 * Base Key (base_key). Byte string containing the key used to derive the security context {{sec-context-est-section}}.
 
 The Sender Context structure contains the following parameters:
 
-* Sender ID. Variable length byte string identifying the sending endpoint. Immutable.
+* Sender ID. Variable length byte string identifying the sending endpoint. Its value is immutable once the Security Context is set up.
 
-* Sender Key. Byte string containing the symmetric key to protect messages to send. Length is determined by Algorithm. Immutable.
+* Sender Key. Byte string containing the symmetric key to protect messages to send. Length is determined by Algorithm. Its value is immutable once the Security Context is set up.
 
-* Sender IV. Byte string containing the fixed portion of IV (context IV in {{I-D.ietf-cose-msg}}) to protect messages to send. Length is determined by Algorithm. Immutable.
+* Sender IV. Byte string containing the fixed portion of IV (context IV in {{I-D.ietf-cose-msg}}) to protect messages to send. Length is determined by Algorithm. Its value is immutable once the Security Context is set up.
 
-* Sender Sequence Number. Non-negative integer enumerating the COSE objects that the endpoint sends, associated to the Context Identifier. It is used for replay protection, and to generate unique IVs for the AEAD. Initialized to 0. Maximum value is determined by Algorithm.
+* Sender Sequence Number. Non-negative integer enumerating the COSE objects that the endpoint sends, associated to the Context Identifier. It is used for replay protection, and to generate unique IVs for the AEAD. Its value is initialized to 0 during set up of the Security Context. Maximum value is determined by Algorithm.
 
 The Recipient Context structure contains the following parameters:
 
-* Recipient ID. Variable length byte string identifying the sending endpoint. Immutable.
+* Recipient ID. Variable length byte string identifying the sending endpoint. Its value is immutable once the Security Context is set up.
 
-* Recipient Key. Byte string containing the symmetric key to verify messages received. Length is determined by the Algorithm. Immutable.
+* Recipient Key. Byte string containing the symmetric key to verify messages received. Length is determined by the Algorithm. Its value is immutable once the Security Context is set up.
 
-* Recipient IV. Byte string containing the context IV to verify messages received. Length is determined by Algorithm. Immutable.
+* Recipient IV. Byte string containing the context IV to verify messages received. Length is determined by Algorithm. Its value is immutable once the Security Context is set up.
 
-* Recipient Sequence Number. Non-negative integer enumerating the COSE objects received, associated to the Context Identifier. It is used for replay protection, and to generate unique IVs for the AEAD. Initialized to 0. Maximum value is determined by Algorithm.
+* Recipient Sequence Number. Non-negative integer enumerating the COSE objects received, associated to the Context Identifier. It is used for replay protection, and to generate unique IVs for the AEAD. Its value is initialized to 0 during set up of the Security Context. Maximum value is determined by Algorithm.
 
 * Replay Window. The replay protection window for messages received, equivalent to the functionality described in Section 4.1.2.6 of {{RFC6347}}. The default window size is 64.
 
