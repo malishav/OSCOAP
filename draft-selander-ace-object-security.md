@@ -290,31 +290,31 @@ A summary of which options are encrypted or integrity protected is shown in
 {{protected-coap-options}}.
 
 ~~~~~~~~~~~
-+----+---+---+---+---+----------------+--------+--------+---+---+---+
-| No.| C | U | N | R | Name           | Format | Length | E | I | D |
-+----+---+---+---+---+----------------+--------+--------+---+---+---+
-|  1 | x |   |   | x | If-Match       | opaque | 0-8    | x | x |   |
-|  3 | x | x | - |   | Uri-Host       | string | 1-255  |   |   |   |
-|  4 |   |   |   | x | ETag           | opaque | 1-8    | x | x |   |
-|  5 | x |   |   |   | If-None-Match  | empty  | 0      | x | x |   |
-|  6 |   | x | - |   | Observe        | uint   | 0-3    | x | x | x |
-|  7 | x | x | - |   | Uri-Port       | uint   | 0-2    |   |   |   |
-|  8 |   |   |   | x | Location-Path  | string | 0-255  | x | x |   |
-| 11 | x | x | - | x | Uri-Path       | string | 0-255  | x | x |   |
-| 12 |   |   |   |   | Content-Format | uint   | 0-2    | x | x |   |
-| 14 |   | x | - |   | Max-Age        | uint   | 0-4    | x | x | x |
-| 15 | x | x | - | x | Uri-Query      | string | 0-255  | x | x |   |
-| 17 | x |   |   |   | Accept         | uint   | 0-2    | x | x |   |
-| 20 |   |   |   | x | Location-Query | string | 0-255  | x | x |   |
-| 23 | x | x | - | - | Block2         | uint   | 0-3    | x | x | x |
-| 27 | x | x | - | - | Block1         | uint   | 0-3    | x | x | x |
-| 28 |   |   | x |   | Size2          | unit   | 0-4    | x | x | x |
-| 35 | x | x | - |   | Proxy-Uri      | string | 1-1034 |   |   |   |
-| 39 | x | x | - |   | Proxy-Scheme   | string | 1-255  |   |   |   |
-| 60 |   |   | x |   | Size1          | uint   | 0-4    | x | x | x |
-+----+---+---+---+---+----------------+--------+--------+---+---+---+
++----+---+---+---+---+----------------+--------+--------+---+---+
+| No.| C | U | N | R | Name           | Format | Length | E | D |
++----+---+---+---+---+----------------+--------+--------+---+---+
+|  1 | x |   |   | x | If-Match       | opaque | 0-8    | x |   |
+|  3 | x | x | - |   | Uri-Host       | string | 1-255  |   |   |
+|  4 |   |   |   | x | ETag           | opaque | 1-8    | x |   |
+|  5 | x |   |   |   | If-None-Match  | empty  | 0      | x |   |
+|  6 |   | x | - |   | Observe        | uint   | 0-3    | x | x |
+|  7 | x | x | - |   | Uri-Port       | uint   | 0-2    |   |   |
+|  8 |   |   |   | x | Location-Path  | string | 0-255  | x |   |
+| 11 | x | x | - | x | Uri-Path       | string | 0-255  | x |   |
+| 12 |   |   |   |   | Content-Format | uint   | 0-2    | x |   |
+| 14 |   | x | - |   | Max-Age        | uint   | 0-4    | x | x |
+| 15 | x | x | - | x | Uri-Query      | string | 0-255  | x |   |
+| 17 | x |   |   |   | Accept         | uint   | 0-2    | x |   |
+| 20 |   |   |   | x | Location-Query | string | 0-255  | x |   |
+| 23 | x | x | - | - | Block2         | uint   | 0-3    | x | x |
+| 27 | x | x | - | - | Block1         | uint   | 0-3    | x | x |
+| 28 |   |   | x |   | Size2          | unit   | 0-4    | x | x |
+| 35 | x | x | - |   | Proxy-Uri      | string | 1-1034 |   |   |
+| 39 | x | x | - |   | Proxy-Scheme   | string | 1-255  |   |   |
+| 60 |   |   | x |   | Size1          | uint   | 0-4    | x | x |
++----+---+---+---+---+----------------+--------+--------+---+---+
          C=Critical, U=Unsafe, N=NoCacheKey, R=Repeatable,
-         E=Encrypt, I=Integrity Protect, D=Duplicate.
+         E=Encrypted and Integrity Protect, D=Duplicate.
 ~~~~~~~~~~~
 {: #protected-coap-options title="Protection of CoAP Options" }
 {: artwork-align="center"}
