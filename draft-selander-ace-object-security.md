@@ -199,7 +199,7 @@ Protect request with  |    Cid=Cid1, ...]     |
 Retrieve context with |<----------------------+
  Token = Token1       |                       |
 Verify request with   |                       |
- Recipient             |                       |
+ Recipient            |                       |
 ~~~~~~~~~~~
 {: #sec-context-ex title="Retrieval and use of the Security Context"}
 {: artwork-align="center"}
@@ -252,7 +252,7 @@ Assumptions:
 
 The security context parameters SHALL be derived using the HKDF-Expand primitive {{RFC5869}}:
 
-Key = HKDF-Expand(base_key, info, key_length),
+Key = HKDF-Expand(base\_key, info, key\_length),
 
 where:
 
@@ -359,9 +359,20 @@ The fields of COSE\_Encrypt0 structure are defined as follows (see example in {{
 
         * If the message is a CoAP request, the "kid" parameter. The value is set to the Context Identifier (see {{sec-context-section}}).
 
+        * Optionally, the parameter called "sid", defined below. The value is set to the Sender ID (see {{sec-context-section}}).
+
     - The "unprotected" field, which SHALL be empty.
 
 * The "cipher text" field is computed from the Plaintext (see {{plaintext}}) and the Additional Authenticated Data (AAD) (see {{AAD}}) and encoded as a byte string (type: bstr), following Section 5.2 of {{I-D.ietf-cose-msg}}.
+
+sid:
+:      This parameter is used to identify the sender of the message. Applications MUST NOT assume that 'sid' values are unique. This is not a security critical field. For this reason, it can be placed in the unprotected headers bucket.
+
+name | label | value type | value registry | description
+---- | :---: | :--------: | -------------- | ----------------
+sid  |  TBD  |    bstr    |                | Sender identifier
+{: #sid-def title="Additional COSE Header Parameter" }
+
 
 ## Plaintext ## {#plaintext}
 
@@ -547,6 +558,10 @@ CoAP headers sent in plaintext allow for example matching of CON and ACK (CoAP M
 # IANA Considerations # {#iana}
 
 Note to RFC Editor: Please replace all occurrences of "\[\[this document\]\]" with the RFC number of this specification.
+
+## Sid Registration ##
+
+IANA is requested to enter a new parameter entitled "sid" to the registry "COSE Header Parameters". The parameter is defined in {{sid-def}}.
 
 ## CoAP Option Number Registration ## 
 
