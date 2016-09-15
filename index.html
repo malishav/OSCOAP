@@ -287,9 +287,10 @@ li, p {
 <link href="#rfc.section.7" rel="Chapter" title="7 Security Considerations"/>
 <link href="#rfc.section.8" rel="Chapter" title="8 Privacy Considerations"/>
 <link href="#rfc.section.9" rel="Chapter" title="9 IANA Considerations"/>
-<link href="#rfc.section.9.1" rel="Chapter" title="9.1 CoAP Option Number Registration"/>
-<link href="#rfc.section.9.2" rel="Chapter" title="9.2 Media Type Registrations"/>
-<link href="#rfc.section.9.3" rel="Chapter" title="9.3 CoAP Content Format Registration"/>
+<link href="#rfc.section.9.1" rel="Chapter" title="9.1 Sid Registration"/>
+<link href="#rfc.section.9.2" rel="Chapter" title="9.2 CoAP Option Number Registration"/>
+<link href="#rfc.section.9.3" rel="Chapter" title="9.3 Media Type Registrations"/>
+<link href="#rfc.section.9.4" rel="Chapter" title="9.4 CoAP Content Format Registration"/>
 <link href="#rfc.section.10" rel="Chapter" title="10 Acknowledgments"/>
 <link href="#rfc.references" rel="Chapter" title="11 References"/>
 <link href="#rfc.references.1" rel="Chapter" title="11.1 Normative References"/>
@@ -316,7 +317,7 @@ li, p {
 
   <meta name="dct.creator" content="Selander, G., Mattsson, J., Palombini, F., and L. Seitz" />
   <meta name="dct.identifier" content="urn:ietf:id:draft-selander-ace-object-security-latest" />
-  <meta name="dct.issued" scheme="ISO8601" content="2016-9-13" />
+  <meta name="dct.issued" scheme="ISO8601" content="2016-9-15" />
   <meta name="dct.abstract" content="This memo defines Object Security of CoAP (OSCOAP), a method for application layer protection of message exchanges with the Constrained Application Protocol (CoAP), using the CBOR Object Signing and Encryption (COSE) format. OSCOAP provides end-to-end encryption, integrity and replay protection to CoAP payload, options, and header fields, as well as a secure binding between CoAP request and response messages. The use of OSCOAP is signaled with the CoAP option Object-Security, also defined in this memo." />
   <meta name="description" content="This memo defines Object Security of CoAP (OSCOAP), a method for application layer protection of message exchanges with the Constrained Application Protocol (CoAP), using the CBOR Object Signing and Encryption (COSE) format. OSCOAP provides end-to-end encryption, integrity and replay protection to CoAP payload, options, and header fields, as well as a secure binding between CoAP request and response messages. The use of OSCOAP is signaled with the CoAP option Object-Security, also defined in this memo." />
 
@@ -340,7 +341,7 @@ li, p {
   <td class="right">F. Palombini</td>
 </tr>
 <tr>
-  <td class="left">Expires: March 17, 2017</td>
+  <td class="left">Expires: March 19, 2017</td>
   <td class="right">Ericsson AB</td>
 </tr>
 <tr>
@@ -353,7 +354,7 @@ li, p {
 </tr>
 <tr>
   <td class="left"></td>
-  <td class="right">September 13, 2016</td>
+  <td class="right">September 15, 2016</td>
 </tr>
 
     	
@@ -373,7 +374,7 @@ li, p {
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on March 17, 2017.</p>
+<p>This Internet-Draft will expire on March 19, 2017.</p>
 <h1 id="rfc.copyrightnotice">
   <a href="#rfc.copyrightnotice">Copyright Notice</a>
 </h1>
@@ -404,9 +405,10 @@ li, p {
 </ul><li>7.   <a href="#rfc.section.7">Security Considerations</a></li>
 <li>8.   <a href="#rfc.section.8">Privacy Considerations</a></li>
 <li>9.   <a href="#rfc.section.9">IANA Considerations</a></li>
-<ul><li>9.1.   <a href="#rfc.section.9.1">CoAP Option Number Registration</a></li>
-<li>9.2.   <a href="#rfc.section.9.2">Media Type Registrations</a></li>
-<li>9.3.   <a href="#rfc.section.9.3">CoAP Content Format Registration</a></li>
+<ul><li>9.1.   <a href="#rfc.section.9.1">Sid Registration</a></li>
+<li>9.2.   <a href="#rfc.section.9.2">CoAP Option Number Registration</a></li>
+<li>9.3.   <a href="#rfc.section.9.3">Media Type Registrations</a></li>
+<li>9.4.   <a href="#rfc.section.9.4">CoAP Content Format Registration</a></li>
 </ul><li>10.   <a href="#rfc.section.10">Acknowledgments</a></li>
 <li>11.   <a href="#rfc.references">References</a></li>
 <ul><li>11.1.   <a href="#rfc.references.1">Normative References</a></li>
@@ -518,7 +520,7 @@ Protect request with  |    Cid=Cid1, ...]     |
 Retrieve context with |&lt;----------------------+
  Token = Token1       |                       |
 Verify request with   |                       |
- Recipient             |                       |
+ Recipient            |                       |
 </pre>
 <p class="figure">Figure 3: Retrieval and use of the Security Context</p>
 <p id="rfc.section.3.1.p.4">The Common Context structure contains the following parameters:</p>
@@ -639,9 +641,38 @@ Verify request with   |                       |
 <p/>
 
 <ul>
-  <li>The "Headers" field is formed by:  <ul><li>The "protected" field, which SHALL include:      <ul><li>The "Partial Initialization Vector" parameter. The value is set to the Sender Sequence Number. The Partial IV is a byte string (type: bstr), where the length is the minimum length needed to encode the sequence number. An Endpoint that receives a COSE object with a sequence number encoded with leading zeroes (i.e. longer than the minimum needed length) SHALL reject the corresponding message as malformed.</li><li>If the message is a CoAP request, the "kid" parameter. The value is set to the Context Identifier (see <a href="#sec-context-section">Section 3</a>).</li></ul></li><li>The "unprotected" field, which SHALL be empty.</li></ul></li>
+  <li>The "Headers" field is formed by:  <ul><li>The "protected" field, which SHALL include:      <ul><li>The "Partial Initialization Vector" parameter. The value is set to the Sender Sequence Number. The Partial IV is a byte string (type: bstr), where the length is the minimum length needed to encode the sequence number. An Endpoint that receives a COSE object with a sequence number encoded with leading zeroes (i.e. longer than the minimum needed length) SHALL reject the corresponding message as malformed.</li><li>If the message is a CoAP request, the "kid" parameter. The value is set to the Context Identifier (see <a href="#sec-context-section">Section 3</a>).</li><li>Optionally, the parameter called "sid", defined below. The value is set to the Sender ID (see <a href="#sec-context-section">Section 3</a>).</li></ul></li><li>The "unprotected" field, which SHALL be empty.</li></ul></li>
   <li>The "cipher text" field is computed from the Plaintext (see <a href="#plaintext">Section 5.1</a>) and the Additional Authenticated Data (AAD) (see <a href="#AAD">Section 5.2</a>) and encoded as a byte string (type: bstr), following Section 5.2 of <a href="#I-D.ietf-cose-msg">[I-D.ietf-cose-msg]</a>.</li>
 </ul>
+<p/>
+
+<dl>
+  <dt>sid:</dt>
+  <dd style="margin-left: 8">This parameter is used to identify the sender of the message. Applications MUST NOT assume that 'sid' values are unique. This is not a security critical field. For this reason, it can be placed in the unprotected headers bucket.</dd>
+</dl>
+<div id="rfc.table.1"/>
+<div id="sid-def"/>
+<table cellpadding="3" cellspacing="0" class="tt full center">
+  <caption>Additional COSE Header Parameter</caption>
+  <thead>
+    <tr>
+      <th class="left">name</th>
+      <th class="center">label</th>
+      <th class="center">value type</th>
+      <th class="left">value registry</th>
+      <th class="left">description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="left">sid</td>
+      <td class="center">TBD</td>
+      <td class="center">bstr</td>
+      <td class="left"/>
+      <td class="left">Sender identifier</td>
+    </tr>
+  </tbody>
+</table>
 <h1 id="rfc.section.5.1"><a href="#rfc.section.5.1">5.1.</a> <a href="#plaintext" id="plaintext">Plaintext</a></h1>
 <p id="rfc.section.5.1.p.1">The Plaintext is formatted as a CoAP message without Header (see <a href="#plaintext-figure">Figure 5</a>) consisting of:</p>
 <p/>
@@ -757,8 +788,10 @@ Verify request with   |                       |
 <p id="rfc.section.8.p.2">CoAP headers sent in plaintext allow for example matching of CON and ACK (CoAP Message Identifier), matching of request and responses (Token) and traffic analysis.</p>
 <h1 id="rfc.section.9"><a href="#rfc.section.9">9.</a> <a href="#iana" id="iana">IANA Considerations</a></h1>
 <p id="rfc.section.9.p.1">Note to RFC Editor: Please replace all occurrences of "[[this document]]" with the RFC number of this specification.</p>
-<h1 id="rfc.section.9.1"><a href="#rfc.section.9.1">9.1.</a> <a href="#coap-option-number-registration" id="coap-option-number-registration">CoAP Option Number Registration</a></h1>
-<p id="rfc.section.9.1.p.1">The Object-Security option is added to the CoAP Option Numbers registry:</p>
+<h1 id="rfc.section.9.1"><a href="#rfc.section.9.1">9.1.</a> <a href="#sid-registration" id="sid-registration">Sid Registration</a></h1>
+<p id="rfc.section.9.1.p.1">IANA is requested to enter a new parameter entitled "sid" to the registry "COSE Header Parameters". The parameter is defined in <a href="#sid-def">Table 1</a>.</p>
+<h1 id="rfc.section.9.2"><a href="#rfc.section.9.2">9.2.</a> <a href="#coap-option-number-registration" id="coap-option-number-registration">CoAP Option Number Registration</a></h1>
+<p id="rfc.section.9.2.p.1">The Object-Security option is added to the CoAP Option Numbers registry:</p>
 <pre>
 +--------+-----------------+-------------------+
 | Number | Name            | Reference         |
@@ -766,8 +799,8 @@ Verify request with   |                       |
 |  TBD   | Object-Security | [[this document]] |
 +--------+-----------------+-------------------+
 </pre>
-<h1 id="rfc.section.9.2"><a href="#rfc.section.9.2">9.2.</a> <a href="#media-type-registrations" id="media-type-registrations">Media Type Registrations</a></h1>
-<p id="rfc.section.9.2.p.1">The "application/oscon" media type is added to the Media Types registry:</p>
+<h1 id="rfc.section.9.3"><a href="#rfc.section.9.3">9.3.</a> <a href="#media-type-registrations" id="media-type-registrations">Media Type Registrations</a></h1>
+<p id="rfc.section.9.3.p.1">The "application/oscon" media type is added to the Media Types registry:</p>
 <pre>
     Type name: application
 
@@ -811,8 +844,8 @@ Verify request with   |                       |
 
     Provisional registration? No
 </pre>
-<h1 id="rfc.section.9.3"><a href="#rfc.section.9.3">9.3.</a> <a href="#coap-content-format-registration" id="coap-content-format-registration">CoAP Content Format Registration</a></h1>
-<p id="rfc.section.9.3.p.1">The "application/oscon" content format is added to the CoAP Content Format registry:</p>
+<h1 id="rfc.section.9.4"><a href="#rfc.section.9.4">9.4.</a> <a href="#coap-content-format-registration" id="coap-content-format-registration">CoAP Content Format Registration</a></h1>
+<p id="rfc.section.9.4.p.1">The "application/oscon" content format is added to the CoAP Content Format registry:</p>
 <pre>
 +-------------------+----------+----+-------------------+
 | Media type        | Encoding | ID | Reference         |
