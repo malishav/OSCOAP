@@ -1,4 +1,4 @@
-# Object Security of CoAP (OSCOAP)
+# Object Security of CoAP (OSCOAP) [![Build Status](https://travis-ci.org/EricssonResearch/OSCOAP.svg?branch=master)](https://travis-ci.org/EricssonResearch/OSCOAP)
 
 This is the working area for the Individual internet-draft, "Object Security of CoAP (OSCOAP)".
 
