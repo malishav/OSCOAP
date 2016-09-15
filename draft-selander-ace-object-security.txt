@@ -74,10 +74,10 @@ Table of Contents
      3.1.  Security Context Definition . . . . . . . . . . . . . . .   6
      3.2.  Security Context Derivation . . . . . . . . . . . . . . .   9
    4.  Protected CoAP Message Fields . . . . . . . . . . . . . . . .  10
-   5.  The COSE Object . . . . . . . . . . . . . . . . . . . . . . .  12
+   5.  The COSE Object . . . . . . . . . . . . . . . . . . . . . . .  13
      5.1.  Plaintext . . . . . . . . . . . . . . . . . . . . . . . .  14
-     5.2.  Additional Authenticated Data . . . . . . . . . . . . . .  14
-   6.  Protecting CoAP Messages  . . . . . . . . . . . . . . . . . .  15
+     5.2.  Additional Authenticated Data . . . . . . . . . . . . . .  15
+   6.  Protecting CoAP Messages  . . . . . . . . . . . . . . . . . .  16
      6.1.  Replay and Freshness Protection . . . . . . . . . . . . .  16
      6.2.  Protecting the Request  . . . . . . . . . . . . . . . . .  16
      6.3.  Verifying the Request . . . . . . . . . . . . . . . . . .  17
@@ -294,13 +294,13 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
    server establish a security context to apply to the COSE objects
    protecting the CoAP messages.  In this section we define the security
    context, and also specify how to establish a security context in
-   client and server based on common keying material and a key
+   client and server based on common shared secret material and a key
    derivation function (KDF).
 
    The EDHOC protocol [I-D.selander-ace-cose-ecdhe] enables the
-   establishment of forward secret keying material, and negotiation of
-   KDF and AEAD, it thus provides all necessary pre-requisite steps for
-   using OSCOAP as defined here.
+   establishment of secret material with the property of forward
+   secrecy, and negotiation of KDF and AEAD, it thus provides all
+   necessary pre-requisite steps for using OSCOAP as defined here.
 
 3.1.  Security Context Definition
 
@@ -452,19 +452,22 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 3.2.  Security Context Derivation
 
-   Given a shared secret keying material and a common key derivation
+   Given a common shared secret material and a common key derivation
    function, the client and server can derive the security context
-   necessary to run OSCOAP.  The procedure described here assumes that
-   the keying material is uniformly random and that the key derivation
-   function is HKDF [RFC5869].  This is for example the case after
-   having used EDHOC [I-D.selander-ace-cose-ecdhe].
+   necessary to run OSCOAP.  The derivation procedure described here is
+   only run once on a set of common secret material.
+
+   The procedure assumes that the common shared secret material is
+   uniformly random and that the key derivation function is HKDF
+   [RFC5869].  This is for example the case after having used EDHOC
+   [I-D.selander-ace-cose-ecdhe].
 
    Assumptions:
 
    o  The hash function, denoted HKDF, is the HMAC based key derivation
       function defined in [RFC5869] with specified hash function
 
-   o  The shared secret keying material, denoted base_key, is uniformly
+   o  The common shared secret material, denoted base_key, is uniformly
       pseudo-random of length at least equal to the output of the
       specified hash function
 
@@ -491,13 +494,10 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
    bits and key_length for the context IVs is 56 bits.
 
    The Context Identifier SHALL be unique for all security contexts used
-   by the party being server.  This can be achieved by the server, or
+   by the endpoint being server.  This can be achieved by the server, or
    trusted third party, assigning identifiers in a non-colliding way.
    In case it is acceptable for the application that the client and
    server switch roles, the application SHALL also ensure that the
-   Context Identifier is unique for all contexts used by the party being
-   the client.  This can be achieved by storing the Cid paired with some
-   sort of communication identifier (e.g. the server's address).
 
 
 
@@ -505,6 +505,11 @@ Selander, et al.         Expires March 19, 2017                 [Page 9]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
+
+   Context Identifier is unique for all contexts used by the endpoint
+   being the client.  This can be achieved by storing the Cid paired
+   with some sort of communication identifier (e.g. the server's
+   address).
 
    The size of Cid depends on the number of simultaneous clients, and
    must be chosen so that the server can uniquely identify the
@@ -548,12 +553,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
    Protection of CoAP Options can be summarized as follows:
 
-   o  To prevent information leakage, Uri-Path and Uri-Query SHALL be
-      encrypted.  As a consequence, if Proxy-Uri is used, those parts of
-      the URI SHALL be removed from the Proxy-Uri. The CoAP Options Uri-
-      Host, Uri-Port, Proxy-Uri, and Proxy-Scheme SHALL neither be
-      encrypted, nor integrity protected (cf. protection of the
-      effective request URI in Section 5.2).
+
 
 
 
@@ -562,36 +562,43 @@ Selander, et al.         Expires March 19, 2017                [Page 10]
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
+   o  To prevent information leakage, Uri-Path and Uri-Query SHALL be
+      encrypted.  As a consequence, if Proxy-Uri is used, those parts of
+      the URI SHALL be removed from the Proxy-Uri. The CoAP Options Uri-
+      Host, Uri-Port, Proxy-Uri, and Proxy-Scheme SHALL neither be
+      encrypted, nor integrity protected (cf. protection of the
+      effective request URI in Section 5.2).
+
    o  The other CoAP options SHALL be encrypted and integrity protected.
 
    A summary of which options are encrypted or integrity protected is
    shown in Figure 4.
 
-   +----+---+---+---+---+----------------+--------+--------+---+---+---+
-   | No.| C | U | N | R | Name           | Format | Length | E | I | D |
-   +----+---+---+---+---+----------------+--------+--------+---+---+---+
-   |  1 | x |   |   | x | If-Match       | opaque | 0-8    | x | x |   |
-   |  3 | x | x | - |   | Uri-Host       | string | 1-255  |   |   |   |
-   |  4 |   |   |   | x | ETag           | opaque | 1-8    | x | x |   |
-   |  5 | x |   |   |   | If-None-Match  | empty  | 0      | x | x |   |
-   |  6 |   | x | - |   | Observe        | uint   | 0-3    | x | x | x |
-   |  7 | x | x | - |   | Uri-Port       | uint   | 0-2    |   |   |   |
-   |  8 |   |   |   | x | Location-Path  | string | 0-255  | x | x |   |
-   | 11 | x | x | - | x | Uri-Path       | string | 0-255  | x | x |   |
-   | 12 |   |   |   |   | Content-Format | uint   | 0-2    | x | x |   |
-   | 14 |   | x | - |   | Max-Age        | uint   | 0-4    | x | x | x |
-   | 15 | x | x | - | x | Uri-Query      | string | 0-255  | x | x |   |
-   | 17 | x |   |   |   | Accept         | uint   | 0-2    | x | x |   |
-   | 20 |   |   |   | x | Location-Query | string | 0-255  | x | x |   |
-   | 23 | x | x | - | - | Block2         | uint   | 0-3    | x | x | x |
-   | 27 | x | x | - | - | Block1         | uint   | 0-3    | x | x | x |
-   | 28 |   |   | x |   | Size2          | unit   | 0-4    | x | x | x |
-   | 35 | x | x | - |   | Proxy-Uri      | string | 1-1034 |   |   |   |
-   | 39 | x | x | - |   | Proxy-Scheme   | string | 1-255  |   |   |   |
-   | 60 |   |   | x |   | Size1          | uint   | 0-4    | x | x | x |
-   +----+---+---+---+---+----------------+--------+--------+---+---+---+
-            C=Critical, U=Unsafe, N=NoCacheKey, R=Repeatable,
-            E=Encrypt, I=Integrity Protect, D=Duplicate.
+     +----+---+---+---+---+----------------+--------+--------+---+---+
+     | No.| C | U | N | R | Name           | Format | Length | E | D |
+     +----+---+---+---+---+----------------+--------+--------+---+---+
+     |  1 | x |   |   | x | If-Match       | opaque | 0-8    | x |   |
+     |  3 | x | x | - |   | Uri-Host       | string | 1-255  |   |   |
+     |  4 |   |   |   | x | ETag           | opaque | 1-8    | x |   |
+     |  5 | x |   |   |   | If-None-Match  | empty  | 0      | x |   |
+     |  6 |   | x | - |   | Observe        | uint   | 0-3    | x | x |
+     |  7 | x | x | - |   | Uri-Port       | uint   | 0-2    |   |   |
+     |  8 |   |   |   | x | Location-Path  | string | 0-255  | x |   |
+     | 11 | x | x | - | x | Uri-Path       | string | 0-255  | x |   |
+     | 12 |   |   |   |   | Content-Format | uint   | 0-2    | x |   |
+     | 14 |   | x | - |   | Max-Age        | uint   | 0-4    | x | x |
+     | 15 | x | x | - | x | Uri-Query      | string | 0-255  | x |   |
+     | 17 | x |   |   |   | Accept         | uint   | 0-2    | x |   |
+     | 20 |   |   |   | x | Location-Query | string | 0-255  | x |   |
+     | 23 | x | x | - | - | Block2         | uint   | 0-3    | x | x |
+     | 27 | x | x | - | - | Block1         | uint   | 0-3    | x | x |
+     | 28 |   |   | x |   | Size2          | unit   | 0-4    | x | x |
+     | 35 | x | x | - |   | Proxy-Uri      | string | 1-1034 |   |   |
+     | 39 | x | x | - |   | Proxy-Scheme   | string | 1-255  |   |   |
+     | 60 |   |   | x |   | Size1          | uint   | 0-4    | x | x |
+     +----+---+---+---+---+----------------+--------+--------+---+---+
+              C=Critical, U=Unsafe, N=NoCacheKey, R=Repeatable,
+              E=Encrypted and Integrity Protect, D=Duplicate.
 
                    Figure 4: Protection of CoAP Options
 
@@ -604,19 +611,19 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
    unless a proxy needs to change the option, and SHALL be encrypted
    unless a proxy needs to read the option.
 
-   The encrypted options are in general omitted from the protected CoAP
-   message and not visible to intermediary nodes (see Section 6.2 and
-   Section 6.4).  Hence the actions resulting from the use of
-   corresponding options is analogous to the case of communicating
-   directly with the endpoint.  For example, a client using an ETag
-   option will not be served by a proxy.
-
 
 
 Selander, et al.         Expires March 19, 2017                [Page 11]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
+
+   The encrypted options are in general omitted from the protected CoAP
+   message and not visible to intermediary nodes (see Section 6.2 and
+   Section 6.4).  Hence the actions resulting from the use of
+   corresponding options is analogous to the case of communicating
+   directly with the endpoint.  For example, a client using an ETag
+   option will not be served by a proxy.
 
    However, some options which are encrypted need to be present in the
    protected CoAP message to support certain proxy functions.  A CoAP
@@ -660,19 +667,19 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
    duplicate and how it is processed with OSCOAP.  New COAP options
    SHOULD NOT be duplicate.
 
-5.  The COSE Object
-
-   This section defines how to use the COSE format [I-D.ietf-cose-msg]
-   to wrap and protect data in the unprotected CoAP message.  OSCOAP
-   uses the COSE_Encrypt0 structure with an Authenticated Encryption
-   with Additional Data (AEAD) algorithm.
-
 
 
 Selander, et al.         Expires March 19, 2017                [Page 12]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
+
+5.  The COSE Object
+
+   This section defines how to use the COSE format [I-D.ietf-cose-msg]
+   to wrap and protect data in the unprotected CoAP message.  OSCOAP
+   uses the COSE_Encrypt0 structure with an Authenticated Encryption
+   with Additional Data (AEAD) algorithm.
 
    The mandatory to support AEAD algorithm is AES-CCM-64-64-128 defined
    in Section 10.2 of [I-D.ietf-cose-msg].  For AES-CCM-64-64-128 the
@@ -716,19 +723,19 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
          +  Optionally, the parameter called "sid", defined below.  The
             value is set to the Sender ID (see Section 3).
 
-      *  The "unprotected" field, which SHALL be empty.
-
-   o  The "cipher text" field is computed from the Plaintext (see
-      Section 5.1) and the Additional Authenticated Data (AAD) (see
-      Section 5.2) and encoded as a byte string (type: bstr), following
-      Section 5.2 of [I-D.ietf-cose-msg].
-
 
 
 Selander, et al.         Expires March 19, 2017                [Page 13]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
+
+      *  The "unprotected" field, which SHALL be empty.
+
+   o  The "cipher text" field is computed from the Plaintext (see
+      Section 5.1) and the Additional Authenticated Data (AAD) (see
+      Section 5.2) and encoded as a byte string (type: bstr), following
+      Section 5.2 of [I-D.ietf-cose-msg].
 
    sid:  This parameter is used to identify the sender of the message.
       Applications MUST NOT assume that 'sid' values are unique.  This
@@ -768,6 +775,17 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
                             Figure 5: Plaintext
 
+
+
+
+
+
+
+Selander, et al.         Expires March 19, 2017                [Page 14]
+
+Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
+
+
 5.2.  Additional Authenticated Data
 
    The Additional Authenticated Data ("Enc_structure") as described is
@@ -777,14 +795,6 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
    o  the "protected" parameter, which includes the "protected" part of
       the "Headers" field;
-
-
-
-
-Selander, et al.         Expires March 19, 2017                [Page 14]
-
-Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
-
 
    o  the "external_aad" includes, in the given order:
 
@@ -825,22 +835,17 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
                   Figure 6: Additional Authenticated Data
 
-   The encryption process is described in Section 5.3 of
-   [I-D.ietf-cose-msg].
-
-6.  Protecting CoAP Messages
-
-
-
-
-
-
 
 
 Selander, et al.         Expires March 19, 2017                [Page 15]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
+
+   The encryption process is described in Section 5.3 of
+   [I-D.ietf-cose-msg].
+
+6.  Protecting CoAP Messages
 
 6.1.  Replay and Freshness Protection
 
@@ -884,12 +889,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
    Given an unprotected CoAP request, including header, options and
    payload, the client SHALL perform the following steps to create a
-   protected CoAP request using a security context associated with the
-   target resource:
 
-   1.  Increment the Sender Sequence Number by one (note that this means
-       that sequence number 0 is never used).  If the Sender Sequence
-       Number exceeds the maximum number for the AEAD algorithm, the
 
 
 
@@ -898,6 +898,12 @@ Selander, et al.         Expires March 19, 2017                [Page 16]
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
+   protected CoAP request using a security context associated with the
+   target resource:
+
+   1.  Increment the Sender Sequence Number by one (note that this means
+       that sequence number 0 is never used).  If the Sender Sequence
+       Number exceeds the maximum number for the AEAD algorithm, the
        client MUST NOT process any requests with the given security
        context.  The client SHOULD acquire a new security context (and
        consequently inform the server about it) before this happens.
@@ -941,18 +947,17 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
    identified by the Context Identifier in the "kid" parameter in the
    received COSE object:
 
-   1.  Verify the Sequence Number in the Partial IV parameter, as
-       described in Section 6.1.  If it cannot be verified that the
-       Sequence Number has not been received before, the server MUST
-       stop processing the request.
-
-
 
 
 Selander, et al.         Expires March 19, 2017                [Page 17]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
+
+   1.  Verify the Sequence Number in the Partial IV parameter, as
+       described in Section 6.1.  If it cannot be verified that the
+       Sequence Number has not been received before, the server MUST
+       stop processing the request.
 
    2.  Recreate the Additional Authenticated Data, as described in
        Section 5.
@@ -997,11 +1002,6 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
        context (and consequently inform the client about it) before this
        happens.  The latter is out of scope of this memo.
 
-   2.  Compute the COSE object as specified in Section Section 5
-
-       *  The IV in the AEAD is created by XORing the Sender IV (context
-          IV) and the Sender Sequence Number.
-
 
 
 
@@ -1009,6 +1009,11 @@ Selander, et al.         Expires March 19, 2017                [Page 18]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
+
+   2.  Compute the COSE object as specified in Section Section 5
+
+       *  The IV in the AEAD is created by XORing the Sender IV (context
+          IV) and the Sender Sequence Number.
 
        *  If the block option is used, the AAD includes the MAC from the
           previous fragment sent (from the second fragment and
@@ -1052,11 +1057,6 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
    2.  Recreate the Additional Authenticated Data as described in
        Section 5.
 
-       *  If the block option is used, the AAD includes the MAC from the
-          previous fragment received (from the second fragment and
-          following) Section 5.2.  This means that the endpoint MUST
-          store the MAC of each last-received fragment to compute the
-          following.
 
 
 
@@ -1065,6 +1065,12 @@ Selander, et al.         Expires March 19, 2017                [Page 19]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
+
+       *  If the block option is used, the AAD includes the MAC from the
+          previous fragment received (from the second fragment and
+          following) Section 5.2.  This means that the endpoint MUST
+          store the MAC of each last-received fragment to compute the
+          following.
 
    3.  Compose the IV by XORing the Recipient IV (context IV) with the
        Partial IV parameter, received in the COSE Object.
@@ -1108,12 +1114,6 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
    ID, as well as Token and Token Length may be changed by a proxy.
    Moreover, messages that are not possible to verify should for
    security reasons not always be acknowledged but in some cases be
-   silently dropped.  This would not comply with CoAP message layer, but
-   does not have an impact on the application layer security solution,
-   since message layer is excluded from that.
-
-   The use of COSE to protect CoAP messages as specified in this
-   document requires an established security context.  The method to
 
 
 
@@ -1122,14 +1122,20 @@ Selander, et al.         Expires March 19, 2017                [Page 20]
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
+   silently dropped.  This would not comply with CoAP message layer, but
+   does not have an impact on the application layer security solution,
+   since message layer is excluded from that.
+
+   The use of COSE to protect CoAP messages as specified in this
+   document requires an established security context.  The method to
    establish the security context described in Section 3.2 is based on a
-   common keying material and key derivation function in client and
-   server.  EDHOC [I-D.selander-ace-cose-ecdhe] describes an augmented
-   Diffie-Hellman key exchange to produce forward secret keying material
-   and agree on crypto algorithms necessary for OSCOAP, authenticated
-   with pre-established credentials.  These pre-established credentials
-   may, in turn, be provisioned using a trusted third party such as
-   described in the OAuth-based ACE framework
+   common shared secret material and key derivation function in client
+   and server.  EDHOC [I-D.selander-ace-cose-ecdhe] describes an
+   augmented Diffie-Hellman key exchange to produce forward secret
+   keying material and agree on crypto algorithms necessary for OSCOAP,
+   authenticated with pre-established credentials.  These pre-
+   established credentials may, in turn, be provisioned using a trusted
+   third party such as described in the OAuth-based ACE framework
    [I-D.ietf-ace-oauth-authz].  An OSCOAP profile of ACE is described in
    [I-D.seitz-ace-oscoap-profile].
 
@@ -1164,12 +1170,6 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
    The unencrypted block options allow for arbitrary proxy fragmentation
    operations which cannot be verified by the endpoints, but can by
    policy be restricted in size since the encrypted options allow for
-   secure fragmentation of very large messages.  A maximum message size
-   (above which the sending endpoint fragments the message and the
-   receiving endpoint discards the message, if complying to the policy)
-   may be obtained as part of normal resource discovery.
-
-
 
 
 
@@ -1177,6 +1177,11 @@ Selander, et al.         Expires March 19, 2017                [Page 21]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
+
+   secure fragmentation of very large messages.  A maximum message size
+   (above which the sending endpoint fragments the message and the
+   receiving endpoint discards the message, if complying to the policy)
+   may be obtained as part of normal resource discovery.
 
 8.  Privacy Considerations
 
@@ -1216,11 +1221,6 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
    The "application/oscon" media type is added to the Media Types
    registry:
-
-
-
-
-
 
 
 

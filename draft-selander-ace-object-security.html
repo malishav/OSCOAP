@@ -491,8 +491,8 @@ Client                                           Server
 </ul>
 <p id="rfc.section.2.p.6">An example of option length is given in <a href="#appendix-a">Appendix A</a>.</p>
 <h1 id="rfc.section.3"><a href="#rfc.section.3">3.</a> <a href="#sec-context-section" id="sec-context-section">The Security Context</a></h1>
-<p id="rfc.section.3.p.1">OSCOAP uses COSE with an Authenticated Encryption with Additional Data (AEAD) algorithm. The specification requires that client and server establish a security context to apply to the COSE objects protecting the CoAP messages. In this section we define the security context, and also specify how to establish a security context in client and server based on common keying material and a key derivation function (KDF).</p>
-<p id="rfc.section.3.p.2">The EDHOC protocol <a href="#I-D.selander-ace-cose-ecdhe">[I-D.selander-ace-cose-ecdhe]</a> enables the establishment of forward secret keying material, and negotiation of KDF and AEAD, it thus provides all necessary pre-requisite steps for using OSCOAP as defined here.</p>
+<p id="rfc.section.3.p.1">OSCOAP uses COSE with an Authenticated Encryption with Additional Data (AEAD) algorithm. The specification requires that client and server establish a security context to apply to the COSE objects protecting the CoAP messages. In this section we define the security context, and also specify how to establish a security context in client and server based on common shared secret material and a key derivation function (KDF).</p>
+<p id="rfc.section.3.p.2">The EDHOC protocol <a href="#I-D.selander-ace-cose-ecdhe">[I-D.selander-ace-cose-ecdhe]</a> enables the establishment of secret material with the property of forward secrecy, and negotiation of KDF and AEAD, it thus provides all necessary pre-requisite steps for using OSCOAP as defined here.</p>
 <h1 id="rfc.section.3.1"><a href="#rfc.section.3.1">3.1.</a> <a href="#sec-context-def-section" id="sec-context-def-section">Security Context Definition</a></h1>
 <p id="rfc.section.3.1.p.1">The security context is the set of information elements necessary to carry out the cryptographic operations in OSCOAP. Each security context is identified by a Context Identifier. A Context Identifier that is no longer in use can be reassigned to a new security context.</p>
 <p id="rfc.section.3.1.p.2">For each endpoint, the security context is composed by a "Common Context", a "Sender Context" and a "Recipient Context". The Common Context includes common security material. The endpoint protects the messages sent using the Sender Context. The endpoint verifies the messages received using the Recipient Context.  In communication between two endpoints, the Sender Context of one endpoint matches the Recipient Context of the other endpoint, and vice versa. Note that, because of that, the two security contexts identified by the same Context Identifiers in the two endpoints are not the same, but they are partly mirrored.</p>
@@ -553,17 +553,18 @@ Verify request with   |                       |
 <p id="rfc.section.3.1.p.10">The ordered 3-tuple (Cid, Sender ID, Sender Sequence Number) is called Transaction Identifier (Tid), and SHALL be unique for each COSE object and server. The Tid is used as a unique challenge in the COSE object of the protected CoAP request. The Tid is part of the Additional Authenticated Data (AAD, see <a href="#sec-obj-cose">Section 5</a>) of the protected CoAP response message, which is how the challenge becomes signed by the server.</p>
 <p id="rfc.section.3.1.p.11">The client and server may change roles while maintaining the same security context. The former server will then make the request using the Sender Context, the former client will verify the request using its Recipient Context etc.</p>
 <h1 id="rfc.section.3.2"><a href="#rfc.section.3.2">3.2.</a> <a href="#sec-context-est-section" id="sec-context-est-section">Security Context Derivation</a></h1>
-<p id="rfc.section.3.2.p.1">Given a shared secret keying material and a common key derivation function, the client and server can derive the security context necessary to run OSCOAP. The procedure described here assumes that the keying material is uniformly random and that the key derivation function is HKDF <a href="#RFC5869">[RFC5869]</a>. This is for example the case after having used EDHOC <a href="#I-D.selander-ace-cose-ecdhe">[I-D.selander-ace-cose-ecdhe]</a>.</p>
-<p id="rfc.section.3.2.p.2">Assumptions:</p>
+<p id="rfc.section.3.2.p.1">Given a common shared secret material and a common key derivation function, the client and server can derive the security context necessary to run OSCOAP. The derivation procedure described here is only run once on a set of common secret material.</p>
+<p id="rfc.section.3.2.p.2">The procedure assumes that the common shared secret material is uniformly random and that the key derivation function is HKDF <a href="#RFC5869">[RFC5869]</a>. This is for example the case after having used EDHOC <a href="#I-D.selander-ace-cose-ecdhe">[I-D.selander-ace-cose-ecdhe]</a>.</p>
+<p id="rfc.section.3.2.p.3">Assumptions:</p>
 <p/>
 
 <ul>
   <li>The hash function, denoted HKDF, is the HMAC based key derivation function defined in <a href="#RFC5869">[RFC5869]</a> with specified hash function</li>
-  <li>The shared secret keying material, denoted base_key, is uniformly pseudo-random of length at least equal to the output of the specified hash function</li>
+  <li>The common shared secret material, denoted base_key, is uniformly pseudo-random of length at least equal to the output of the specified hash function</li>
 </ul>
-<p id="rfc.section.3.2.p.4">The security context parameters SHALL be derived using the HKDF-Expand primitive <a href="#RFC5869">[RFC5869]</a>:</p>
-<p id="rfc.section.3.2.p.5">Key = HKDF-Expand(base_key, info, key_length),</p>
-<p id="rfc.section.3.2.p.6">where:</p>
+<p id="rfc.section.3.2.p.5">The security context parameters SHALL be derived using the HKDF-Expand primitive <a href="#RFC5869">[RFC5869]</a>:</p>
+<p id="rfc.section.3.2.p.6">Key = HKDF-Expand(base_key, info, key_length),</p>
+<p id="rfc.section.3.2.p.7">where:</p>
 <p/>
 
 <ul>
@@ -571,12 +572,12 @@ Verify request with   |                       |
   <li>info = Sender ID/Recipient ID || "IV"/"Key"</li>
   <li>key_length is the key size of the AEAD algorithm</li>
 </ul>
-<p id="rfc.section.3.2.p.8">The Sender/Recipient Key shall be derived using the Sender/Recipient ID concatenated with the label "Key". The Sender/Recipient IV shall be derived using the Sender/Recipient ID concatenated with the label "IV".</p>
-<p id="rfc.section.3.2.p.9">With the mandatory OSCOAP algorithm AES-CCM-64-64-128 (see Section 10.2 in <a href="#I-D.ietf-cose-msg">[I-D.ietf-cose-msg]</a>), key_length for the keys is 128 bits and key_length for the context IVs is 56 bits.</p>
-<p id="rfc.section.3.2.p.10">The Context Identifier SHALL be unique for all security contexts used by the party being server. This can be achieved by the server, or trusted third party, assigning identifiers in a non-colliding way. In case it is acceptable for the application that the client and server switch roles, the application SHALL also ensure that the Context Identifier is unique for all contexts used by the party being the client. This can be achieved by storing the Cid paired with some sort of communication identifier (e.g. the server's address).</p>
-<p id="rfc.section.3.2.p.11">The size of Cid depends on the number of simultaneous clients, and must be chosen so that the server can uniquely identify the requesting client. Cids of different lengths can be used by different clients. In the case of an ACE-based authentication and authorization model <a href="#I-D.ietf-ace-oauth-authz">[I-D.ietf-ace-oauth-authz]</a>, the Authorization Server can define the context identifier of all clients interacting with a particular server, in which case the size of Cid can be proportional to the logarithm of the number of authorized clients. It is RECOMMENDED to start assigning Cids of length 1 byte (0x00, 0x01, &#8230;, 0xff), and then when all 1 byte Cids are in use, start handling out Cids with a length of two bytes (0x0000, 0x0001, &#8230;, 0xffff), and so on. Note that a Cid with the value 0x00 is considered different from the Cid with the value 0x0000.</p>
-<p id="rfc.section.3.2.p.12">In case of EDHOC, party V (typically the server) can use the key identifier of its ephemeral public key (kid_ev, Section 1.1 of <a href="#I-D.selander-ace-cose-ecdhe">[I-D.selander-ace-cose-ecdhe]</a>) to label the derived keying material, base_key, and to identify the security context derived from base_key. In this case, Cid would be assigned the value kid_ev.</p>
-<p id="rfc.section.3.2.p.13">Alternatively, the derivation scheme above MAY be used to derive a random context identifier (using info = "Context Identifier". In this case key_length SHALL be sufficiently large so that accidental collisions are negligible given the number of security contexts being derived in this way.</p>
+<p id="rfc.section.3.2.p.9">The Sender/Recipient Key shall be derived using the Sender/Recipient ID concatenated with the label "Key". The Sender/Recipient IV shall be derived using the Sender/Recipient ID concatenated with the label "IV".</p>
+<p id="rfc.section.3.2.p.10">With the mandatory OSCOAP algorithm AES-CCM-64-64-128 (see Section 10.2 in <a href="#I-D.ietf-cose-msg">[I-D.ietf-cose-msg]</a>), key_length for the keys is 128 bits and key_length for the context IVs is 56 bits.</p>
+<p id="rfc.section.3.2.p.11">The Context Identifier SHALL be unique for all security contexts used by the endpoint being server. This can be achieved by the server, or trusted third party, assigning identifiers in a non-colliding way. In case it is acceptable for the application that the client and server switch roles, the application SHALL also ensure that the Context Identifier is unique for all contexts used by the endpoint being the client. This can be achieved by storing the Cid paired with some sort of communication identifier (e.g. the server's address).</p>
+<p id="rfc.section.3.2.p.12">The size of Cid depends on the number of simultaneous clients, and must be chosen so that the server can uniquely identify the requesting client. Cids of different lengths can be used by different clients. In the case of an ACE-based authentication and authorization model <a href="#I-D.ietf-ace-oauth-authz">[I-D.ietf-ace-oauth-authz]</a>, the Authorization Server can define the context identifier of all clients interacting with a particular server, in which case the size of Cid can be proportional to the logarithm of the number of authorized clients. It is RECOMMENDED to start assigning Cids of length 1 byte (0x00, 0x01, &#8230;, 0xff), and then when all 1 byte Cids are in use, start handling out Cids with a length of two bytes (0x0000, 0x0001, &#8230;, 0xffff), and so on. Note that a Cid with the value 0x00 is considered different from the Cid with the value 0x0000.</p>
+<p id="rfc.section.3.2.p.13">In case of EDHOC, party V (typically the server) can use the key identifier of its ephemeral public key (kid_ev, Section 1.1 of <a href="#I-D.selander-ace-cose-ecdhe">[I-D.selander-ace-cose-ecdhe]</a>) to label the derived keying material, base_key, and to identify the security context derived from base_key. In this case, Cid would be assigned the value kid_ev.</p>
+<p id="rfc.section.3.2.p.14">Alternatively, the derivation scheme above MAY be used to derive a random context identifier (using info = "Context Identifier". In this case key_length SHALL be sufficiently large so that accidental collisions are negligible given the number of security contexts being derived in this way.</p>
 <h1 id="rfc.section.4"><a href="#rfc.section.4">4.</a> <a href="#coap-headers-and-options" id="coap-headers-and-options">Protected CoAP Message Fields</a></h1>
 <p id="rfc.section.4.p.1">This section defines how the CoAP message fields are protected. OSCOAP protects as much of the unprotected CoAP message as possible, while still allowing forward proxy operations <a href="#I-D.hartke-core-e2e-security-reqs">[I-D.hartke-core-e2e-security-reqs]</a>.</p>
 <p id="rfc.section.4.p.2">The CoAP Payload SHALL be encrypted and integrity protected.</p>
@@ -592,31 +593,31 @@ Verify request with   |                       |
 <div id="rfc.figure.4"/>
 <div id="protected-coap-options"/>
 <pre>
-+----+---+---+---+---+----------------+--------+--------+---+---+---+
-| No.| C | U | N | R | Name           | Format | Length | E | I | D |
-+----+---+---+---+---+----------------+--------+--------+---+---+---+
-|  1 | x |   |   | x | If-Match       | opaque | 0-8    | x | x |   |
-|  3 | x | x | - |   | Uri-Host       | string | 1-255  |   |   |   |
-|  4 |   |   |   | x | ETag           | opaque | 1-8    | x | x |   |
-|  5 | x |   |   |   | If-None-Match  | empty  | 0      | x | x |   |
-|  6 |   | x | - |   | Observe        | uint   | 0-3    | x | x | x |
-|  7 | x | x | - |   | Uri-Port       | uint   | 0-2    |   |   |   |
-|  8 |   |   |   | x | Location-Path  | string | 0-255  | x | x |   |
-| 11 | x | x | - | x | Uri-Path       | string | 0-255  | x | x |   |
-| 12 |   |   |   |   | Content-Format | uint   | 0-2    | x | x |   |
-| 14 |   | x | - |   | Max-Age        | uint   | 0-4    | x | x | x |
-| 15 | x | x | - | x | Uri-Query      | string | 0-255  | x | x |   |
-| 17 | x |   |   |   | Accept         | uint   | 0-2    | x | x |   |
-| 20 |   |   |   | x | Location-Query | string | 0-255  | x | x |   |
-| 23 | x | x | - | - | Block2         | uint   | 0-3    | x | x | x |
-| 27 | x | x | - | - | Block1         | uint   | 0-3    | x | x | x |
-| 28 |   |   | x |   | Size2          | unit   | 0-4    | x | x | x |
-| 35 | x | x | - |   | Proxy-Uri      | string | 1-1034 |   |   |   |
-| 39 | x | x | - |   | Proxy-Scheme   | string | 1-255  |   |   |   |
-| 60 |   |   | x |   | Size1          | uint   | 0-4    | x | x | x |
-+----+---+---+---+---+----------------+--------+--------+---+---+---+
++----+---+---+---+---+----------------+--------+--------+---+---+
+| No.| C | U | N | R | Name           | Format | Length | E | D |
++----+---+---+---+---+----------------+--------+--------+---+---+
+|  1 | x |   |   | x | If-Match       | opaque | 0-8    | x |   |
+|  3 | x | x | - |   | Uri-Host       | string | 1-255  |   |   |
+|  4 |   |   |   | x | ETag           | opaque | 1-8    | x |   |
+|  5 | x |   |   |   | If-None-Match  | empty  | 0      | x |   |
+|  6 |   | x | - |   | Observe        | uint   | 0-3    | x | x |
+|  7 | x | x | - |   | Uri-Port       | uint   | 0-2    |   |   |
+|  8 |   |   |   | x | Location-Path  | string | 0-255  | x |   |
+| 11 | x | x | - | x | Uri-Path       | string | 0-255  | x |   |
+| 12 |   |   |   |   | Content-Format | uint   | 0-2    | x |   |
+| 14 |   | x | - |   | Max-Age        | uint   | 0-4    | x | x |
+| 15 | x | x | - | x | Uri-Query      | string | 0-255  | x |   |
+| 17 | x |   |   |   | Accept         | uint   | 0-2    | x |   |
+| 20 |   |   |   | x | Location-Query | string | 0-255  | x |   |
+| 23 | x | x | - | - | Block2         | uint   | 0-3    | x | x |
+| 27 | x | x | - | - | Block1         | uint   | 0-3    | x | x |
+| 28 |   |   | x |   | Size2          | unit   | 0-4    | x | x |
+| 35 | x | x | - |   | Proxy-Uri      | string | 1-1034 |   |   |
+| 39 | x | x | - |   | Proxy-Scheme   | string | 1-255  |   |   |
+| 60 |   |   | x |   | Size1          | uint   | 0-4    | x | x |
++----+---+---+---+---+----------------+--------+--------+---+---+
          C=Critical, U=Unsafe, N=NoCacheKey, R=Repeatable,
-         E=Encrypt, I=Integrity Protect, D=Duplicate.
+         E=Encrypted and Integrity Protect, D=Duplicate.
 </pre>
 <p class="figure">Figure 4: Protection of CoAP Options</p>
 <p id="rfc.section.4.p.7">Unless specified otherwise, CoAP options not listed in <a href="#protected-coap-options">Figure 4</a> SHALL be encrypted and integrity protected.</p>
@@ -778,7 +779,7 @@ Verify request with   |                       |
 <p id="rfc.section.7.p.1">In scenarios with intermediary nodes such as proxies or brokers, transport layer security such as DTLS only protects data hop-by-hop. As a consequence the intermediary nodes can read and modify information. The trust model where all intermediate nodes are considered trustworthy is problematic, not only from a privacy perspective, but also from a security perspective, as the intermediaries are free to delete resources on sensors and falsify commands to actuators (such as "unlock door", "start fire alarm", "raise bridge"). Even in the rare cases, where all the owners of the intermediary nodes are fully trusted, attacks and data breaches make such an architecture brittle.</p>
 <p id="rfc.section.7.p.2">DTLS protects hop-by-hop the entire CoAP message, including header, options, and payload. OSCOAP protects end-to-end the payload, and all information in the options and header, that is not required for forwarding (see <a href="#coap-headers-and-options">Section 4</a>). DTLS and OSCOAP can be combined, thereby enabling end-to-end security of CoAP payload, in combination with hop-by-hop protection of the entire CoAP message, during transport between end-point and intermediary node.</p>
 <p id="rfc.section.7.p.3">The CoAP message layer, however, cannot be protected end-to-end through intermediary devices since the parameters Type and Message ID, as well as Token and Token Length may be changed by a proxy. Moreover, messages that are not possible to verify should for security reasons not always be acknowledged but in some cases be silently dropped. This would not comply with CoAP message layer, but does not have an impact on the application layer security solution, since message layer is excluded from that.</p>
-<p id="rfc.section.7.p.4">The use of COSE to protect CoAP messages as specified in this document requires an established security context. The method to establish the security context described in <a href="#sec-context-est-section">Section 3.2</a> is based on a common keying material and key derivation function in client and server. EDHOC <a href="#I-D.selander-ace-cose-ecdhe">[I-D.selander-ace-cose-ecdhe]</a> describes an augmented Diffie-Hellman key exchange to produce forward secret keying material and agree on crypto algorithms necessary for OSCOAP, authenticated with pre-established credentials. These pre-established credentials may, in turn, be provisioned using a trusted third party such as described in the OAuth-based ACE framework <a href="#I-D.ietf-ace-oauth-authz">[I-D.ietf-ace-oauth-authz]</a>. An OSCOAP profile of ACE is described in <a href="#I-D.seitz-ace-oscoap-profile">[I-D.seitz-ace-oscoap-profile]</a>.</p>
+<p id="rfc.section.7.p.4">The use of COSE to protect CoAP messages as specified in this document requires an established security context. The method to establish the security context described in <a href="#sec-context-est-section">Section 3.2</a> is based on a common shared secret material and key derivation function in client and server. EDHOC <a href="#I-D.selander-ace-cose-ecdhe">[I-D.selander-ace-cose-ecdhe]</a> describes an augmented Diffie-Hellman key exchange to produce forward secret keying material and agree on crypto algorithms necessary for OSCOAP, authenticated with pre-established credentials. These pre-established credentials may, in turn, be provisioned using a trusted third party such as described in the OAuth-based ACE framework <a href="#I-D.ietf-ace-oauth-authz">[I-D.ietf-ace-oauth-authz]</a>. An OSCOAP profile of ACE is described in <a href="#I-D.seitz-ace-oscoap-profile">[I-D.seitz-ace-oscoap-profile]</a>.</p>
 <p id="rfc.section.7.p.5">For symmetric encryption it is required to have a unique IV for each message, for which the sequence numbers in the COSE message field "Partial IV" is used. The context IVs (Sender IV and Recipient IV) SHOULD be established between sender and recipient before the message is sent, for example using the method in <a href="#I-D.selander-ace-cose-ecdhe">[I-D.selander-ace-cose-ecdhe]</a>, to avoid the overhead of sending it in each message.</p>
 <p id="rfc.section.7.p.6">If the recipient accepts any sequence number larger than the one previously received, the problem of sequence number synchronization is avoided. (With reliable transport it may be defined that only messages with sequence number which are equal to previous sequence number + 1 are accepted.) The alternatives to sequence numbers have their issues: very constrained devices may not be able to support accurate time, or to generate and store large numbers of random IVs. The requirement to change key at counter wrap is a complication, but it also forces the user of this specification to think about implementing key renewal.</p>
 <p id="rfc.section.7.p.7">The encrypted block options enable the sender to split large messages into protected fragments such that the receiving node can verify blocks before having received the complete message. In order to protect from attacks replacing fragments from a different message with the same block number between same endpoints and same resource at roughly the same time, the MAC from the message containing one block is included in the external_aad of the message containing the next block.</p>
