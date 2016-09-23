@@ -220,7 +220,7 @@ The Sender Context structure contains the following parameters:
 
 * Sender IV. Byte string containing the fixed portion of IV (context IV in {{I-D.ietf-cose-msg}}) to protect messages to send. Length is determined by Algorithm. Its value is immutable once the security context is established.
 
-* Sender Sequence Number. Non-negative integer enumerating the COSE objects that the endpoint sends, associated to the Context Identifier. It is used for replay protection, and to generate unique IVs for the AEAD. Its value is initialized to 0 during establishment of the security context. Maximum value is determined by Algorithm.
+* Sender Sequence Number. Non-negative integer enumerating the COSE objects that the endpoint sends, associated to the Context Identifier. It is used for replay protection, and to generate unique IVs for the AEAD. Maximum value is determined by Algorithm.
 
 The Recipient Context structure contains the following parameters:
 
@@ -230,15 +230,36 @@ The Recipient Context structure contains the following parameters:
 
 * Recipient IV. Byte string containing the context IV to verify messages received. Length is determined by Algorithm. Its value is immutable once the security context is established.
 
-* Recipient Sequence Number. Non-negative integer enumerating the COSE objects received, associated to the Context Identifier. It is used for replay protection, and to generate unique IVs for the AEAD. Its value is initialized to 0 during establishment of the security context. Maximum value is determined by Algorithm.
+* Recipient Sequence Number. Non-negative integer enumerating the COSE objects received, associated to the Context Identifier. It is used for replay protection, and to generate unique IVs for the AEAD. Maximum value is determined by Algorithm.
 
-* Replay Window. The replay protection window for messages received, equivalent to the functionality described in Section 4.1.2.6 of {{RFC6347}}. The default window size is 64.
+* Replay Window. The replay protection window for messages received, equivalent to the functionality described in Section 4.1.2.6 of {{RFC6347}}.
 
 The ordered 3-tuple (Cid, Sender ID, Sender Sequence Number) is called Transaction Identifier (Tid), and SHALL be unique for each COSE object and server. The Tid is used as a unique challenge in the COSE object of the protected CoAP request. The Tid is part of the Additional Authenticated Data (AAD, see {{sec-obj-cose}}) of the protected CoAP response message, which is how the challenge becomes signed by the server.
 
 The client and server may change roles while maintaining the same security context. The former server will then make the request using the Sender Context, the former client will verify the request using its Recipient Context etc.
 
 ## Security Context Establishment ## {#sec-context-est-section}
+
+This section aims at describing how to establish the security context, given some input parameters. The input parameters, which are established in a previous phase, are:
+
+* Context Identifier (Cid)
+* Algorithm (Alg)
+* Base Key (base_key)
+* Sender ID
+* Recipient ID
+* Replay Window (optionally)
+
+These are included unchanged in the security context. We give below some indications on how applications should select these parameters. Moreover, the following parameters are derived as described below:
+
+* Sender Key
+* Sender IV
+* Sender Sequence Number
+* Recipient Key
+* Recipient IV
+* Recipient Sequence Number
+* Replay Window 
+
+### Derivation of Sender Key/IV, Recipient Key/IV ###
 
 Given a common shared secret material and a common key derivation function, the client and server can derive the security context necessary to run OSCOAP. The derivation procedure described here MUST not be executed more than once on a set of common secret material. 
 
@@ -249,9 +270,9 @@ Assumptions:
 * The hash function, denoted HKDF, is the HMAC based key derivation function defined in {{RFC5869}} with specified hash function
 * The common shared secret material, denoted base_key, is uniformly pseudo-random of length at least equal to the output of the specified hash function
 
-The security context parameters SHALL be derived using the HKDF-Expand primitive {{RFC5869}}:
+The security context parameters Sender Key/IV, Recipient Key/IV SHALL be derived using the HKDF-Expand primitive {{RFC5869}}:
 
-Key = HKDF-Expand(base\_key, info, key\_length),
+output parameter = HKDF-Expand(base\_key, info, key\_length),
 
 where:
 
@@ -262,6 +283,15 @@ where:
 The Sender/Recipient Key shall be derived using the Sender/Recipient ID concatenated with the label "Key". The Sender/Recipient IV shall be derived using the Sender/Recipient ID concatenated with the label "IV".
 
 With the mandatory OSCOAP algorithm AES-CCM-64-64-128 (see Section 10.2 in {{I-D.ietf-cose-msg}}), key\_length for the keys is 128 bits and key\_length for the context IVs is 56 bits.
+
+
+### Sequence Numbers and Replay Window ###
+
+Sequence Numbers' values are initialized to 0 during establishment of the security context. The default Replay Window size is 64.
+
+### Context Identifier and Sender/Recipient ID###
+
+As mentioned, Cid, Sender and Recipient ID are established in a previous phase. How this is done is application specific, but some guidelines are given in this section.
 
 The Context Identifier SHALL be unique for all security contexts used by the endpoint being server. This can be achieved by the server, or trusted third party, assigning identifiers in a non-colliding way. In case it is acceptable for the application that the client and server switch roles, the application SHALL also ensure that the Context Identifier is unique for all contexts used by the endpoint being the client. This can be achieved by storing the Cid paired with some sort of communication identifier (e.g. the server's address).
 
