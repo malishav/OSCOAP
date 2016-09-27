@@ -282,7 +282,7 @@ where:
 
 The Sender/Recipient Key shall be derived using the Sender/Recipient ID concatenated with the label "Key", the Algorithm and the key\_length. The Sender/Recipient IV shall be derived using the Sender/Recipient ID concatenated with the label "IV", the Algorithm and the key\_length.
 
-With the mandatory OSCOAP algorithm AES-CCM-64-64-128 (see Section 10.2 in {{I-D.ietf-cose-msg}}), key\_length for the keys is 128 bits and key\_length for the context IVs is 56 bits.
+For example, for the algorithm AES-CCM-64-64-128 (see Section 10.2 in {{I-D.ietf-cose-msg}}), key\_length for the keys is 128 bits and key\_length for the context IVs is 56 bits.
 
 
 ### Sequence Numbers and Replay Window ###
@@ -739,7 +739,7 @@ Let's analyse the contributions one at a time:
 
 * The Cipher Text, excluding the Tag, is the encryption of the payload and the encrypted options {{coap-headers-and-options}}, which are present in the unprotected CoAP message.
 
-* The size of the Tag depends on the Algorithm. For the OSCOAP mandatory algorithm AES-CCM-64-64-128, the Tag is 8 bytes.
+* The size of the Tag depends on the Algorithm. For example, for the algorithm AES-CCM-64-64-128, the Tag is 8 bytes.
 
 * The overhead from the COSE format itself depends on the sizes of the previous fields, and is of the order of 10 bytes.
 
