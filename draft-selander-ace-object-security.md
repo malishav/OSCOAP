@@ -249,7 +249,7 @@ This section aims at describing how to establish the security context, given som
 * Recipient ID
 * Replay Window (optionally)
 
-These are included unchanged in the security context. We give below some indications on how applications should select these parameters. Moreover, the following parameters are derived as described below:
+These are included unchanged in the security context. We give below some indications on how applications should select these parameters. Moreover, the following parameters are established as described below:
 
 * Sender Key
 * Sender IV
@@ -287,19 +287,19 @@ With the mandatory OSCOAP algorithm AES-CCM-64-64-128 (see Section 10.2 in {{I-D
 
 ### Sequence Numbers and Replay Window ###
 
-Sequence Numbers' values are initialized to 0 during establishment of the security context. The default Replay Window size is 64.
+Sequence Numbers' values are initialized to 0 during establishment of the security context. The default Replay Window size of 64 is used if no input parameter is provided in the set up phase.
 
-### Context Identifier and Sender/Recipient ID###
+### Context Identifier and Sender/Recipient ID### {#cid-est}
 
-As mentioned, Cid, Sender and Recipient ID are established in a previous phase. How this is done is application specific, but some guidelines are given in this section.
+As mentioned, Cid, Sender ID and Recipient ID are established in a previous phase. How this is done is application specific, but some guidelines are given in this section.
 
-The Context Identifier SHALL be unique for all security contexts used by the endpoint being server. This can be achieved by the server, or trusted third party, assigning identifiers in a non-colliding way. In case it is acceptable for the application that the client and server switch roles, the application SHALL also ensure that the Context Identifier is unique for all contexts used by the endpoint being the client. This can be achieved by storing the Cid paired with some sort of communication identifier (e.g. the server's address).
+It is RECOMMENDED that the application uses 64-bits long stochastic Cids, in order to have globally unique Context Identifiers. Cid SHOULD be unique in the sets of all security contexts used by all the endpoints. If it is not the case, it is the role of the application to specify how to handle collisions.
 
-The size of Cid depends on the number of simultaneous clients, and must be chosen so that the server can uniquely identify the requesting client. Cids of different lengths can be used by different clients. In the case of an ACE-based authentication and authorization model {{I-D.ietf-ace-oauth-authz}}, the Authorization Server can define the context identifier of all clients interacting with a particular server, in which case the size of Cid can be proportional to the logarithm of the number of authorized clients. It is RECOMMENDED to start assigning Cids of length 1 byte (0x00, 0x01, ..., 0xff), and then when all 1 byte Cids are in use, start handling out Cids with a length of two bytes (0x0000, 0x0001, ..., 0xffff), and so on. Note that a Cid with the value 0x00 is considered different from the Cid with the value 0x0000.
+During the same previous phase during which the Cid is established in the endpoint, the application informs the endpoint what resource can be accessed using the corresponding security context. The granularity of that is decided by the application (resource, host, etc). The endpoint SHALL save the association resource-Cid, in order to be able to retrieve the correct security context to access a resource.
 
-In case of EDHOC, party V (typically the server) can use the key identifier of its ephemeral public key (kid\_ev, Section 1.1 of {{I-D.selander-ace-cose-ecdhe}}) to label the derived keying material, base\_key, and to identify the security context derived from base\_key. In this case, Cid would be assigned the value kid\_ev.
+The Sender ID and Recipient ID are also established in the endpoint during the previous set up phase. The application SHOULD make sure that these identifiers are locally unique in the set of all endpoints using the same security context. If it is not the case, it is again the role of the application to specify how to handle collisions.
 
-Alternatively, the derivation scheme above MAY be used to derive a random context identifier (using info = "Context Identifier". In this case key\_length SHALL be sufficiently large so that accidental collisions are negligible given the number of security contexts being derived in this way.
+In case of EDHOC, party V (typically the server) uses the key identifier of its ephemeral public key (kid\_ev, Section 1.1 of {{I-D.selander-ace-cose-ecdhe}}) to label the derived keying material, base\_key, and to identify the security context derived from base\_key. In this case, Cid is assigned the value kid\_ev.
 
 # Protected CoAP Message Fields # {#coap-headers-and-options} 
 
@@ -516,7 +516,7 @@ If the CoAP client receives a response with the Object-Security option, then the
 
 ## Protecting the Request ## {#protected-coap-formatting-req}
 
-Given an unprotected CoAP request, including header, options and payload, the client SHALL perform the following steps to create a protected CoAP request using a security context associated with the target resource:
+Given an unprotected CoAP request, including header, options and payload, the client SHALL perform the following steps to create a protected CoAP request using a security context associated with the target resource (see {{cid-est}}).
 
 1. Increment the Sender Sequence Number by one (note that this means that sequence number 0 is never used). If the Sender Sequence Number exceeds the maximum number for the AEAD algorithm, the client MUST NOT process any requests with the given security context. The client SHOULD acquire a new security context (and consequently inform the server about it) before this happens. The latter is out of scope of this memo.
 
@@ -524,6 +524,7 @@ Given an unprotected CoAP request, including header, options and payload, the cl
 
     * the IV in the AEAD is created by XORing the Sender IV (context IV) with the Sender Sequence Number (partial IV).
     * If the block option is used, the AAD includes the MAC from the previous fragment sent (from the second fragment and following) {{AAD}}. This means that the endpoint MUST store the MAC of each last-sent fragment to compute the following.
+    * Note that the 'sid' field containing the Sender ID is included in the COSE object ({{sec-obj-cose}}) if the application needs it.
 
 3. Format the protected CoAP message as an ordinary CoAP message, with the following Header, Options, and Payload, based on the unprotected CoAP message:
 
@@ -533,7 +534,7 @@ Given an unprotected CoAP request, including header, options and payload, the cl
 
     * If the unprotected CoAP message has no Payload, then the value of the Object-Security option is the COSE object. If the unprotected CoAP message has Payload, then the Object-Security option is empty and the Payload of the protected CoAP message is the COSE object.
 
-The Client SHALL be able to find the correct security context with use of the Token of the message exchange.
+4. Store in memory the association Token - Cid. The Client SHALL be able to find the correct security context used to protect the request and verify the response with use of the Token of the message exchange.
 
 
 ## Verifying the Request ## {#verif-coap-req}
