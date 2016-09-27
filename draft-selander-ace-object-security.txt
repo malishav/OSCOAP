@@ -527,18 +527,20 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
    o  base_key is defined above
 
-   o  info = Sender ID/Recipient ID || "IV"/"Key"
+   o  info = Sender ID/Recipient ID || "IV"/"Key" || Algorithm ||
+      key_length
 
    o  key_length is the key size of the AEAD algorithm
 
    The Sender/Recipient Key shall be derived using the Sender/Recipient
-   ID concatenated with the label "Key".  The Sender/Recipient IV shall
-   be derived using the Sender/Recipient ID concatenated with the label
-   "IV".
+   ID concatenated with the label "Key", the Algorithm and the
+   key_length.  The Sender/Recipient IV shall be derived using the
+   Sender/Recipient ID concatenated with the label "IV", the Algorithm
+   and the key_length.
 
-   With the mandatory OSCOAP algorithm AES-CCM-64-64-128 (see
-   Section 10.2 in [I-D.ietf-cose-msg]), key_length for the keys is 128
-   bits and key_length for the context IVs is 56 bits.
+   For example, for the algorithm AES-CCM-64-64-128 (see Section 10.2 in
+   [I-D.ietf-cose-msg]), key_length for the keys is 128 bits and
+   key_length for the context IVs is 56 bits.
 
 3.2.2.  Sequence Numbers and Replay Window
 
@@ -552,8 +554,6 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
    previous phase.  How this is done is application specific, but some
    guidelines are given in this section.
 
-   It is RECOMMENDED that the application uses 64-bits long stochastic
-   Cids, in order to have globally unique Context Identifiers.  Cid
 
 
 
@@ -562,6 +562,8 @@ Selander, et al.         Expires March 31, 2017                [Page 10]
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
+   It is RECOMMENDED that the application uses 64-bits long stochastic
+   Cids, in order to have globally unique Context Identifiers.  Cid
    SHOULD be unique in the sets of all security contexts used by all the
    endpoints.  If it is not the case, it is the role of the application
    to specify how to handle collisions.
@@ -609,14 +611,14 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
       encrypted, nor integrity protected (cf. protection of the
       effective request URI in Section 5.2).
 
-   o  The other CoAP options SHALL be encrypted and integrity protected.
-
 
 
 Selander, et al.         Expires March 31, 2017                [Page 11]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
+
+   o  The other CoAP options SHALL be encrypted and integrity protected.
 
    A summary of which options are encrypted or integrity protected is
    shown in Figure 4.
@@ -652,12 +654,6 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
    Unless specified otherwise, CoAP options not listed in Figure 4 SHALL
    be encrypted and integrity protected.
 
-   Specifications of new CoAP options SHOULD specify how they are
-   processed with OSCOAP.  New COAP options SHOULD be encrypted and
-   integrity protected.  New COAP options SHALL be integrity protected
-   unless a proxy needs to change the option, and SHALL be encrypted
-   unless a proxy needs to read the option.
-
    The encrypted options are in general omitted from the protected CoAP
    message and not visible to intermediary nodes (see Section 6.2 and
    Section 6.4).  Hence the actions resulting from the use of
@@ -665,7 +661,11 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
    directly with the endpoint.  For example, a client using an ETag
    option will not be served by a proxy.
 
-
+   However, some options which are encrypted need to be present in the
+   protected CoAP message to support certain proxy functions.  A CoAP
+   option which may be both encrypted in the COSE object of the
+   protected CoAP message, and also unencrypted as CoAP option in the
+   protected CoAP message, is called "duplicate".  The "encrypted" value
 
 
 
@@ -674,11 +674,6 @@ Selander, et al.         Expires March 31, 2017                [Page 12]
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
-   However, some options which are encrypted need to be present in the
-   protected CoAP message to support certain proxy functions.  A CoAP
-   option which may be both encrypted in the COSE object of the
-   protected CoAP message, and also unencrypted as CoAP option in the
-   protected CoAP message, is called "duplicate".  The "encrypted" value
    of a duplicate option is intended for the destination endpoint and
    the "unencrypted" value is intended for a proxy.  The unencrypted
    value is not integrity protected.
@@ -712,9 +707,13 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
    o  The size options Size1 and Size2 are duplicate, analogously to the
       block options.
 
-   Specifications of new CoAP options SHALL define if the new option is
-   duplicate and how it is processed with OSCOAP.  New COAP options
-   SHOULD NOT be duplicate.
+   Specifications of new CoAP options SHOULD specify how they are
+   processed with OSCOAP.  New COAP options SHALL be encrypted and
+   integrity protected.  New COAP options SHOULD NOT be duplicate unless
+   a proxy needs to read the option.  If an option is registered as
+   duplicate, the duplicate value SHOULD NOT be the same as the end-to-
+   end value, unless the proxy is required by specification to be able
+   to read the end-to-end value.
 
 5.  The COSE Object
 
@@ -722,6 +721,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
    to wrap and protect data in the unprotected CoAP message.  OSCOAP
    uses the COSE_Encrypt0 structure with an Authenticated Encryption
    with Additional Data (AEAD) algorithm.
+
 
 
 
@@ -1010,11 +1010,12 @@ Selander, et al.         Expires March 31, 2017                [Page 18]
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
-       *  If the unprotected CoAP message has no Payload, then the value
-          of the Object-Security option is the COSE object.  If the
-          unprotected CoAP message has Payload, then the Object-Security
-          option is empty and the Payload of the protected CoAP message
-          is the COSE object.
+       *  If the message type of the unprotected CoAP message does not
+          allow Payload, then the value of the Object-Security option is
+          the COSE object.  If the message type of the unprotected CoAP
+          message allows Payload, then the Object-Security option is
+          empty and the Payload of the protected CoAP message is the
+          COSE object.
 
    4.  Store in memory the association Token - Cid. The Client SHALL be
        able to find the correct security context used to protect the
@@ -1056,7 +1057,6 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
    7.  Restore the unprotected request by adding any decrypted options
        or payload from the plaintext.  Any duplicate options (Section 4)
        are overwritten.  The Object-Security option is removed.
-
 
 
 
@@ -1107,12 +1107,12 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
           present has its unencrypted value.  The Object-Security option
           is added.
 
-       *  If the unprotected CoAP message has no Payload, then the value
-          of the Object-Security option is the COSE object.  If the
-          unprotected CoAP message has Payload, then the Object-Security
-          option is empty, and the Payload of the protected CoAP message
-          is the COSE object.
-
+       *  If the message type of the unprotected CoAP message does not
+          allow Payload, then the value of the Object-Security option is
+          the COSE object.  If the message type of the unprotected CoAP
+          message allows Payload, then the Object-Security option is
+          empty and the Payload of the protected CoAP message is the
+          COSE object.
 
 
 
@@ -1524,11 +1524,12 @@ Appendix A.  Overhead
 A.1.  Length of the Object-Security Option
 
    The protected CoAP message contains the COSE object.  The COSE object
-   is included in the payload if the unprotected CoAP message has
-   payload or else in the Object-Security option.  In the former case
-   the Object-Security option is empty.  So the length of the Object-
-   Security option is either zero or the size of the COSE object,
-   depending on whether the CoAP message has payload or not.
+   is included in the payload if the message type of the unprotected
+   CoAP message allows payload or else in the Object-Security option.
+   In the former case the Object-Security option is empty.  So the
+   length of the Object-Security option is either zero or the size of
+   the COSE object, depending on whether the CoAP message allows payload
+   or not.
 
    Length of Object-Security option = { 0, size of COSE Object }
 
@@ -1564,7 +1565,6 @@ A.2.  Size of the COSE Object
 
 
 
-
 Selander, et al.         Expires March 31, 2017                [Page 28]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
@@ -1574,8 +1574,8 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
       payload and the encrypted options Section 4, which are present in
       the unprotected CoAP message.
 
-   o  The size of the Tag depends on the Algorithm.  For the OSCOAP
-      mandatory algorithm AES-CCM-64-64-128, the Tag is 8 bytes.
+   o  The size of the Tag depends on the Algorithm.  For example, for
+      the algorithm AES-CCM-64-64-128, the Tag is 8 bytes.
 
    o  The overhead from the COSE format itself depends on the sizes of
       the previous fields, and is of the order of 10 bytes.
@@ -1825,11 +1825,11 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
        brackets [ ... ] indicates COSE object.  The bracket { ... }
                          indicates encrypted data.
 
-   Since the unprotected request message (GET) has no payload, the COSE
-   object (indicated with [ ... ]) is carried in the Object-Security
-   option value.  Since the unprotected response message (Content) has
-   payload, the Object-Security option is empty, and the COSE object is
-   carried as the payload.
+   Since the unprotected request message (GET) allows no payload, the
+   COSE object (indicated with [ ... ]) is carried in the Object-
+   Security option value.  Since the unprotected response message
+   (Content) has payload, the Object-Security option is empty, and the
+   COSE object is carried as the payload.
 
    The COSE header of the request contains a Context Identifier
    (cid:ca), indicating which security context was used to protect the
