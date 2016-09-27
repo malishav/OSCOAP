@@ -277,10 +277,10 @@ output parameter = HKDF-Expand(base\_key, info, key\_length),
 where:
 
 * base_key is defined above
-* info = Sender ID/Recipient ID \|\| "IV"/"Key"
+* info = Sender ID/Recipient ID \|\| "IV"/"Key" \|\| Algorithm \|\| key_length
 * key_length is the key size of the AEAD algorithm
 
-The Sender/Recipient Key shall be derived using the Sender/Recipient ID concatenated with the label "Key". The Sender/Recipient IV shall be derived using the Sender/Recipient ID concatenated with the label "IV".
+The Sender/Recipient Key shall be derived using the Sender/Recipient ID concatenated with the label "Key", the Algorithm and the key\_length. The Sender/Recipient IV shall be derived using the Sender/Recipient ID concatenated with the label "IV", the Algorithm and the key\_length.
 
 With the mandatory OSCOAP algorithm AES-CCM-64-64-128 (see Section 10.2 in {{I-D.ietf-cose-msg}}), key\_length for the keys is 128 bits and key\_length for the context IVs is 56 bits.
 
