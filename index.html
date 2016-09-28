@@ -320,7 +320,7 @@ li, p {
 
   <meta name="dct.creator" content="Selander, G., Mattsson, J., Palombini, F., and L. Seitz" />
   <meta name="dct.identifier" content="urn:ietf:id:draft-selander-ace-object-security-latest" />
-  <meta name="dct.issued" scheme="ISO8601" content="2016-9-27" />
+  <meta name="dct.issued" scheme="ISO8601" content="2016-9-28" />
   <meta name="dct.abstract" content="This memo defines Object Security of CoAP (OSCOAP), a method for application layer protection of message exchanges with the Constrained Application Protocol (CoAP), using the CBOR Object Signing and Encryption (COSE) format. OSCOAP provides end-to-end encryption, integrity and replay protection to CoAP payload, options, and header fields, as well as a secure binding between CoAP request and response messages. The use of OSCOAP is signaled with the CoAP option Object-Security, also defined in this memo." />
   <meta name="description" content="This memo defines Object Security of CoAP (OSCOAP), a method for application layer protection of message exchanges with the Constrained Application Protocol (CoAP), using the CBOR Object Signing and Encryption (COSE) format. OSCOAP provides end-to-end encryption, integrity and replay protection to CoAP payload, options, and header fields, as well as a secure binding between CoAP request and response messages. The use of OSCOAP is signaled with the CoAP option Object-Security, also defined in this memo." />
 
@@ -344,7 +344,7 @@ li, p {
   <td class="right">F. Palombini</td>
 </tr>
 <tr>
-  <td class="left">Expires: March 31, 2017</td>
+  <td class="left">Expires: April 1, 2017</td>
   <td class="right">Ericsson AB</td>
 </tr>
 <tr>
@@ -357,7 +357,7 @@ li, p {
 </tr>
 <tr>
   <td class="left"></td>
-  <td class="right">September 27, 2016</td>
+  <td class="right">September 28, 2016</td>
 </tr>
 
     	
@@ -377,7 +377,7 @@ li, p {
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on March 31, 2017.</p>
+<p>This Internet-Draft will expire on April 1, 2017.</p>
 <h1 id="rfc.copyrightnotice">
   <a href="#rfc.copyrightnotice">Copyright Notice</a>
 </h1>
@@ -541,7 +541,7 @@ Verify request with   |                       |
 <p/>
 
 <ul>
-  <li>Sender ID. Variable length byte string identifying the sending endpoint. Its value is immutable once the security context is established.</li>
+  <li>Sender ID. Variable length byte string identifying oneself. Its value is immutable once the security context is established.</li>
   <li>Sender Key. Byte string containing the symmetric key to protect messages to send. Length is determined by Algorithm. Its value is immutable once the security context is established.</li>
   <li>Sender IV. Byte string containing the fixed portion of IV (context IV in <a href="#I-D.ietf-cose-msg">[I-D.ietf-cose-msg]</a>) to protect messages to send. Length is determined by Algorithm. Its value is immutable once the security context is established.</li>
   <li>Sender Sequence Number. Non-negative integer enumerating the COSE objects that the endpoint sends, associated to the Context Identifier. It is used for replay protection, and to generate unique IVs for the AEAD. Maximum value is determined by Algorithm.</li>
@@ -550,13 +550,13 @@ Verify request with   |                       |
 <p/>
 
 <ul>
-  <li>Recipient ID. Variable length byte string identifying the sending endpoint. Its value is immutable once the security context is established.</li>
+  <li>Recipient ID. Variable length byte string identifying the endpoint messages are received from or sent to. Its value is immutable once the security context is established.</li>
   <li>Recipient Key. Byte string containing the symmetric key to verify messages received. Length is determined by the Algorithm. Its value is immutable once the security context is established.</li>
   <li>Recipient IV. Byte string containing the context IV to verify messages received. Length is determined by Algorithm. Its value is immutable once the security context is established.</li>
   <li>Recipient Sequence Number. Non-negative integer enumerating the COSE objects received, associated to the Context Identifier. It is used for replay protection, and to generate unique IVs for the AEAD. Maximum value is determined by Algorithm.</li>
   <li>Replay Window. The replay protection window for messages received, equivalent to the functionality described in Section 4.1.2.6 of <a href="#RFC6347">[RFC6347]</a>.</li>
 </ul>
-<p id="rfc.section.3.1.p.10">The ordered 3-tuple (Cid, Sender ID, Sender Sequence Number) is called Transaction Identifier (Tid), and SHALL be unique for each COSE object and server. The Tid is used as a unique challenge in the COSE object of the protected CoAP request. The Tid is part of the Additional Authenticated Data (AAD, see <a href="#sec-obj-cose">Section 5</a>) of the protected CoAP response message, which is how the challenge becomes signed by the server.</p>
+<p id="rfc.section.3.1.p.10">The 3-tuple (Cid, Sender ID, Sender Sequence Number) is called Transaction Identifier (Tid), and SHALL be unique for each COSE object and server. The Tid is used as a unique challenge in the COSE object of the protected CoAP request. The Tid is part of the Additional Authenticated Data (AAD, see <a href="#sec-obj-cose">Section 5</a>) of the protected CoAP response message, which is how the challenge becomes signed by the server.</p>
 <p id="rfc.section.3.1.p.11">The client and server may change roles while maintaining the same security context. The former server will then make the request using the Sender Context, the former client will verify the request using its Recipient Context etc.</p>
 <h1 id="rfc.section.3.2"><a href="#rfc.section.3.2">3.2.</a> <a href="#sec-context-est-section" id="sec-context-est-section">Security Context Establishment</a></h1>
 <p id="rfc.section.3.2.p.1">This section aims at describing how to establish the security context, given some input parameters. The input parameters, which are established in a previous phase, are:</p>
@@ -736,7 +736,7 @@ Verify request with   |                       |
 <ul>
   <li>the "context" parameter, which has value "Encrypted"</li>
   <li>the "protected" parameter, which includes the "protected" part of the "Headers" field;</li>
-  <li>the "external_aad" is a serialized CBOR array that contains, in the given order:  <ul><li>ver: uint, contains the CoAP version number of the unprotected CoAP message, as defined in Section 3 of <a href="#RFC7252">[RFC7252]</a></li><li>code: bstr, contains is the CoAP Code of the unprotected CoAP message, as defined in Section 3 of <a href="#RFC7252">[RFC7252]</a>.  </li><li>alg: bstr, contains the serialized Algorithm from the security context used for the exchange (see <a href="#sec-context-def-section">Section 3.1</a>);</li><li>request-uri: tstr, contains the plaintext "effective" request URI composed from the request scheme and Uri-* options according to the method described in Section 6.5 of <a href="#RFC7252">[RFC7252]</a>, if the message is a CoAP request;</li><li>transaction-id: bstr, contains Transaction Identifier (Tid) of the associated CoAP request, if the message is a CoAP response (see <a href="#sec-context-section">Section 3</a>), and</li><li>mac-previous-bloc: bstr, contains the MAC of the message containing the previous block in the sequence, as enumerated by Block1 in the case of a request and Block2 in the case of a response, if the message is fragmented using a block option <a href="#I-D.ietf-core-block">[I-D.ietf-core-block]</a>.</li></ul></li>
+  <li>the "external_aad" is a serialized CBOR array that contains, in the given order:  <ul><li>ver: uint, contains the CoAP version number of the unprotected CoAP message, as defined in Section 3 of <a href="#RFC7252">[RFC7252]</a></li><li>code: bstr, contains is the CoAP Code of the unprotected CoAP message, as defined in Section 3 of <a href="#RFC7252">[RFC7252]</a>.  </li><li>alg: bstr, contains the serialized Algorithm from the security context used for the exchange (see <a href="#sec-context-def-section">Section 3.1</a>);</li><li>request-uri: tstr, contains the plaintext "effective" request URI composed from the request scheme and Uri-* options according to the method described in Section 6.5 of <a href="#RFC7252">[RFC7252]</a>, if the message is a CoAP request;</li><li>transaction-id: bstr, only included if the message to protect or verify is a CoAP response, contains the Transaction Identifier (Tid) of the associated CoAP request (see <a href="#sec-context-section">Section 3</a>). Note that the Tid is the 3-tuple (Cid, Sender ID, Sender Sequence Number) for the endpoint sending the request and verifying the response; which means that for the endpoint sending the response, the Tid has value (Cid, Recipient ID, seq), where seq is the value of the "Partial IV" in the request's COSE object (see <a href="#sec-obj-cose">Section 5</a>); and</li><li>mac-previous-bloc: bstr, contains the MAC of the message containing the previous block in the sequence, as enumerated by Block1 in the case of a request and Block2 in the case of a response, if the message is fragmented using a block option <a href="#I-D.ietf-core-block">[I-D.ietf-core-block]</a>.</li></ul></li>
 </ul>
 <div id="rfc.figure.6"/>
 <div id="aad-req"/>
@@ -913,7 +913,7 @@ external_aad = external_aad_req / external_aad_resp
       <td class="reference">
         <b id="I-D.ietf-cose-msg">[I-D.ietf-cose-msg]</b>
       </td>
-      <td class="top"><a>Schaad, J.</a>, "<a href="http://tools.ietf.org/html/draft-ietf-cose-msg-18">CBOR Object Signing and Encryption (COSE)</a>", Internet-Draft draft-ietf-cose-msg-18, September 2016.</td>
+      <td class="top"><a>Schaad, J.</a>, "<a href="http://tools.ietf.org/html/draft-ietf-cose-msg-19">CBOR Object Signing and Encryption (COSE)</a>", Internet-Draft draft-ietf-cose-msg-19, September 2016.</td>
     </tr>
     <tr>
       <td class="reference">

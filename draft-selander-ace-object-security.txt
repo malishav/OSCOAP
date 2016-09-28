@@ -5,10 +5,10 @@
 ACE Working Group                                            G. Selander
 Internet-Draft                                               J. Mattsson
 Intended status: Standards Track                            F. Palombini
-Expires: March 31, 2017                                      Ericsson AB
+Expires: April 1, 2017                                       Ericsson AB
                                                                 L. Seitz
                                                         SICS Swedish ICT
-                                                      September 27, 2016
+                                                      September 28, 2016
 
 
                     Object Security of CoAP (OSCOAP)
@@ -40,7 +40,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on March 31, 2017.
+   This Internet-Draft will expire on April 1, 2017.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Selander, et al.         Expires March 31, 2017                 [Page 1]
+Selander, et al.          Expires April 1, 2017                 [Page 1]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Selander, et al.         Expires March 31, 2017                 [Page 2]
+Selander, et al.          Expires April 1, 2017                 [Page 2]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -165,7 +165,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-Selander, et al.         Expires March 31, 2017                 [Page 3]
+Selander, et al.          Expires April 1, 2017                 [Page 3]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -221,7 +221,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-Selander, et al.         Expires March 31, 2017                 [Page 4]
+Selander, et al.          Expires April 1, 2017                 [Page 4]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -277,7 +277,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-Selander, et al.         Expires March 31, 2017                 [Page 5]
+Selander, et al.          Expires April 1, 2017                 [Page 5]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -333,7 +333,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-Selander, et al.         Expires March 31, 2017                 [Page 6]
+Selander, et al.          Expires April 1, 2017                 [Page 6]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -377,25 +377,23 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
    The Sender Context structure contains the following parameters:
 
-   o  Sender ID.  Variable length byte string identifying the sending
-      endpoint.  Its value is immutable once the security context is
-      established.
+   o  Sender ID.  Variable length byte string identifying oneself.  Its
+      value is immutable once the security context is established.
 
    o  Sender Key. Byte string containing the symmetric key to protect
       messages to send.  Length is determined by Algorithm.  Its value
       is immutable once the security context is established.
 
+   o  Sender IV.  Byte string containing the fixed portion of IV
+      (context IV in [I-D.ietf-cose-msg]) to protect messages to send.
 
 
 
-
-Selander, et al.         Expires March 31, 2017                 [Page 7]
+Selander, et al.          Expires April 1, 2017                 [Page 7]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
-   o  Sender IV.  Byte string containing the fixed portion of IV
-      (context IV in [I-D.ietf-cose-msg]) to protect messages to send.
       Length is determined by Algorithm.  Its value is immutable once
       the security context is established.
 
@@ -407,9 +405,9 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
    The Recipient Context structure contains the following parameters:
 
-   o  Recipient ID.  Variable length byte string identifying the sending
-      endpoint.  Its value is immutable once the security context is
-      established.
+   o  Recipient ID.  Variable length byte string identifying the
+      endpoint messages are received from or sent to.  Its value is
+      immutable once the security context is established.
 
    o  Recipient Key. Byte string containing the symmetric key to verify
       messages received.  Length is determined by the Algorithm.  Its
@@ -428,10 +426,10 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
       received, equivalent to the functionality described in
       Section 4.1.2.6 of [RFC6347].
 
-   The ordered 3-tuple (Cid, Sender ID, Sender Sequence Number) is
-   called Transaction Identifier (Tid), and SHALL be unique for each
-   COSE object and server.  The Tid is used as a unique challenge in the
-   COSE object of the protected CoAP request.  The Tid is part of the
+   The 3-tuple (Cid, Sender ID, Sender Sequence Number) is called
+   Transaction Identifier (Tid), and SHALL be unique for each COSE
+   object and server.  The Tid is used as a unique challenge in the COSE
+   object of the protected CoAP request.  The Tid is part of the
    Additional Authenticated Data (AAD, see Section 5) of the protected
    CoAP response message, which is how the challenge becomes signed by
    the server.
@@ -445,7 +443,9 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-Selander, et al.         Expires March 31, 2017                 [Page 8]
+
+
+Selander, et al.          Expires April 1, 2017                 [Page 8]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -501,7 +501,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-Selander, et al.         Expires March 31, 2017                 [Page 9]
+Selander, et al.          Expires April 1, 2017                 [Page 9]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -557,7 +557,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 10]
+Selander, et al.          Expires April 1, 2017                [Page 10]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -613,7 +613,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 11]
+Selander, et al.          Expires April 1, 2017                [Page 11]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -669,7 +669,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 12]
+Selander, et al.          Expires April 1, 2017                [Page 12]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -725,7 +725,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 13]
+Selander, et al.          Expires April 1, 2017                [Page 13]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -781,7 +781,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 14]
+Selander, et al.          Expires April 1, 2017                [Page 14]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -837,7 +837,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 15]
+Selander, et al.          Expires April 1, 2017                [Page 15]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -862,9 +862,15 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
          according to the method described in Section 6.5 of [RFC7252],
          if the message is a CoAP request;
 
-      *  transaction-id: bstr, contains Transaction Identifier (Tid) of
-         the associated CoAP request, if the message is a CoAP response
-         (see Section 3), and
+      *  transaction-id: bstr, only included if the message to protect
+         or verify is a CoAP response, contains the Transaction
+         Identifier (Tid) of the associated CoAP request (see
+         Section 3).  Note that the Tid is the 3-tuple (Cid, Sender ID,
+         Sender Sequence Number) for the endpoint sending the request
+         and verifying the response; which means that for the endpoint
+         sending the response, the Tid has value (Cid, Recipient ID,
+         seq), where seq is the value of the "Partial IV" in the
+         request's COSE object (see Section 5); and
 
       *  mac-previous-bloc: bstr, contains the MAC of the message
          containing the previous block in the sequence, as enumerated by
@@ -887,13 +893,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-
-
-
-
-
-
-Selander, et al.         Expires March 31, 2017                [Page 16]
+Selander, et al.          Expires April 1, 2017                [Page 16]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -949,7 +949,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 17]
+Selander, et al.          Expires April 1, 2017                [Page 17]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -1005,7 +1005,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 18]
+Selander, et al.          Expires April 1, 2017                [Page 18]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -1061,7 +1061,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 19]
+Selander, et al.          Expires April 1, 2017                [Page 19]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -1117,7 +1117,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 20]
+Selander, et al.          Expires April 1, 2017                [Page 20]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -1173,7 +1173,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 21]
+Selander, et al.          Expires April 1, 2017                [Page 21]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -1229,7 +1229,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 22]
+Selander, et al.          Expires April 1, 2017                [Page 22]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -1285,7 +1285,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 23]
+Selander, et al.          Expires April 1, 2017                [Page 23]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -1341,7 +1341,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 24]
+Selander, et al.          Expires April 1, 2017                [Page 24]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -1397,7 +1397,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 25]
+Selander, et al.          Expires April 1, 2017                [Page 25]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -1423,7 +1423,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
    [I-D.ietf-cose-msg]
               Schaad, J., "CBOR Object Signing and Encryption (COSE)",
-              draft-ietf-cose-msg-18 (work in progress), September 2016.
+              draft-ietf-cose-msg-19 (work in progress), September 2016.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -1453,7 +1453,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 26]
+Selander, et al.          Expires April 1, 2017                [Page 26]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -1509,7 +1509,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 27]
+Selander, et al.          Expires April 1, 2017                [Page 27]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -1565,7 +1565,7 @@ A.2.  Size of the COSE Object
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 28]
+Selander, et al.          Expires April 1, 2017                [Page 28]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -1621,7 +1621,7 @@ A.4.  Example
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 29]
+Selander, et al.          Expires April 1, 2017                [Page 29]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -1677,7 +1677,7 @@ Appendix B.  Examples
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 30]
+Selander, et al.          Expires April 1, 2017                [Page 30]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -1733,7 +1733,7 @@ B.1.  Secure Access to Sensor
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 31]
+Selander, et al.          Expires April 1, 2017                [Page 31]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -1789,7 +1789,7 @@ B.2.  Secure Subscribe to Sensor
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 32]
+Selander, et al.          Expires April 1, 2017                [Page 32]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -1845,7 +1845,7 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 33]
+Selander, et al.          Expires April 1, 2017                [Page 33]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -1901,7 +1901,7 @@ Appendix C.  Object Security of Content (OSCON)
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 34]
+Selander, et al.          Expires April 1, 2017                [Page 34]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -1957,7 +1957,7 @@ C.2.  MAC Only
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 35]
+Selander, et al.          Expires April 1, 2017                [Page 35]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -2013,7 +2013,7 @@ C.3.  Signature Only
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 36]
+Selander, et al.          Expires April 1, 2017                [Page 36]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -2069,7 +2069,7 @@ C.4.  Authenticated Encryption with Additional Data (AEAD)
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 37]
+Selander, et al.          Expires April 1, 2017                [Page 37]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -2125,7 +2125,7 @@ Authors' Addresses
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 38]
+Selander, et al.          Expires April 1, 2017                [Page 38]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
@@ -2181,4 +2181,4 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
 
-Selander, et al.         Expires March 31, 2017                [Page 39]
+Selander, et al.          Expires April 1, 2017                [Page 39]
