@@ -214,7 +214,7 @@ The Common Context structure contains the following parameters:
 
 The Sender Context structure contains the following parameters:
 
-* Sender ID. Variable length byte string identifying the sending endpoint. Its value is immutable once the security context is established.
+* Sender ID. Variable length byte string identifying oneself. Its value is immutable once the security context is established.
 
 * Sender Key. Byte string containing the symmetric key to protect messages to send. Length is determined by Algorithm. Its value is immutable once the security context is established.
 
@@ -224,7 +224,7 @@ The Sender Context structure contains the following parameters:
 
 The Recipient Context structure contains the following parameters:
 
-* Recipient ID. Variable length byte string identifying the sending endpoint. Its value is immutable once the security context is established.
+* Recipient ID. Variable length byte string identifying the endpoint messages are received from or sent to. Its value is immutable once the security context is established.
 
 * Recipient Key. Byte string containing the symmetric key to verify messages received. Length is determined by the Algorithm. Its value is immutable once the security context is established.
 
@@ -234,7 +234,7 @@ The Recipient Context structure contains the following parameters:
 
 * Replay Window. The replay protection window for messages received, equivalent to the functionality described in Section 4.1.2.6 of {{RFC6347}}.
 
-The ordered 3-tuple (Cid, Sender ID, Sender Sequence Number) is called Transaction Identifier (Tid), and SHALL be unique for each COSE object and server. The Tid is used as a unique challenge in the COSE object of the protected CoAP request. The Tid is part of the Additional Authenticated Data (AAD, see {{sec-obj-cose}}) of the protected CoAP response message, which is how the challenge becomes signed by the server.
+The 3-tuple (Cid, Sender ID, Sender Sequence Number) is called Transaction Identifier (Tid), and SHALL be unique for each COSE object and server. The Tid is used as a unique challenge in the COSE object of the protected CoAP request. The Tid is part of the Additional Authenticated Data (AAD, see {{sec-obj-cose}}) of the protected CoAP response message, which is how the challenge becomes signed by the server.
 
 The client and server may change roles while maintaining the same security context. The former server will then make the request using the Sender Context, the former client will verify the request using its Recipient Context etc.
 
@@ -445,7 +445,7 @@ The Additional Authenticated Data ("Enc_structure") as described is Section 5.3 
 
     * request-uri: tstr, contains the plaintext "effective" request URI composed from the request scheme and Uri-\* options according to the method described in Section 6.5 of {{RFC7252}}, if the message is a CoAP request; 
     
-    * transaction-id: bstr, contains Transaction Identifier (Tid) of the associated CoAP request, if the message is a CoAP response (see {{sec-context-section}}), and
+    * transaction-id: bstr, only included if the message to protect or verify is a CoAP response, contains the Transaction Identifier (Tid) of the associated CoAP request (see {{sec-context-section}}). Note that the Tid is the 3-tuple (Cid, Sender ID, Sender Sequence Number) for the endpoint sending the request and verifying the response; which means that for the endpoint sending the response, the Tid has value (Cid, Recipient ID, seq), where seq is the value of the "Partial IV" in the request's COSE object (see {{sec-obj-cose}}); and
     
     * mac-previous-bloc: bstr, contains the MAC of the message containing the previous block in the sequence, as enumerated by Block1 in the case of a request and Block2 in the case of a response, if the message is fragmented using a block option {{I-D.ietf-core-block}}.
 
