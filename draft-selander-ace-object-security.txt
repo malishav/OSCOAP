@@ -731,13 +731,10 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
    The mandatory to support AEAD algorithm is AES-CCM-64-64-128 defined
-   in Section 10.2 of [I-D.ietf-cose-msg].
-
-   For AES-CCM-64-64-128 the length of Sender Key and Recipient Key
-   SHALL be 128 bits, the length of IV, Sender IV, and Recipient IV
-   SHALL be 7 bytes, and the maximum Sender Sequence Number and
-   Recipient Sequence Number SHALL be 2^56-1.
-
+   in Section 10.2 of [I-D.ietf-cose-msg].  For AES-CCM-64-64-128 the
+   length of Sender Key and Recipient Key SHALL be 128 bits, the length
+   of IV, Sender IV, and Recipient IV SHALL be 7 bytes, and the maximum
+   Sender Sequence Number and Recipient Sequence Number SHALL be 2^56-1.
    The IV is constructed using a Partial IV exactly like in Section 3.1
    of [I-D.ietf-cose-msg], i.e. by padding the Sender Sequence Number or
    the Recipient Sequence Number with zeroes and XORing it with the
@@ -778,6 +775,9 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
       *  The "unprotected" field, which SHALL be empty.
 
+   o  The "cipher text" field is computed from the Plaintext (see
+      Section 5.1) and the Additional Authenticated Data (AAD) (see
+
 
 
 
@@ -786,8 +786,6 @@ Selander, et al.          Expires April 3, 2017                [Page 14]
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
 
-   o  The "cipher text" field is computed from the Plaintext (see
-      Section 5.1) and the Additional Authenticated Data (AAD) (see
       Section 5.2) and encoded as a byte string (type: bstr), following
       Section 5.2 of [I-D.ietf-cose-msg].
 
@@ -834,6 +832,8 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
    The Additional Authenticated Data ("Enc_structure") as described is
    Section 5.3 of [I-D.ietf-cose-msg] includes (see Figure 8):
 
+   o  the "context" parameter, which has value "Encrypted"
+
 
 
 
@@ -841,8 +841,6 @@ Selander, et al.          Expires April 3, 2017                [Page 15]
 
 Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
 
-
-   o  the "context" parameter, which has value "Encrypted"
 
    o  the "protected" parameter, which includes the "protected" part of
       the "Headers" field;
@@ -889,6 +887,8 @@ Internet-Draft      Object Security of CoAP (OSCOAP)      September 2016
                       ]
 
                    Figure 6: external_aad for a request
+
+
 
 
 
