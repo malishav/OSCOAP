@@ -65,11 +65,11 @@ normative:
   RFC6347:
   RFC7252:
   RFC7641:
-
+  RFC7959:
+  
 informative:
 
 #        - I-D.ietf-ace-oauth-authz
-#        - I-D.ietf-core-block
 #        - rfc7228
 #        - I-D.hartke-core-e2e-security-reqs
 #	       - I-D.bormann-6lo-coap-802-15-ie
@@ -79,7 +79,6 @@ informative:
   I-D.hartke-core-e2e-security-reqs:
   I-D.bormann-6lo-coap-802-15-ie:
   I-D.ietf-ace-oauth-authz:
-  I-D.ietf-core-block:
   I-D.seitz-ace-oscoap-profile:
   I-D.ietf-core-coap-tcp-tls:
   RFC5869:
@@ -97,7 +96,7 @@ The Constrained Application Protocol (CoAP) {{RFC7252}} is a web application pro
 
 This memo defines Object Security of CoAP (OSCOAP), a data object based security protocol, protecting CoAP message exchanges end-to-end, across intermediary nodes. An analysis of end-to-end security for CoAP messages through intermediary nodes is performed in {{I-D.hartke-core-e2e-security-reqs}}, this specification addresses the forwarding case.
 
-The solution provides an in-layer security protocol for CoAP which does not depend on underlying layers and is therefore favorable for providing security for "CoAP over foo", e.g. CoAP messages passing over both reliable and unreliable transport, CoAP over IEEE 802.15.4 IE {{I-D.bormann-6lo-coap-802-15-ie}}.
+The solution provides an in-layer security protocol for CoAP which does not depend on underlying layers and is therefore favorable for providing security for "CoAP over foo", e.g. CoAP messages passing over both unreliable and reliable transport {{I-D.ietf-core-coap-tcp-tls}}, CoAP over IEEE 802.15.4 IE {{I-D.bormann-6lo-coap-802-15-ie}}.
 
 OSCOAP builds on CBOR Object Signing and Encryption (COSE) {{I-D.ietf-cose-msg}}, providing end-to-end encryption, integrity, and replay protection. The use of OSCOAP is signaled with the CoAP option Object-Security, also defined in this memo. The solution transforms an unprotected CoAP message into a protected CoAP message in the following way: the unprotected CoAP message is protected by including payload (if present), certain options, and header fields in a COSE object. The message fields that have been encrypted are removed from the message whereas the Object-Security option and the COSE object are added. We call the result the "protected" CoAP message. Thus OSCOAP is a security protocol based on the exchange of protected CoAP messages (see {{oscoap-ex}}).
 
@@ -261,7 +260,7 @@ These are included unchanged in the security context. We give below some indicat
 
 ### Derivation of Sender Key/IV, Recipient Key/IV ###
 
-Given a common shared secret material and a common key derivation function, the client and server can derive the security context necessary to run OSCOAP. The derivation procedure described here MUST not be executed more than once on a set of common secret material. Also, the same base_key SHOULD NOT be used in different security contexts (identified by different Cids).
+Given a common shared secret material and a common key derivation function, the client and server can derive the security context necessary to run OSCOAP. The derivation procedure described here MUST NOT be executed more than once on a set of common secret material. Also, the same base_key SHOULD NOT be used in different security contexts (identified by different Cids).
 
 The procedure assumes that the common shared secret material is uniformly random and that the key derivation function is HKDF {{RFC5869}}. This is for example the case after having used EDHOC {{I-D.selander-ace-cose-ecdhe}}.
 
@@ -443,7 +442,7 @@ The Additional Authenticated Data ("Enc_structure") as described is Section 5.3 
     
     * transaction-id: bstr, only included if the message to protect or verify is a CoAP response, contains the Transaction Identifier (Tid) of the associated CoAP request (see {{sec-context-section}}). Note that the Tid is the 3-tuple (Cid, Sender ID, Sender Sequence Number) for the endpoint sending the request and verifying the response; which means that for the endpoint sending the response, the Tid has value (Cid, Recipient ID, seq), where seq is the value of the "Partial IV" in the COSE object of the request (see {{sec-obj-cose}}); and
     
-    * mac-previous-block: bstr, contains the MAC of the message containing the previous block in the sequence, as enumerated by Block1 in the case of a request and Block2 in the case of a response, if the message is fragmented using a block option {{I-D.ietf-core-block}}.
+    * mac-previous-block: bstr, contains the MAC of the message containing the previous block in the sequence, as enumerated by Block1 in the case of a request and Block2 in the case of a response, if the message is fragmented using a block option {{RFC7959}}.
 
 ~~~~~~~~~~~
 external_aad_req = [
