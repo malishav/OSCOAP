@@ -320,7 +320,7 @@ li, p {
 
   <meta name="dct.creator" content="Selander, G., Mattsson, J., Palombini, F., and L. Seitz" />
   <meta name="dct.identifier" content="urn:ietf:id:draft-selander-ace-object-security-latest" />
-  <meta name="dct.issued" scheme="ISO8601" content="2016-10-11" />
+  <meta name="dct.issued" scheme="ISO8601" content="2016-10-18" />
   <meta name="dct.abstract" content="This memo defines Object Security of CoAP (OSCOAP), a method for application layer protection of message exchanges with the Constrained Application Protocol (CoAP), using the CBOR Object Signing and Encryption (COSE) format. OSCOAP provides end-to-end encryption, integrity and replay protection to CoAP payload, options, and header fields, as well as a secure binding between CoAP request and response messages. The use of OSCOAP is signaled with the CoAP option Object-Security, also defined in this memo." />
   <meta name="description" content="This memo defines Object Security of CoAP (OSCOAP), a method for application layer protection of message exchanges with the Constrained Application Protocol (CoAP), using the CBOR Object Signing and Encryption (COSE) format. OSCOAP provides end-to-end encryption, integrity and replay protection to CoAP payload, options, and header fields, as well as a secure binding between CoAP request and response messages. The use of OSCOAP is signaled with the CoAP option Object-Security, also defined in this memo." />
 
@@ -344,7 +344,7 @@ li, p {
   <td class="right">F. Palombini</td>
 </tr>
 <tr>
-  <td class="left">Expires: April 14, 2017</td>
+  <td class="left">Expires: April 21, 2017</td>
   <td class="right">Ericsson AB</td>
 </tr>
 <tr>
@@ -357,7 +357,7 @@ li, p {
 </tr>
 <tr>
   <td class="left"></td>
-  <td class="right">October 11, 2016</td>
+  <td class="right">October 18, 2016</td>
 </tr>
 
     	
@@ -377,7 +377,7 @@ li, p {
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on April 14, 2017.</p>
+<p>This Internet-Draft will expire on April 21, 2017.</p>
 <h1 id="rfc.copyrightnotice">
   <a href="#rfc.copyrightnotice">Copyright Notice</a>
 </h1>
@@ -620,7 +620,8 @@ Verify request with   |                       |
 <p/>
 
 <ul>
-  <li>To prevent information leakage, Uri-Path and Uri-Query SHALL be encrypted. As a consequence, if Proxy-Uri is used, those parts of the URI SHALL be removed from the Proxy-Uri. The CoAP Options Uri-Host, Uri-Port, Proxy-Uri, and Proxy-Scheme SHALL neither be encrypted, nor integrity protected (cf. protection of the effective request URI in <a href="#AAD">Section 5.2</a>).</li>
+  <li>To prevent information leakage, Uri-Path and Uri-Query SHALL be encrypted. If Proxy-Uri is used and thus Uri-* are not present, then OSCOAP implementation MUST first split the Proxy-Uri into the unencrypted Uri <a href="#AAD">Section 5.2</a> and the Uri-Path/Query options (according to section 6.4 of <a href="#RFC7252">[RFC7252]</a>), replace the Proxy-Uri value with the unencrypted Uri, and encrypt Uri-Path/Query, which will then be carried in the ciphertext. This means that the proxy will not be able to read the Uri-Path and Uri-Query options and will thus process the message as indicated by CoAP.</li>
+  <li>The CoAP Options Uri-Host, Uri-Port, Proxy-Uri, and Proxy-Scheme SHALL neither be encrypted, nor integrity protected (cf. protection of the unencrypted Uri in <a href="#AAD">Section 5.2</a>).</li>
   <li>The other CoAP options SHALL be encrypted and integrity protected.</li>
 </ul>
 <p id="rfc.section.4.p.6">A summary of which options are encrypted or integrity protected is shown in <a href="#protected-coap-options">Figure 4</a>.</p>
@@ -675,7 +676,7 @@ Verify request with   |                       |
 <p/>
 
 <ul>
-  <li>The "Headers" field is formed by:  <ul><li>The "protected" field, which SHALL include:      <ul><li>The "Partial IV" parameter. The value is set to the Sender Sequence Number. The Partial IV is a byte string (type: bstr), where the length is the minimum length needed to encode the sequence number. An Endpoint that receives a COSE object with a sequence number encoded with leading zeroes (i.e. longer than the minimum needed length) SHALL reject the corresponding message as malformed.</li><li>If the message is a CoAP request, the "kid" parameter. The value is set to the Context Identifier (see <a href="#sec-context-section">Section 3</a>).</li><li>Optionally, the parameter called "sid", defined below. The value is set to the Sender ID (see <a href="#sec-context-section">Section 3</a>). Note that since this parameter is sent in clear, privacy issues SHOULD be considered by the application defining the Sender ID.</li></ul></li><li>The "unprotected" field, which SHALL be empty.</li></ul></li>
+  <li>The "Headers" field is formed by:  <ul><li>The "protected" field, which SHALL include:      <ul><li>The "Partial IV" parameter. The value is set to the Sender Sequence Number. The Partial IV is a byte string (type: bstr), where the length is the minimum length needed to encode the sequence number. An Endpoint that receives a COSE object with a sequence number encoded with leading zeroes (i.e. longer than the minimum needed length) SHALL reject the corresponding message as malformed.</li><li>The "kid" parameter. The value is set to the Context Identifier (see <a href="#sec-context-section">Section 3</a>). This parameter is optional if the message is a CoAP response.</li><li>Optionally, the parameter called "sid", defined below. The value is set to the Sender ID (see <a href="#sec-context-section">Section 3</a>). Note that since this parameter is sent in clear, privacy issues SHOULD be considered by the application defining the Sender ID.</li></ul></li><li>The "unprotected" field, which SHALL be empty.</li></ul></li>
   <li>The "cipher text" field is computed from the Plaintext (see <a href="#plaintext">Section 5.1</a>) and the Additional Authenticated Data (AAD) (see <a href="#AAD">Section 5.2</a>) and encoded as a byte string (type: bstr), following Section 5.2 of <a href="#I-D.ietf-cose-msg">[I-D.ietf-cose-msg]</a>.</li>
 </ul>
 <p/>
@@ -736,7 +737,7 @@ Verify request with   |                       |
 <ul>
   <li>the "context" parameter, which has value "Encrypted"</li>
   <li>the "protected" parameter, which includes the "protected" part of the "Headers" field;</li>
-  <li>the "external_aad" is a serialized CBOR array (see <a href="#aad">Figure 8</a>) that contains, in the given order:  <ul><li>ver: uint, contains the CoAP version number of the unprotected CoAP message, as defined in Section 3 of <a href="#RFC7252">[RFC7252]</a></li><li>code: bstr, contains is the CoAP Code of the unprotected CoAP message, as defined in Section 3 of <a href="#RFC7252">[RFC7252]</a>.  </li><li>alg: bstr, contains the serialized Algorithm from the security context used for the exchange (see <a href="#sec-context-def-section">Section 3.1</a>);</li><li>request-uri: tstr, contains the plaintext "effective" request URI composed from the request scheme and Uri-* options according to the method described in Section 6.5 of <a href="#RFC7252">[RFC7252]</a>, if the message is a CoAP request;</li><li>transaction-id: bstr, only included if the message to protect or verify is a CoAP response, contains the Transaction Identifier (Tid) of the associated CoAP request (see <a href="#sec-context-section">Section 3</a>). Note that the Tid is the 3-tuple (Cid, Sender ID, Sender Sequence Number) for the endpoint sending the request and verifying the response; which means that for the endpoint sending the response, the Tid has value (Cid, Recipient ID, seq), where seq is the value of the "Partial IV" in the COSE object of the request (see <a href="#sec-obj-cose">Section 5</a>); and</li><li>mac-previous-block: bstr, contains the MAC of the message containing the previous block in the sequence, as enumerated by Block1 in the case of a request and Block2 in the case of a response, if the message is fragmented using a block option <a href="#RFC7959">[RFC7959]</a>.</li></ul></li>
+  <li>the "external_aad" is a serialized CBOR array (see <a href="#aad">Figure 8</a>) that contains, in the given order:  <ul><li>ver: uint, contains the CoAP version number of the unprotected CoAP message, as defined in Section 3 of <a href="#RFC7252">[RFC7252]</a></li><li>code: bstr, contains is the CoAP Code of the unprotected CoAP message, as defined in Section 3 of <a href="#RFC7252">[RFC7252]</a>.  </li><li>alg: bstr, contains the serialized Algorithm from the security context used for the exchange (see <a href="#sec-context-def-section">Section 3.1</a>);</li><li>unencrypted-uri: tstr, contains the part of the URI which is not encrypted, and is composed of the request scheme (Proxy-Scheme if present), Uri-Host and Uri-Port options according to the method described in Section 6.5 of <a href="#RFC7252">[RFC7252]</a>, if the message is a CoAP request;</li><li>transaction-id: bstr, only included if the message to protect or verify is a CoAP response, contains the Transaction Identifier (Tid) of the associated CoAP request (see <a href="#sec-context-section">Section 3</a>). Note that the Tid is the 3-tuple (Cid, Sender ID, Sender Sequence Number) for the endpoint sending the request and verifying the response; which means that for the endpoint sending the response, the Tid has value (Cid, Recipient ID, seq), where seq is the value of the "Partial IV" in the COSE object of the request (see <a href="#sec-obj-cose">Section 5</a>); and</li><li>mac-previous-block: bstr, contains the MAC of the message containing the previous block in the sequence, as enumerated by Block1 in the case of a request and Block2 in the case of a response, if the message is fragmented using a block option <a href="#RFC7959">[RFC7959]</a>.</li></ul></li>
 </ul>
 <div id="rfc.figure.6"/>
 <div id="aad-req"/>
@@ -745,7 +746,7 @@ external_aad_req = [
     ver : uint,
     code : bstr,
     alg : bstr,
-    request-uri : tstr,
+    unencrypted-uri : tstr,
     ? mac-previous-block : bstr
 ]
 </pre>
@@ -914,7 +915,7 @@ external_aad = external_aad_req / external_aad_resp
       <td class="reference">
         <b id="I-D.ietf-cose-msg">[I-D.ietf-cose-msg]</b>
       </td>
-      <td class="top"><a>Schaad, J.</a>, "<a href="http://tools.ietf.org/html/draft-ietf-cose-msg-20">CBOR Object Signing and Encryption (COSE)</a>", Internet-Draft draft-ietf-cose-msg-20, October 2016.</td>
+      <td class="top"><a>Schaad, J.</a>, "<a href="http://tools.ietf.org/html/draft-ietf-cose-msg-22">CBOR Object Signing and Encryption (COSE)</a>", Internet-Draft draft-ietf-cose-msg-22, October 2016.</td>
     </tr>
     <tr>
       <td class="reference">
@@ -967,13 +968,13 @@ external_aad = external_aad_req / external_aad_resp
       <td class="reference">
         <b id="I-D.ietf-ace-oauth-authz">[I-D.ietf-ace-oauth-authz]</b>
       </td>
-      <td class="top"><a>Seitz, L.</a>, <a>Selander, G.</a>, <a>Wahlstroem, E.</a>, <a>Erdtman, S.</a> and <a>H. Tschofenig</a>, "<a href="http://tools.ietf.org/html/draft-ietf-ace-oauth-authz-02">Authentication and Authorization for Constrained Environments (ACE)</a>", Internet-Draft draft-ietf-ace-oauth-authz-02, June 2016.</td>
+      <td class="top"><a>Seitz, L.</a>, <a>Selander, G.</a>, <a>Wahlstroem, E.</a>, <a>Erdtman, S.</a> and <a>H. Tschofenig</a>, "<a href="http://tools.ietf.org/html/draft-ietf-ace-oauth-authz-03">Authentication and Authorization for Constrained Environments (ACE)</a>", Internet-Draft draft-ietf-ace-oauth-authz-03, October 2016.</td>
     </tr>
     <tr>
       <td class="reference">
         <b id="I-D.ietf-core-coap-tcp-tls">[I-D.ietf-core-coap-tcp-tls]</b>
       </td>
-      <td class="top"><a>Bormann, C.</a>, <a>Lemay, S.</a>, <a>Tschofenig, H.</a>, <a>Hartke, K.</a>, <a>Silverajan, B.</a> and <a>B. Raymor</a>, "<a href="http://tools.ietf.org/html/draft-ietf-core-coap-tcp-tls-04">CoAP (Constrained Application Protocol) over TCP, TLS, and WebSockets</a>", Internet-Draft draft-ietf-core-coap-tcp-tls-04, August 2016.</td>
+      <td class="top"><a>Bormann, C.</a>, <a>Lemay, S.</a>, <a>Tschofenig, H.</a>, <a>Hartke, K.</a>, <a>Silverajan, B.</a> and <a>B. Raymor</a>, "<a href="http://tools.ietf.org/html/draft-ietf-core-coap-tcp-tls-05">CoAP (Constrained Application Protocol) over TCP, TLS, and WebSockets</a>", Internet-Draft draft-ietf-core-coap-tcp-tls-05, October 2016.</td>
     </tr>
     <tr>
       <td class="reference">
