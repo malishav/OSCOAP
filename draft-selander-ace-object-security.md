@@ -310,7 +310,9 @@ The CoAP Header fields Version and Code SHALL be integrity protected but not enc
 
 Protection of CoAP Options can be summarized as follows:
 
-* To prevent information leakage, Uri-Path and Uri-Query SHALL be encrypted. As a consequence, if Proxy-Uri is used, those parts of the URI SHALL be removed from the Proxy-Uri. The CoAP Options Uri-Host, Uri-Port, Proxy-Uri, and Proxy-Scheme SHALL neither be encrypted, nor integrity protected (cf. protection of the effective request URI in {{AAD}}).
+* To prevent information leakage, Uri-Path and Uri-Query SHALL be encrypted. If Proxy-Uri is used and thus Uri-* are not present, then OSCOAP implementation MUST first split the Proxy-Uri into the unencrypted Uri {{AAD}} and the Uri-Path/Query options (according to section 6.4 of {{RFC7252}}), replace the Proxy-Uri value with the unencrypted Uri, and encrypt Uri-Path/Query, which will then be carried in the ciphertext. This means that the proxy will not be able to read the Uri-Path and Uri-Query options and will thus process the message as indicated by CoAP.
+
+* The CoAP Options Uri-Host, Uri-Port, Proxy-Uri, and Proxy-Scheme SHALL neither be encrypted, nor integrity protected (cf. protection of the unencrypted Uri in {{AAD}}).
 
 * The other CoAP options SHALL be encrypted and integrity protected.
 
@@ -438,7 +440,7 @@ The Additional Authenticated Data ("Enc_structure") as described is Section 5.3 
 
     * alg: bstr, contains the serialized Algorithm from the security context used for the exchange (see {{sec-context-def-section}});
 
-    * request-uri: tstr, contains the plaintext "effective" request URI composed from the request scheme and Uri-\* options according to the method described in Section 6.5 of {{RFC7252}}, if the message is a CoAP request; 
+    * unencrypted-uri: tstr, contains the part of the URI which is not encrypted, and is composed of the request scheme (Proxy-Scheme if present), Uri-Host and Uri-Port options according to the method described in Section 6.5 of {{RFC7252}}, if the message is a CoAP request; 
     
     * transaction-id: bstr, only included if the message to protect or verify is a CoAP response, contains the Transaction Identifier (Tid) of the associated CoAP request (see {{sec-context-section}}). Note that the Tid is the 3-tuple (Cid, Sender ID, Sender Sequence Number) for the endpoint sending the request and verifying the response; which means that for the endpoint sending the response, the Tid has value (Cid, Recipient ID, seq), where seq is the value of the "Partial IV" in the COSE object of the request (see {{sec-obj-cose}}); and
     
@@ -449,7 +451,7 @@ external_aad_req = [
     ver : uint,
     code : bstr,
     alg : bstr,
-    request-uri : tstr,
+    unencrypted-uri : tstr,
     ? mac-previous-block : bstr
 ]
 ~~~~~~~~~~~
