@@ -400,7 +400,6 @@ name | label | value type | value registry | description
 sid  |  TBD  |    bstr    |                | Sender identifier
 {: #sid-def title="Additional COSE Header Parameter" }
 
-
 ## Plaintext ## {#plaintext}
 
 The Plaintext is formatted as a CoAP message without Header (see {{plaintext-figure}}) consisting of:
@@ -436,7 +435,6 @@ The Additional Authenticated Data ("Enc_structure") as described is Section 5.3 
     * ver: uint, contains the CoAP version number of the unprotected CoAP message, as defined in Section 3 of {{RFC7252}}
     
     * code: bstr, contains is the CoAP Code of the unprotected CoAP message, as defined in Section 3 of {{RFC7252}}.
- <!--In the case of CoAP over TCP, even though the CoAP message format is different (see {{I-D.ietf-core-coap-tcp-tls}}), the version number and Code are still included in the external\_aad formatted as indicated above; -->
 
     * alg: bstr, contains the serialized Algorithm from the security context used for the exchange (see {{sec-context-def-section}});
 
@@ -476,21 +474,6 @@ external_aad = external_aad_req / external_aad_resp
 {: #aad title="external_aad" }
 {: artwork-align="center"}
 
-<!--
-~~~~~~~~~~~
- 0                   1                   2                   3
- 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|Ver|0 0 0 0 0 0|      Code     |      Alg      |      ...      ~
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-~   request URI (if request) / request Tid (if response)        ~
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-~   MAC of previous block (if Block1 or Block2 present)         ~
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-~~~~~~~~~~~
-{: #aad-enc-figure title="Additional Authenticated Data" }
-{: artwork-align="center"}
--->
 The encryption process is described in Section 5.3 of {{I-D.ietf-cose-msg}}. 
 
 # Protecting CoAP Messages # {#coap-protected-generate}
@@ -605,7 +588,7 @@ The use of COSE to protect CoAP messages as specified in this document requires 
 
 For symmetric encryption it is required to have a unique IV for each message, for which the sequence numbers in the COSE message field "Partial IV" is used. The context IVs (Sender IV and Recipient IV) SHOULD be established between sender and recipient before the message is sent, for example using the method in {{I-D.selander-ace-cose-ecdhe}}, to avoid the overhead of sending it in each message.
 
-The MTI AEAD algorithm AES-CCM-64-64-128 is selected for broad applicability in terms of message size (2^64 blocks) and maximum no. messages (2^56-1). For 128 bit CCM*, use instead AES-CCM-16-64-128 {{I-D.ietf-cose-msg}}.
+The mandatory-to-implement AEAD algorithm AES-CCM-64-64-128 is selected for broad applicability in terms of message size (2^64 blocks) and maximum no. messages (2^56-1). For 128 bit CCM*, use instead AES-CCM-16-64-128 {{I-D.ietf-cose-msg}}.
 
 If the recipient accepts any sequence number larger than the one previously received (less than the maximum sequence number), then the problem of sequence number synchronization is avoided. With reliable transport it may be defined that only messages with sequence number which are equal to previous sequence number + 1 are accepted. The alternatives to sequence numbers have their issues: very constrained devices may not be able to support accurate time, or to generate and store large numbers of random IVs. The requirement to change key at counter wrap is a complication, but it also forces the user of this specification to think about implementing key renewal.
 
@@ -701,7 +684,7 @@ The "application/oscon" content format is added to the CoAP Content Format regis
 
 # Acknowledgments #
 
-Klaus Hartke has independently been working on the same problem and a similar solution: establishing end-to-end security across proxies by adding a CoAP option. We are grateful to Malisa Vucinic and Marco Tiloca for providing helpful and timely reviews of previous versions of the draft. We are also grateful to Carsten Bormann and Jim Schaad for providing input and interesting discussions.
+The following individuals provided input to this document: Carsten Bormann, Joakim Brorsson, Martin Gunnarsson, Klaus Hartke, Jim Schaad, Marco Tiloca, and Malisa Vucinic.
 
 --- back
 
@@ -928,9 +911,6 @@ The server verifies that the Sequence Number has not been received before (see {
 
 
 # Object Security of Content (OSCON) # {#mode-payl}
-
-<!--  TODO: check that all ref to {{I-D.hartke-core-e2e-security-reqs}} has ref to the right section before submitting [FP]
--->
 
 OSCOAP protects message exchanges end-to-end between a certain client and a
 certain server, targeting the security requirements for forward proxy of {{I-D.hartke-core-e2e-security-reqs}}. In contrast, many use cases require one and
