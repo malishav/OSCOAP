@@ -1,13 +1,13 @@
 ---
 title: Object Security of CoAP (OSCOAP)
 # abbrev: OSCOAP
-docname: draft-selander-ace-object-security-latest
+docname: draft-ietf-core-object-security-latest
 
 # stand_alone: true
 
 ipr: trust200902
 area: Applications
-wg: ACE Working Group
+wg: CoRE Working Group
 kw: Internet-Draft
 cat: std
 
