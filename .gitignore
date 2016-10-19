@@ -9,4 +9,4 @@
 venv/
 issues.json
 lib
-draft-selander-ace-object-security.md
+*.xml
