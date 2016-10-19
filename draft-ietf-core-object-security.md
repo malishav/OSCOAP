@@ -310,9 +310,9 @@ The CoAP Header fields Version and Code SHALL be integrity protected but not enc
 
 Protection of CoAP Options can be summarized as follows:
 
-* To prevent information leakage, Uri-Path and Uri-Query SHALL be encrypted. If Proxy-Uri is used and thus Uri-* are not present, then OSCOAP implementation MUST first split the Proxy-Uri into the unencrypted Uri {{AAD}} and the Uri-Path/Query options (according to section 6.4 of {{RFC7252}}), replace the Proxy-Uri value with the unencrypted Uri, and encrypt Uri-Path/Query, which will then be carried in the ciphertext. This means that the proxy will not be able to read the Uri-Path and Uri-Query options and will thus process the message as indicated by CoAP.
+* To prevent information leakage, Uri-Path and Uri-Query SHALL be encrypted. If Proxy-Uri is used and thus Uri-* are not present, then OSCOAP implementation MUST first split the Proxy-Uri into the unencrypted Uri {{AAD}} and the Uri-Path/Query options (according to section 6.4 of {{RFC7252}}), replace the Proxy-Uri value with the unencrypted Uri, and encrypt Uri-Path/Query, which will then be carried in the ciphertext. This means that the proxy will not be able to see that Uri-Path and Uri-Query options are present in the message and will thus process the message as indicated by CoAP.
 
-* The CoAP Options Uri-Host, Uri-Port, Proxy-Uri, and Proxy-Scheme SHALL neither be encrypted, nor integrity protected (cf. protection of the unencrypted Uri in {{AAD}}).
+* The CoAP Options Uri-Host, Uri-Port, Proxy-Uri, and Proxy-Scheme SHALL neither be encrypted, nor integrity protected. Note that even though these options are not protected, their values are included in the additional authenticated data, thus they are indirectly integrity protected (cf. protection of the unencrypted Uri in {{AAD}}).
 
 * The other CoAP options SHALL be encrypted and integrity protected.
 
