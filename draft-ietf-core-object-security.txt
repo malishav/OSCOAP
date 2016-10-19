@@ -1250,10 +1250,10 @@ Internet-Draft      Object Security of CoAP (OSCOAP)        October 2016
    [I-D.selander-ace-cose-ecdhe], to avoid the overhead of sending it in
    each message.
 
-   The MTI AEAD algorithm AES-CCM-64-64-128 is selected for broad
-   applicability in terms of message size (2^64 blocks) and maximum no.
-   messages (2^56-1).  For 128 bit CCM*, use instead AES-CCM-16-64-128
-   [I-D.ietf-cose-msg].
+   The mandatory-to-implement AEAD algorithm AES-CCM-64-64-128 is
+   selected for broad applicability in terms of message size (2^64
+   blocks) and maximum no. messages (2^56-1).  For 128 bit CCM*, use
+   instead AES-CCM-16-64-128 [I-D.ietf-cose-msg].
 
    If the recipient accepts any sequence number larger than the one
    previously received (less than the maximum sequence number), then the
@@ -1410,12 +1410,9 @@ Internet-Draft      Object Security of CoAP (OSCOAP)        October 2016
 
 10.  Acknowledgments
 
-   Klaus Hartke has independently been working on the same problem and a
-   similar solution: establishing end-to-end security across proxies by
-   adding a CoAP option.  We are grateful to Malisa Vucinic and Marco
-   Tiloca for providing helpful and timely reviews of previous versions
-   of the draft.  We are also grateful to Carsten Bormann and Jim Schaad
-   for providing input and interesting discussions.
+   The following individuals provided input to this document: Carsten
+   Bormann, Joakim Brorsson, Martin Gunnarsson, Klaus Hartke, Jim
+   Schaad, Marco Tiloca, and Malisa Vucinic.
 
 11.  References
 
@@ -1448,6 +1445,9 @@ Internet-Draft      Object Security of CoAP (OSCOAP)        October 2016
               the Constrained Application Protocol (CoAP)", RFC 7959,
               DOI 10.17487/RFC7959, August 2016,
               <http://www.rfc-editor.org/info/rfc7959>.
+
+
+
 
 
 
