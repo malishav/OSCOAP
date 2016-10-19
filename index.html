@@ -620,8 +620,8 @@ Verify request with   |                       |
 <p/>
 
 <ul>
-  <li>To prevent information leakage, Uri-Path and Uri-Query SHALL be encrypted. If Proxy-Uri is used and thus Uri-* are not present, then OSCOAP implementation MUST first split the Proxy-Uri into the unencrypted Uri <a href="#AAD">Section 5.2</a> and the Uri-Path/Query options (according to section 6.4 of <a href="#RFC7252">[RFC7252]</a>), replace the Proxy-Uri value with the unencrypted Uri, and encrypt Uri-Path/Query, which will then be carried in the ciphertext. This means that the proxy will not be able to read the Uri-Path and Uri-Query options and will thus process the message as indicated by CoAP.</li>
-  <li>The CoAP Options Uri-Host, Uri-Port, Proxy-Uri, and Proxy-Scheme SHALL neither be encrypted, nor integrity protected (cf. protection of the unencrypted Uri in <a href="#AAD">Section 5.2</a>).</li>
+  <li>To prevent information leakage, Uri-Path and Uri-Query SHALL be encrypted. If Proxy-Uri is used and thus Uri-* are not present, then OSCOAP implementation MUST first split the Proxy-Uri into the unencrypted Uri <a href="#AAD">Section 5.2</a> and the Uri-Path/Query options (according to section 6.4 of <a href="#RFC7252">[RFC7252]</a>), replace the Proxy-Uri value with the unencrypted Uri, and encrypt Uri-Path/Query, which will then be carried in the ciphertext. This means that the proxy will not be able to see that Uri-Path and Uri-Query options are present in the message and will thus process the message as indicated by CoAP.</li>
+  <li>The CoAP Options Uri-Host, Uri-Port, Proxy-Uri, and Proxy-Scheme SHALL neither be encrypted, nor integrity protected. Note that even though these options are not protected, their values are included in the additional authenticated data, thus they are indirectly integrity protected (cf. protection of the unencrypted Uri in <a href="#AAD">Section 5.2</a>).</li>
   <li>The other CoAP options SHALL be encrypted and integrity protected.</li>
 </ul>
 <p id="rfc.section.4.p.6">A summary of which options are encrypted or integrity protected is shown in <a href="#protected-coap-options">Figure 4</a>.</p>
