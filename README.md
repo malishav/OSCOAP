@@ -4,7 +4,7 @@ This is the working area for the Working Group internet-draft, "Object Security 
 
 * [Editor's copy](https://EricssonResearch.github.io/OSCOAP/)
 * [Working Group Draft] (https://tools.ietf.org/html/draft-ietf-core-object-security)
-
+* [Compare Working Group and Editor's Drafts] (https://tools.ietf.org/rfcdiff?url1=https://www.ietf.org/id/draft-ietf-core-object-security&url2=http://ericssonresearch.github.io/OSCOAP/draft-ietf-core-object-security.txt)
 
 ## Building the Draft
 
