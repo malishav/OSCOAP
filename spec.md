@@ -4,7 +4,9 @@
 
 ## Table of Contents
 1. [Notes](#notes)
-2. [Template](#template)
+2. [Security Contexts](#security-contexts)
+    1. [Security Context A: Client](#client-sec)
+    2. [Security Context B: Server](#server-sec)
 3. [Correct OSCOAP use](#correct-oscoap-use)
     1. [GET test](#get)
         1. [Test 1a](#test-1a)
@@ -56,51 +58,9 @@ CoAP Version is 1 in all the tests.
 
 At the current state of these test specifications, the Base Key is not used.
 
-## 2. Template
+## 2. Security Contexts
 
-### Identifier: TEST_x
-
-**Objective** :
-
-**Configuration** :
-
-_clients security context_ :
-
-    * Common Context:
-    * Sender Context:
-    * Recipient Context:
-
-_server security context_ :
-
-    * Common Context:
-    * Sender Context:
-    * Recipient Context:
-
-**Test Sequence**
-
-+------+----------+----------------------------------------------------------+
-| Step | Type     | Description                                              |
-+======+==========+==========================================================+
-| 1    | Stimulus |                                                          |
-+------+----------+----------------------------------------------------------+
-| 2    | Check    |                                                          |
-+------+----------+----------------------------------------------------------+
-| 3    | Verify   |                                                          |
-+------+----------+----------------------------------------------------------+
-
-------
-
-## 3. Correct OSCOAP use
-
-### 3.1 GET Tests {#get}
-
-#### 3.1.1. Identifier: TEST_1a {#test-1a}
-
-**Objective** : Perform a simple GET transaction using OSCOAP, Content-Format and Uri-Path option (Client side)
-
-**Configuration** :
-
-_clients security context:_
+### Security Context A: Client {#client-sec}
 
 * Common Context:
     - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
@@ -117,6 +77,42 @@ _clients security context:_
     - Recipient IV: 58-F9-1A-5C-DF-F4-F5
     - Recipient Seq Number: 00
 
+### Security Context B: Server {#server-sec}
+
+* Common Context:
+    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
+    - Alg: AES-CCM-64-64-128
+    - Context Id: 4B-65-79-23-30
+* Sender Context:
+    - Sender Id: 73-65-72-76-65-72
+    - Sender Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
+    - Sender IV: 58-F9-1A-5C-DF-F4-F5
+    - Sender Seq Number: 00
+* Recipient Context:
+    - Recipient Id: 63-6C-69-65-6E-74
+    - Recipient Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
+    - Recipient IV: E8-28-A4-79-D0-88-C4
+    - Recipient Seq Number: 00
+
+------
+
+## 3. Correct OSCOAP use
+
+### 3.1 GET Tests {#get}
+
+#### 3.1.1. Identifier: TEST_1a {#test-1a}
+
+**Objective** : Perform a simple GET transaction using OSCOAP, Content-Format and Uri-Path option (Client side)
+
+**Configuration** :
+
+_client security context_: [Security Context A](#client-sec), with:
+
+* Sender Context:
+    - Sender Seq Number: 01
+* Recipient Context:
+    - Recipient Seq Number: 01
+
 **Test Sequence**
 
 +------+----------+----------------------------------------------------------+
@@ -126,7 +122,7 @@ _clients security context:_
 |      |          | protected with OSCOAP, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /hello                                      |
+|      |          | - Uri-Path : /helloworld                                 |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Client serializes the request                            |
 +------+----------+----------------------------------------------------------+
@@ -152,26 +148,17 @@ _clients security context:_
 
 **Configuration** :
 
-_server security context:_
+_server security context_: 
+[Security Context B](#server-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 73-65-72-76-65-72
-    - Sender Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Sender IV: 58-F9-1A-5C-DF-F4-F5
-    - Sender Seq Number: 00
+    - Sender Seq Number: 01
 * Recipient Context:
-    - Recipient Id: 63-6C-69-65-6E-74
-    - Recipient Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Recipient IV: E8-28-A4-79-D0-88-C4
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 01
 
-_server resources_
+_server resources_:
 
-* /hello : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /helloworld : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
 
 **Test Sequence**
 
@@ -182,7 +169,7 @@ _server resources_
 |      |          | protected with OSCOAP, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /hello                                      |
+|      |          | - Uri-Path = /helloworld                                 |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Server parses the request and continues the CoAP         |
 |      |          | processing (OSCOAP verification succeeds)                |
@@ -212,22 +199,13 @@ _server resources_
 
 **Configuration** :
 
-_clients security context:_
+_client security context_: [Security Context A](#client-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 63-6C-69-65-6E-74
-    - Sender Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Sender IV: E8-28-A4-79-D0-88-C4
-    - Sender Seq Number: 00
+    - Sender Seq Number: 02
 * Recipient Context:
-    - Recipient Id: 73-65-72-76-65-72
-    - Recipient Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Recipient IV: 58-F9-1A-5C-DF-F4-F5
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 02
+
 
 **Test Sequence**
 
@@ -238,7 +216,7 @@ _clients security context:_
 |      |          | protected with OSCOAP, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /hello                                      |
+|      |          | - Uri-Path = /helloworld                                 |
 |      |          | - Uri-Query : first=1                                    |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Client serializes the request                            |
@@ -265,26 +243,16 @@ _clients security context:_
 
 **Configuration** :
 
-_server security context:_
+_server security context_: [Security Context B](#server-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 73-65-72-76-65-72
-    - Sender Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Sender IV: 58-F9-1A-5C-DF-F4-F5
-    - Sender Seq Number: 00
+    - Sender Seq Number: 02
 * Recipient Context:
-    - Recipient Id: 63-6C-69-65-6E-74
-    - Recipient Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Recipient IV: E8-28-A4-79-D0-88-C4
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 02
 
-_server resources_
+_server resources_:
 
-* /hello : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain), and with ETag 0x2b
+* /helloworld : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain), and with ETag 0x2b
 
 **Test Sequence**
 
@@ -295,7 +263,7 @@ _server resources_
 |      |          | protected with OSCOAP, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-path = /hello                                      |
+|      |          | - Uri-path = /helloworld                                 |
 |      |          | - Uri-Query : first=1                                    |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Server parses the request and continues the CoAP         |
@@ -328,22 +296,12 @@ _server resources_
 
 **Configuration** :
 
-_clients security context:_
+_client security context_: [Security Context A](#client-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 63-6C-69-65-6E-74
-    - Sender Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Sender IV: E8-28-A4-79-D0-88-C4
-    - Sender Seq Number: 00
+    - Sender Seq Number: 03
 * Recipient Context:
-    - Recipient Id: 73-65-72-76-65-72
-    - Recipient Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Recipient IV: 58-F9-1A-5C-DF-F4-F5
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 03
 
 **Test Sequence**
 
@@ -354,7 +312,7 @@ _clients security context:_
 |      |          | protected with OSCOAP, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-path = /hello                                      |
+|      |          | - Uri-path = /helloworld                                 |
 |      |          | - Uri-Query : second=2                                   |
 |      |          | - Accept = 0 (text/plain;charset=utf-8)                  |
 +------+----------+----------------------------------------------------------+
@@ -382,26 +340,16 @@ _clients security context:_
 
 **Configuration** :
 
-_server security context:_
+_server security context_: [Security Context B](#server-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 73-65-72-76-65-72
-    - Sender Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Sender IV: 58-F9-1A-5C-DF-F4-F5
-    - Sender Seq Number: 00
+    - Sender Seq Number: 03
 * Recipient Context:
-    - Recipient Id: 63-6C-69-65-6E-74
-    - Recipient Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Recipient IV: E8-28-A4-79-D0-88-C4
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 03
 
-_server resources_
+_server resources_:
 
-* /hello : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain), with ETag 0x2b and Max-Age 5
+* /helloworld : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain), with ETag 0x2b and Max-Age 5
 
 **Test Sequence**
 
@@ -412,7 +360,7 @@ _server resources_
 |      |          | protected with OSCOAP, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-path = /hello                                      |
+|      |          | - Uri-path = /helloworld                                 |
 |      |          | - Uri-Query : second=2                                   |
 |      |          | - Accept = 0 (text/plain;charset=utf-8)                  |
 +------+----------+----------------------------------------------------------+
@@ -446,22 +394,12 @@ _server resources_
 
 **Configuration** :
 
-_clients security context:_
+_client security context_: [Security Context A](#client-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 63-6C-69-65-6E-74
-    - Sender Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Sender IV: E8-28-A4-79-D0-88-C4
-    - Sender Seq Number: 00
+    - Sender Seq Number: 04
 * Recipient Context:
-    - Recipient Id: 73-65-72-76-65-72
-    - Recipient Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Recipient IV: 58-F9-1A-5C-DF-F4-F5
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 04
 
 **Test Sequence**
 
@@ -500,24 +438,14 @@ _clients security context:_
 
 **Configuration** :
 
-_server security context:_
+_server security context_: [Security Context B](#server-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 73-65-72-76-65-72
-    - Sender Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Sender IV: 58-F9-1A-5C-DF-F4-F5
-    - Sender Seq Number:
+    - Sender Seq Number: 04
 * Recipient Context:
-    - Recipient Id: 63-6C-69-65-6E-74
-    - Recipient Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Recipient IV: E8-28-A4-79-D0-88-C4
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 04
 
-_server resources_
+_server resources_:
 
 
 **Test Sequence**
@@ -564,22 +492,12 @@ _server resources_
 
 **Configuration** :
 
-_clients security context:_
+_client security context_: [Security Context A](#client-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 63-6C-69-65-6E-74
-    - Sender Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Sender IV: E8-28-A4-79-D0-88-C4
-    - Sender Seq Number: 00
+    - Sender Seq Number: 05
 * Recipient Context:
-    - Recipient Id: 73-65-72-76-65-72
-    - Recipient Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Recipient IV: 58-F9-1A-5C-DF-F4-F5
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 05
 
 **Test Sequence**
 
@@ -619,24 +537,14 @@ _clients security context:_
 
 **Configuration** :
 
-_server security context:_
+_server security context_: [Security Context B](#server-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 73-65-72-76-65-72
-    - Sender Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Sender IV: 58-F9-1A-5C-DF-F4-F5
-    - Sender Seq Number:
+    - Sender Seq Number: 05
 * Recipient Context:
-    - Recipient Id: 63-6C-69-65-6E-74
-    - Recipient Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Recipient IV: E8-28-A4-79-D0-88-C4
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 05
 
-_server resources_
+_server resources_:
 
 * /counter  : protected resource, authorized method: PUT, returns the value of the counter with content-format 0 (text/plain), has ETag 0x5b5b
 
@@ -682,22 +590,12 @@ _server resources_
 
 **Configuration** :
 
-_clients security context:_
+_client security context_: [Security Context A](#client-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 63-6C-69-65-6E-74
-    - Sender Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Sender IV: E8-28-A4-79-D0-88-C4
-    - Sender Seq Number: 00
+    - Sender Seq Number: 06
 * Recipient Context:
-    - Recipient Id: 73-65-72-76-65-72
-    - Recipient Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Recipient IV: 58-F9-1A-5C-DF-F4-F5
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 06
 
 **Test Sequence**
 
@@ -734,24 +632,14 @@ _clients security context:_
 
 **Configuration** :
 
-_server security context:_
+_server security context_: [Security Context B](#server-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 73-65-72-76-65-72
-    - Sender Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Sender IV: 58-F9-1A-5C-DF-F4-F5
-    - Sender Seq Number:
+    - Sender Seq Number: 06
 * Recipient Context:
-    - Recipient Id: 63-6C-69-65-6E-74
-    - Recipient Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Recipient IV: E8-28-A4-79-D0-88-C4
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 06
 
-_server resources_
+_server resources_:
 
 * /counter  : protected resource, authorized method: DEL
 
@@ -794,22 +682,12 @@ _server resources_
 
 **Configuration** :
 
-_clients security context:_
+_client security context_: [Security Context A](#client-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 63-6C-69-65-6E-74
-    - Sender Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Sender IV: E8-28-A4-79-D0-88-C4
-    - Sender Seq Number: 00
+    - Sender Seq Number: 07
 * Recipient Context:
-    - Recipient Id: 73-65-72-76-65-72
-    - Recipient Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Recipient IV: 58-F9-1A-5C-DF-F4-F5
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 07
 
 **Test Sequence**
 
@@ -846,24 +724,14 @@ _clients security context:_
 
 **Configuration** :
 
-_server security context:_
+_server security context_: [Security Context B](#server-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 73-65-72-76-65-72
-    - Sender Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Sender IV: 58-F9-1A-5C-DF-F4-F5
-    - Sender Seq Number:
+    - Sender Seq Number: 07
 * Recipient Context:
-    - Recipient Id: 63-6C-69-65-6E-74
-    - Recipient Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Recipient IV: E8-28-A4-79-D0-88-C4
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 07
 
-_server resources_
+_server resources_:
 
 
 **Test Sequence**
@@ -910,22 +778,13 @@ _server resources_
 
 **Configuration** :
 
-_clients security context:_
+_client security context_: [Security Context A](#client-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23 
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 63-6C-69-65-6E-74
     - Sender Key: **11**-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Sender IV: E8-28-A4-79-D0-88-C4
-    - Sender Seq Number: 00
+    - Sender Seq Number: 08
 * Recipient Context:
-    - Recipient Id: 73-65-72-76-65-72
-    - Recipient Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Recipient IV: 58-F9-1A-5C-DF-F4-F5
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 08
 
 **Test Sequence**
 
@@ -936,7 +795,7 @@ _clients security context:_
 |      |          | protected with OSCOAP, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /hello                                      |
+|      |          | - Uri-Path : /helloworld                                 |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Client serializes the request                            |
 +------+----------+----------------------------------------------------------+
@@ -957,26 +816,16 @@ _clients security context:_
 
 **Configuration** :
 
-_server security context:_
+_server security context_: [Security Context B](#server-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 73-65-72-76-65-72
-    - Sender Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Sender IV: 58-F9-1A-5C-DF-F4-F5
-    - Sender Seq Number: 00
+    - Sender Seq Number: 08
 * Recipient Context:
-    - Recipient Id: 63-6C-69-65-6E-74
-    - Recipient Key: **F8**-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Recipient IV: E8-28-A4-79-D0-88-C4
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 08
 
-_server resources_
+_server resources_:
 
-* /hello : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /helloworld : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
 
 **Test Sequence**
 
@@ -987,7 +836,7 @@ _server resources_
 |      |          | protected with OSCOAP, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /hello                                      |
+|      |          | - Uri-Path = /helloworld                                 |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | The message verification [6.3] fails and the server      |
 |      |          | stops processing the message                             |
@@ -1005,22 +854,13 @@ _server resources_
 
 **Configuration** :
 
-_clients security context:_
+_client security context_: [Security Context A](#client-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23 
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 63-6C-69-65-6E-74
-    - Sender Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
     - Sender IV: **11**-28-A4-79-D0-88-C4
-    - Sender Seq Number: 00
+    - Sender Seq Number: 09
 * Recipient Context:
-    - Recipient Id: 73-65-72-76-65-72
-    - Recipient Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Recipient IV: 58-F9-1A-5C-DF-F4-F5
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 09
 
 **Test Sequence**
 
@@ -1031,7 +871,7 @@ _clients security context:_
 |      |          | protected with OSCOAP, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /hello                                      |
+|      |          | - Uri-Path : /helloworld                                 |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Client serializes the request                            |
 +------+----------+----------------------------------------------------------+
@@ -1052,26 +892,16 @@ _clients security context:_
 
 **Configuration** :
 
-_server security context:_
+_server security context_: [Security Context B](#server-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 73-65-72-76-65-72
-    - Sender Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Sender IV: 58-F9-1A-5C-DF-F4-F5
-    - Sender Seq Number: 00
+    - Sender Seq Number: 09
 * Recipient Context:
-    - Recipient Id: 63-6C-69-65-6E-74
-    - Recipient Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Recipient IV: **E8**-28-A4-79-D0-88-C4
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 09
 
-_server resources_
+_server resources_:
 
-* /hello : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /helloworld : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
 
 **Test Sequence**
 
@@ -1082,7 +912,7 @@ _server resources_
 |      |          | protected with OSCOAP, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /hello                                      |
+|      |          | - Uri-Path = /helloworld                                 |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | The message verification [6.3] fails and the server      |
 |      |          | stops processing the message                             |
@@ -1100,22 +930,13 @@ _server resources_
 
 **Configuration** :
 
-_clients security context:_
+_client security context_: [Security Context A](#client-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23 
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
     - Sender Id: **11**-6C-69-65-6E-74
-    - Sender Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Sender IV: E8-28-A4-79-D0-88-C4
-    - Sender Seq Number: 00
+    - Sender Seq Number: 0A
 * Recipient Context:
-    - Recipient Id: 73-65-72-76-65-72
-    - Recipient Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Recipient IV: 58-F9-1A-5C-DF-F4-F5
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 0A
 
 **Test Sequence**
 
@@ -1126,7 +947,7 @@ _clients security context:_
 |      |          | protected with OSCOAP, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /hello                                      |
+|      |          | - Uri-Path : /helloworld                                 |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Client serializes the request                            |
 +------+----------+----------------------------------------------------------+
@@ -1147,26 +968,16 @@ _clients security context:_
 
 **Configuration** :
 
-_server security context:_
+_server security context_: [Security Context B](#server-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 73-65-72-76-65-72
-    - Sender Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Sender IV: 58-F9-1A-5C-DF-F4-F5
-    - Sender Seq Number: 00
+    - Sender Seq Number: 0A
 * Recipient Context:
-    - Recipient Id: **63**-6C-69-65-6E-74
-    - Recipient Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Recipient IV: E8-28-A4-79-D0-88-C4
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 0A
 
-_server resources_
+_server resources_:
 
-* /hello : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /helloworld : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
 
 **Test Sequence**
 
@@ -1177,7 +988,7 @@ _server resources_
 |      |          | protected with OSCOAP, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /hello                                      |
+|      |          | - Uri-Path = /helloworld                                 |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | The message verification [6.3] fails and the server      |
 |      |          | stops processing the message                             |
@@ -1195,22 +1006,13 @@ _server resources_
 
 **Configuration** :
 
-_clients security context:_
+_client security context_: [Security Context A](#client-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23 
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 63-6C-69-65-6E-74
-    - Sender Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Sender IV: E8-28-A4-79-D0-88-C4
-    - Sender Seq Number: 00
+    - Sender Seq Number: 0B
 * Recipient Context:
-    - Recipient Id: 73-65-72-76-65-72
     - Recipient Key: **11**-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Recipient IV: 58-F9-1A-5C-DF-F4-F5
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 0B
 
 **Test Sequence**
 
@@ -1221,7 +1023,7 @@ _clients security context:_
 |      |          | protected with OSCOAP, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /hello                                      |
+|      |          | - Uri-Path : /helloworld                                 |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Client serializes the request                            |
 +------+----------+----------------------------------------------------------+
@@ -1247,26 +1049,16 @@ _clients security context:_
 
 **Configuration** :
 
-_server security context:_
+_server security context_: [Security Context B](#server-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 73-65-72-76-65-72
-    - Sender Key: **EB**-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Sender IV: 58-F9-1A-5C-DF-F4-F5
-    - Sender Seq Number: 00
+    - Sender Seq Number: 0B
 * Recipient Context:
-    - Recipient Id: 63-6C-69-65-6E-74
-    - Recipient Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Recipient IV: E8-28-A4-79-D0-88-C4
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 0B
 
-_server resources_
+_server resources_:
 
-* /hello : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /helloworld : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
 
 **Test Sequence**
 
@@ -1277,7 +1069,7 @@ _server resources_
 |      |          | protected with OSCOAP, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /hello                                      |
+|      |          | - Uri-Path = /helloworld                                 |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Server parses the request and continues the CoAP         |
 |      |          | processing (OSCOAP verification succeeds)                |
@@ -1307,22 +1099,13 @@ _server resources_
 
 **Configuration** :
 
-_clients security context:_
+_client security context_: [Security Context A](#client-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23 
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 63-6C-69-65-6E-74
-    - Sender Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Sender IV: E8-28-A4-79-D0-88-C4
-    - Sender Seq Number: 00
+    - Sender Seq Number: 0C
 * Recipient Context:
-    - Recipient Id: 73-65-72-76-65-72
-    - Recipient Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
     - Recipient IV: **11**-F9-1A-5C-DF-F4-F5
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 0C
 
 **Test Sequence**
 
@@ -1333,7 +1116,7 @@ _clients security context:_
 |      |          | protected with OSCOAP, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /hello                                      |
+|      |          | - Uri-Path : /helloworld                                 |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Client serializes the request                            |
 +------+----------+----------------------------------------------------------+
@@ -1359,26 +1142,16 @@ _clients security context:_
 
 **Configuration** :
 
-_server security context:_
+_server security context_: [Security Context B](#server-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 73-65-72-76-65-72
-    - Sender Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Sender IV: **58**-F9-1A-5C-DF-F4-F5
-    - Sender Seq Number: 00
+    - Sender Seq Number: 0C
 * Recipient Context:
-    - Recipient Id: 63-6C-69-65-6E-74
-    - Recipient Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Recipient IV: E8-28-A4-79-D0-88-C4
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 0C
 
-_server resources_
+_server resources_:
 
-* /hello : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /helloworld : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
 
 **Test Sequence**
 
@@ -1389,7 +1162,7 @@ _server resources_
 |      |          | protected with OSCOAP, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /hello                                      |
+|      |          | - Uri-Path = /helloworld                                 |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Server parses the request and continues the CoAP         |
 |      |          | processing (OSCOAP verification succeeds)                |
@@ -1419,22 +1192,13 @@ _server resources_
 
 **Configuration** :
 
-_clients security context:_
+_client security context_: [Security Context A](#client-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23 
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 63-6C-69-65-6E-74
-    - Sender Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Sender IV: E8-28-A4-79-D0-88-C4
-    - Sender Seq Number: 00
+    - Sender Seq Number: 0D
 * Recipient Context:
     - Recipient Id: **11**-65-72-76-65-72
-    - Recipient Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Recipient IV: 58-F9-1A-5C-DF-F4-F5
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 0D
 
 **Test Sequence**
 
@@ -1445,7 +1209,7 @@ _clients security context:_
 |      |          | protected with OSCOAP, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /hello                                      |
+|      |          | - Uri-Path : /helloworld                                 |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Client serializes the request                            |
 +------+----------+----------------------------------------------------------+
@@ -1471,26 +1235,16 @@ _clients security context:_
 
 **Configuration** :
 
-_server security context:_
+_server security context_: [Security Context B](#server-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: **73**-65-72-76-65-72
-    - Sender Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Sender IV: 58-F9-1A-5C-DF-F4-F5
-    - Sender Seq Number: 00
+    - Sender Seq Number: 0D
 * Recipient Context:
-    - Recipient Id: 63-6C-69-65-6E-74
-    - Recipient Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Recipient IV: E8-28-A4-79-D0-88-C4
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 0D
 
-_server resources_
+_server resources_:
 
-* /hello : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /helloworld : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
 
 **Test Sequence**
 
@@ -1501,7 +1255,7 @@ _server resources_
 |      |          | protected with OSCOAP, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /hello                                      |
+|      |          | - Uri-Path = /helloworld                                 |
 +------+----------+----------------------------------------------------------+
 | 4    | Check    | Server parses the request and continues the CoAP         |
 |      |          | processing (OSCOAP verification succeeds)                |
@@ -1534,22 +1288,12 @@ _server resources_
 
 **Configuration** :
 
-_clients security context:_
+_client security context_: [Security Context A](#client-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 63-6C-69-65-6E-74
-    - Sender Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Sender IV: E8-28-A4-79-D0-88-C4
     - Sender Seq Number: **00**
 * Recipient Context:
-    - Recipient Id: 73-65-72-76-65-72
-    - Recipient Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Recipient IV: 58-F9-1A-5C-DF-F4-F5
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 0E
 
 **Test Sequence**
 
@@ -1560,7 +1304,7 @@ _clients security context:_
 |      |          | protected with OSCOAP, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /hello                                      |
+|      |          | - Uri-Path : /helloworld                                 |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Client serializes the request                            |
 +------+----------+----------------------------------------------------------+
@@ -1583,26 +1327,16 @@ _clients security context:_
 
 **Configuration** :
 
-_server security context:_
+_server security context_: [Security Context B](#server-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 73-65-72-76-65-72
-    - Sender Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Sender IV: 58-F9-1A-5C-DF-F4-F5
-    - Sender Seq Number: 00
+    - Sender Seq Number: 0E
 * Recipient Context:
-    - Recipient Id: 63-6C-69-65-6E-74
-    - Recipient Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Recipient IV: E8-28-A4-79-D0-88-C4
     - Recipient Seq Number: **65**
 
-_server resources_
+_server resources_:
 
-* /hello : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /helloworld : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
 
 **Test Sequence**
 
@@ -1613,7 +1347,7 @@ _server resources_
 |      |          | protected with OSCOAP, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /hello                                      |
+|      |          | - Uri-Path = /helloworld                                 |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | The message verification [6.3] fails and the server      |
 |      |          | stops processing the message                             |
@@ -1633,21 +1367,11 @@ _server resources_
 
 **Configuration** :
 
-_clients security context:_
+_client security context_: [Security Context A](#client-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 63-6C-69-65-6E-74
-    - Sender Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Sender IV: E8-28-A4-79-D0-88-C4
-    - Sender Seq Number: 00
+    - Sender Seq Number: 0F
 * Recipient Context:
-    - Recipient Id: 73-65-72-76-65-72
-    - Recipient Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Recipient IV: 58-F9-1A-5C-DF-F4-F5
     - Recipient Seq Number: **65**
 
 **Test Sequence**
@@ -1659,7 +1383,7 @@ _clients security context:_
 |      |          | protected with OSCOAP, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /hello                                      |
+|      |          | - Uri-Path : /helloworld                                 |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Client serializes the request                            |
 +------+----------+----------------------------------------------------------+
@@ -1687,26 +1411,16 @@ _clients security context:_
 
 **Configuration** :
 
-_server security context:_
+_server security context_: [Security Context B](#server-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 73-65-72-76-65-72
-    - Sender Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Sender IV: 58-F9-1A-5C-DF-F4-F5
     - Sender Seq Number: **00**
 * Recipient Context:
-    - Recipient Id: 63-6C-69-65-6E-74
-    - Recipient Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Recipient IV: E8-28-A4-79-D0-88-C4
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 0F
 
-_server resources_
+_server resources_:
 
-* /hello : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /helloworld : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
 
 **Test Sequence**
 
@@ -1717,7 +1431,7 @@ _server resources_
 |      |          | protected with OSCOAP, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /hello                                      |
+|      |          | - Uri-Path = /helloworld                                 |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Server parses the request and continues the CoAP         |
 |      |          | processing (OSCOAP verification succeeds)                |
@@ -1749,22 +1463,12 @@ _server resources_
 
 **Configuration** :
 
-_clients security context:_
+_client security context_: [Security Context A](#client-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: **4B-65-79-23-30**
 * Sender Context:
-    - Sender Id: **63-6C-69-65-6E-74**
-    - Sender Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Sender IV: E8-28-A4-79-D0-88-C4
-    - Sender Seq Number: **00**
+    - Sender Seq Number: **10**
 * Recipient Context:
-    - Recipient Id: 73-65-72-76-65-72**
-    - Recipient Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Recipient IV: 58-F9-1A-5C-DF-F4-F5
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 10
 
 **Test Sequence**
 
@@ -1801,24 +1505,14 @@ _clients security context:_
 
 **Configuration** :
 
-_server security context:_
+_server security context_: [Security Context B](#server-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 73-65-72-76-65-72
-    - Sender Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Sender IV: 58-F9-1A-5C-DF-F4-F5
-    - Sender Seq Number: 00
+    - Sender Seq Number: 10
 * Recipient Context:
-    - Recipient Id: 63-6C-69-65-6E-74
-    - Recipient Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Recipient IV: E8-28-A4-79-D0-88-C4
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 10
 
-_server resources_
+_server resources_:
 
 * /change-tid : protected resource, authorized method: GET, modify the Tid of the response to an arbitrary value, returns the string "Hello World!" with content-format 0 (text/plain) 
 
@@ -1865,32 +1559,19 @@ _server resources_
 
 **Configuration** :
 
-_clients security context:_
+_client security context_: [Security Context A](#client-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
-* Sender Context:
-    - Sender Id: 63-6C-69-65-6E-74
-    - Sender Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Sender IV: E8-28-A4-79-D0-88-C4
-    - Sender Seq Number: 00
-* Recipient Context:
-    - Recipient Id: 73-65-72-76-65-72
-    - Recipient Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Recipient IV: 58-F9-1A-5C-DF-F4-F5
-    - Recipient Seq Number: 00
+N/A
 
 **Test Sequence**
 
 +------+----------+----------------------------------------------------------+
 | Step | Type     | Description                                              |
 +======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request       |
-|      |          | protected with OSCOAP, including:                        |
+| 1    | Stimulus | The client is requested to send a CoAP GET request,      |
+|      |          | including:                                               |
 |      |          |                                                          |
-|      |          | - Uri-Path : /hello                                      |
+|      |          | - Uri-Path : /helloworld                                 |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Client serializes the request                            |
 +------+----------+----------------------------------------------------------+
@@ -1908,36 +1589,26 @@ _clients security context:_
 
 **Configuration** :
 
-_server security context:_
+_server security context_: [Security Context B](#server-sec), with:
 
-* Common Context:
-    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
-    - Alg: AES-CCM-64-64-128
-    - Context Id: 4B-65-79-23-30
 * Sender Context:
-    - Sender Id: 73-65-72-76-65-72
-    - Sender Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Sender IV: 58-F9-1A-5C-DF-F4-F5
-    - Sender Seq Number: 00
+    - Sender Seq Number: 11
 * Recipient Context:
-    - Recipient Id: 63-6C-69-65-6E-74
-    - Recipient Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Recipient IV: E8-28-A4-79-D0-88-C4
-    - Recipient Seq Number: 00
+    - Recipient Seq Number: 11
 
-_server resources_
+_server resources_:
 
-* /hello : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /helloworld : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
 
 **Test Sequence**
 
 +------+----------+----------------------------------------------------------+
 | Step | Type     | Description                                              |
 +======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request       |
-|      |          | protected with OSCOAP, including:                        |
+| 1    | Stimulus | The client is requested to send a CoAP GET request,      |
+|      |          | including:                                               |
 |      |          |                                                          |
-|      |          | - Uri-Path = /hello                                      |
+|      |          | - Uri-Path : /helloworld                                 |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | The message verification [6.3] fails                     |
 +------+----------+----------------------------------------------------------+
