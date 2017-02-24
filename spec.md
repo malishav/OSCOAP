@@ -602,7 +602,7 @@ _client security context_: [Security Context A](#client-sec), with:
 +------+----------+----------------------------------------------------------+
 | Step | Type     | Description                                              |
 +======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP PUT request       |
+| 1    | Stimulus | The client is requested to send a CoAP DEL request       |
 |      |          | protected with OSCOAP, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
@@ -648,7 +648,7 @@ _server resources_:
 +------+----------+----------------------------------------------------------+
 | Step | Type     | Description                                              |
 +======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP PUT request       |
+| 1    | Stimulus | The client is requested to send a CoAP DEL request       |
 |      |          | protected with OSCOAP, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
