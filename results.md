@@ -54,6 +54,47 @@ Implementer: TODO
         1. [TEST_17a](#test-17a)
         2. [TEST_17b](#test-17b)
 
+## 1. Notes
+
+CoAP Version is 1 in all the tests.
+
+At the current state of these test specifications, the Base Key is not used.
+
+## 2. Security Contexts
+
+### Security Context A: Client {#client-sec}
+
+* Common Context:
+    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
+    - Alg: AES-CCM-64-64-128
+    - Context Id: 4B-65-79-23-30
+* Sender Context:
+    - Sender Id: 63-6C-69-65-6E-74
+    - Sender Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
+    - Sender IV: E8-28-A4-79-D0-88-C4
+    - Sender Seq Number: 00
+* Recipient Context:
+    - Recipient Id: 73-65-72-76-65-72
+    - Recipient Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
+    - Recipient IV: 58-F9-1A-5C-DF-F4-F5
+    - Recipient Seq Number: 00
+
+### Security Context B: Server {#server-sec}
+
+* Common Context:
+    - Base Key: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
+    - Alg: AES-CCM-64-64-128
+    - Context Id: 4B-65-79-23-30
+* Sender Context:
+    - Sender Id: 73-65-72-76-65-72
+    - Sender Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
+    - Sender IV: 58-F9-1A-5C-DF-F4-F5
+    - Sender Seq Number: 00
+* Recipient Context:
+    - Recipient Id: 63-6C-69-65-6E-74
+    - Recipient Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
+    - Recipient IV: E8-28-A4-79-D0-88-C4
+    - Recipient Seq Number: 00
 
 ------
 
