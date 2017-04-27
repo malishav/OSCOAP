@@ -18,16 +18,14 @@ Francesca, Christian
 
 ## Documentation
 
-### \[1\]: {#ref-1}
-[Test specification provided:](https://github.com/EricssonResearch/OSCOAP/releases/tag/interop-27-02-2017)
+### \[1\]: [Test specification provided](https://github.com/EricssonResearch/OSCOAP/releases/tag/interop-27-02-2017)
 
-### \[2\]: {#ref-2}
-[OSCOAP version implemented:](https://github.com/core-wg/oscoap/releases/tag/interop-27-02-17)
+### \[2\]: [OSCOAP version implemented](https://github.com/core-wg/oscoap/releases/tag/interop-27-02-2017)
 
 ## Summary
 
 Because of the short timeslot and connectivity issues, only two implementations were tested: Christian's and Jim's. The set of tests was run on a first round with Jim's client and Christian's server, and on a second round with Jim's server and Christian's client.
-Jim and Christian have described the outcome of each test during the run as successful (passed) or not (failed) if the outcome was the one expected according to the test specification [[1]](#1). They have also captured the traffic and shared it with us, to allow for a more extensive analysis of the results.
+Jim and Christian have described the outcome of each test during the run as successful (passed) or not (failed) if the outcome was the one expected according to the test specification \[1\]. They have also captured the traffic and shared it with us, to allow for a more extensive analysis of the results.
 
 In short, the interop was successful, and the implementation could interact as expected, for the set of tests provided.
 
@@ -57,7 +55,7 @@ Additional tests:
 * Client sends Uri_Query unprotected: server discards it, so passed.
 * Client sends unknown Cid: passed
 
-## Client: Christian's, Server: Jim's
+### Client: Christian's, Server: Jim's
 
 * 1\. Passed
 * 2\. Passed
