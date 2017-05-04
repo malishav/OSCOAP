@@ -26,37 +26,33 @@
     3. [PUT test](#put)       
         1. [Test 7a](#test-7a)
         2. [Test 7b](#test-7b)
-        3. [TEST_8a](#test-8a)
-        4. [TEST_8b](#test-8b)
+        3. [Test 8a](#test-8a)
+        4. [Test 8b](#test-8b)
     4. [DELETE test](#del)
-        1. [TEST_9a](#test-9a)
-        2. [TEST_9b](#test-9b)
+        1. [Test 9a](#test-9a)
+        2. [Test 9b](#test-9b)
 4. [Incorrect OSCOAP use](#incorrect-oscoap)
     1. [Security Context not matching](#sec-context)
-        5. [TEST_10a](#test-10a)
-        6. [TEST_10b](#test-10b)
-        7. [TEST_11a](#test-11a)
-        2. [TEST_11b](#test-11b)
-        3. [TEST_12a](#test-12a)
-        4. [TEST_12b](#test-12b)
-        5. [TEST_13a](#test-13a)
-        6. [TEST_13b](#test-13b)
+        1. [Test 10a](#test-10a)
+        2. [Test 10b](#test-10b)
+        3. [Test 11a](#test-11a)
+        4. [Test 11b](#test-11b)
+        5. [Test 12a](#test-12a)
+        6. [Test 12b](#test-12b)
     2. [Replay of a previously sent message](#replay)
-        1. [TEST_14a](#test-14a)
-        2. [TEST_14b](#test-14b)
-        3. [TEST_15a](#test-15a)
-        4. [TEST_15b](#test-15b)
-        5. [TEST_16a](#test-16a)
-        6. [TEST_16b](#test-16b)
-    3. [Accessing an OSCOAP-protected resource without OSCOAP](#unauth)
-        1. [TEST_17a](#test-17a)
-        2. [TEST_17b](#test-17b)
+        1. [Test 13a](#test-13a)
+        2. [Test 13b](#test-13b)
+    3. [Accessing an OSCOAP-protected resource without OSCOAP](#auth)
+        1. [Test 14a](#test-14a)
+        2. [Test 14b](#test-14b)
 
 ## 1. Notes
 
 CoAP Version is 2 in all the tests.
 
 The client and server may optionally display external_aad and COSE object (before and after compression) to simplify debugging.
+
+When non-indicated, CoAP messages can be NON or CON (implementer's choice)
 
 ## 2. Security Contexts and Resources
 
