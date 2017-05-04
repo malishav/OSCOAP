@@ -939,6 +939,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | OSCOAP verification succeeds; expected response:         |
 |      |          | 4.01 Unauthorized error message:                         |
 |      |          |                                                          |
+|      |          | - Object-Security option                                 |
 |      |          | - Payload: Security context not found (optional)         |
 +------+----------+----------------------------------------------------------+
 | 5    | Verify   | Client displays the received packet                      |
@@ -975,6 +976,7 @@ _server resources_:
 | 4    | Check    | Server serialize the response correctly, which is:       |
 |      |          | 4.01 Unauthorized error message:                         |
 |      |          |                                                          |
+|      |          | - Object-Security option                                 |
 |      |          | - Payload: Security context not found (optional)         |
 +------+----------+----------------------------------------------------------+
 | 5    | Verify   | Server displays the sent packet                          |
@@ -1010,6 +1012,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | OSCOAP verification succeeds; expected response:         |
 |      |          | 4.00 Bad Request error message:                          |
 |      |          |                                                          |
+|      |          | - Object-Security option                                 |
 |      |          | - Payload: Decryption failed (optional)                  |
 +------+----------+----------------------------------------------------------+
 | 5    | Verify   | Client displays the received packet                      |
@@ -1046,6 +1049,7 @@ _server resources_:
 | 4    | Check    | Server serialize the response correctly, which is:       |
 |      |          | 4.00 Bad Request error message:                          |
 |      |          |                                                          |
+|      |          | - Object-Security option                                 |
 |      |          | - Payload: Decryption failed (optional)                  |
 +------+----------+----------------------------------------------------------+
 | 5    | Verify   | Server displays the sent packet                          |
@@ -1122,210 +1126,15 @@ _server resources_:
 | 5    | Verify   | Server displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
 
---------------
-TODO: UPDATE FOLLOWING SECTIONS
-
-#### 4.1.9. Identifier: TEST_12a {#test-12a}
-
-**Objective** : Perform a GET transaction with non matching Client Recipient - Server Sender IVs (Client side)
-
-**Configuration** :
-
-_client security context_: [Security Context A](#client-sec), with:
-
-* Sender Context:
-    - Sender Seq Number: 0C
-* Recipient Context:
-    - Recipient IV: **11**-F9-1A-5C-DF-F4-F5
-    - Recipient Seq Number: 0C
-
-**Test Sequence**
-
-+------+----------+----------------------------------------------------------+
-| Step | Type     | Description                                              |
-+======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request       |
-|      |          | protected with OSCOAP, including:                        |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /helloworld                                 |
-+------+----------+----------------------------------------------------------+
-| 2    | Check    | Client serializes the request                            |
-+------+----------+----------------------------------------------------------+
-| 3    | Verify   | - Client displays the sent packet                        |
-|      |          | - (Optional) Client displays the external_aad for the    |
-|      |          | sent message                                             |
-|      |          | - (Optional) Client displays the COSE object for the     |
-|      |          | sent message                                             |
-+------+----------+----------------------------------------------------------+
-| 4    | Check    | The message verification [6.5] fails and the client      |
-|      |          | stops processing the message                             |
-+------+----------+----------------------------------------------------------+
-| 5    | Verify   | - Client displays the received packet                    |
-|      |          | - (Optional) Client displays the external_aad for the    |
-|      |          | received message                                         |
-|      |          | - (Optional) Client displays the COSE object for the     |
-|      |          | received message                                         |
-+------+----------+----------------------------------------------------------+
-
-#### 4.1.10. Identifier: TEST_12b {#test-12b}
-
-**Objective** : Perform a GET transaction with non matching Client Recipient - Server Sender IVs (Server side)
-
-**Configuration** :
-
-_server security context_: [Security Context B](#server-sec), with:
-
-* Sender Context:
-    - Sender Seq Number: 0C
-* Recipient Context:
-    - Recipient Seq Number: 0C
-
-_server resources_:
-
-* /helloworld : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
-
-**Test Sequence**
-
-+------+----------+----------------------------------------------------------+
-| Step | Type     | Description                                              |
-+======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request       |
-|      |          | protected with OSCOAP, including:                        |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /helloworld                                 |
-+------+----------+----------------------------------------------------------+
-| 2    | Check    | Server parses the request and continues the CoAP         |
-|      |          | processing (OSCOAP verification succeeds)                |
-+------+----------+----------------------------------------------------------+
-| 3    | Verify   | - Server displays the received packet                    |
-|      |          | - (Optional) Server displays the external_aad for the    |
-|      |          | received message                                         |
-|      |          | - (Optional) Server displays the COSE object for the     |
-|      |          | received message                                         |
-+------+----------+----------------------------------------------------------+
-| 4    | Check    | Server serialize the response correctly, including:      |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Content-Format = 0 (text/plain)                        |
-|      |          | - payload                                                |
-+------+----------+----------------------------------------------------------+
-| 5    | Verify   | - Server displays the sent packet                        |
-|      |          | - (Optional) Server displays the external_aad for the    |
-|      |          | sent message                                             |
-|      |          | - (Optional) Server displays the COSE object for the     |
-|      |          | sent message                                             |
-+------+----------+----------------------------------------------------------+
-
-#### 4.1.11. Identifier: TEST_13a {#test-13a}
-
-**Objective** : Perform a GET transaction with non matching Client Recipient - Server Sender Ids (Client side)
-
-**Configuration** :
-
-_client security context_: [Security Context A](#client-sec), with:
-
-* Sender Context:
-    - Sender Seq Number: 0D
-* Recipient Context:
-    - Recipient Id: **11**-65-72-76-65-72
-    - Recipient Seq Number: 0D
-
-**Test Sequence**
-
-+------+----------+----------------------------------------------------------+
-| Step | Type     | Description                                              |
-+======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request       |
-|      |          | protected with OSCOAP, including:                        |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /helloworld                                 |
-+------+----------+----------------------------------------------------------+
-| 2    | Check    | Client serializes the request                            |
-+------+----------+----------------------------------------------------------+
-| 3    | Verify   | - Client displays the sent packet                        |
-|      |          | - (Optional) Client displays the external_aad for the    |
-|      |          | sent message                                             |
-|      |          | - (Optional) Client displays the COSE object for the     |
-|      |          | sent message                                             |
-+------+----------+----------------------------------------------------------+
-| 4    | Check    | The message verification [6.5] fails and the client      |
-|      |          | stops processing the message                             |
-+------+----------+----------------------------------------------------------+
-| 5    | Verify   | - Client displays the received packet                    |
-|      |          | - (Optional) Client displays the external_aad for the    |
-|      |          | received message                                         |
-|      |          | - (Optional) Client displays the COSE object for the     |
-|      |          | received message                                         |
-+------+----------+----------------------------------------------------------+
-
-#### 4.1.12. Identifier: TEST_13b {#test-13b}
-
-**Objective** : Perform a GET transaction with non matching Client Recipient - Server Sender Ids (Server side)
-
-**Configuration** :
-
-_server security context_: [Security Context B](#server-sec), with:
-
-* Sender Context:
-    - Sender Seq Number: 0D
-* Recipient Context:
-    - Recipient Seq Number: 0D
-
-_server resources_:
-
-* /helloworld : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
-
-**Test Sequence**
-
-+------+----------+----------------------------------------------------------+
-| Step | Type     | Description                                              |
-+======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request       |
-|      |          | protected with OSCOAP, including:                        |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /helloworld                                 |
-+------+----------+----------------------------------------------------------+
-| 4    | Check    | Server parses the request and continues the CoAP         |
-|      |          | processing (OSCOAP verification succeeds)                |
-+------+----------+----------------------------------------------------------+
-| 3    | Verify   | - Server displays the received packet                    |
-|      |          | - (Optional) Server displays the external_aad for the    |
-|      |          | received message                                         |
-|      |          | - (Optional) Server displays the COSE object for the     |
-|      |          | received message                                         |
-+------+----------+----------------------------------------------------------+
-| 4    | Check    | Server serialize the response correctly, including:      |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Content-Format = 0 (text/plain)                        |
-|      |          | - payload                                                |
-+------+----------+----------------------------------------------------------+
-| 5    | Verify   | - Server displays the sent packet                        |
-|      |          | - (Optional) Server displays the external_aad for the    |
-|      |          | sent message                                             |
-|      |          | - (Optional) Server displays the COSE object for the     |
-|      |          | sent message                                             |
-+------+----------+----------------------------------------------------------+
-
-
 ### 4.2. Replay of a previously sent message {#replay}
 
-#### 4.2.1. Identifier: TEST_14a {#test-14a}
+#### 4.2.1. Identifier: TEST_13a {#test-13a}
 
-**Objective** : Perform a GET transaction using OSCOAP, Content-Format and Uri-Path option, request replayed by the Client (Client side)
+**Objective** : Perform a CON GET transaction using OSCOAP, Content-Format and Uri-Path option, request replayed by the Client (Client side)
 
 **Configuration** :
 
-_client security context_: [Security Context A](#client-sec), with:
-
-* Sender Context:
-    - Sender Seq Number: **00**
-* Recipient Context:
-    - Recipient Seq Number: 0E
+_client security context_: [Security Context A](#client-sec)
 
 **Test Sequence**
 
@@ -1336,301 +1145,149 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | protected with OSCOAP, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /helloworld                                 |
-+------+----------+----------------------------------------------------------+
-| 2    | Check    | Client serializes the request                            |
-+------+----------+----------------------------------------------------------+
-| 3    | Verify   | - Client displays the sent packet                        |
-|      |          | - (Optional) Client displays the sequence number in the  |
-|      |          | sent message                                             |
-|      |          | - (Optional) Client displays the external_aad for the    |
-|      |          | sent message                                             |
-|      |          | - (Optional) Client displays the COSE object for the     |
-|      |          | sent message                                             |
-+------+----------+----------------------------------------------------------+
-| 4    | Check    | Client doesn't receive a response back                   |
-+------+----------+----------------------------------------------------------+
-| 5    | Verify   | Client displays the received packet (if any)             |
-+------+----------+----------------------------------------------------------+
-
-#### 4.2.2. Identifier: TEST_14b {#test-14b}
-
-**Objective** : Perform a GET transaction using OSCOAP, Content-Format and Uri-Path option, request replayed by the Client (Server side)
-
-**Configuration** :
-
-_server security context_: [Security Context B](#server-sec), with:
-
-* Sender Context:
-    - Sender Seq Number: 0E
-* Recipient Context:
-    - Recipient Seq Number: **65**
-
-_server resources_:
-
-* /helloworld : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
-
-**Test Sequence**
-
-+------+----------+----------------------------------------------------------+
-| Step | Type     | Description                                              |
-+======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request       |
-|      |          | protected with OSCOAP, including:                        |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /helloworld                                 |
-+------+----------+----------------------------------------------------------+
-| 2    | Check    | The message verification [6.3] fails and the server      |
-|      |          | stops processing the message                             |
-+------+----------+----------------------------------------------------------+
-| 3    | Verify   | - Server displays the received packet                    |
-|      |          | - (Optional) Server displays the sequence number in the  |
-|      |          | received message                                         |
-|      |          | - (Optional) Server displays the external_aad for the    |
-|      |          | received message                                         |
-|      |          | - (Optional) Server displays the COSE object for the     |
-|      |          | received message                                         |
-+------+----------+----------------------------------------------------------+
-
-#### 4.2.3. Identifier: TEST_15a {#test-15a}
-
-**Objective** : Perform a GET transaction using OSCOAP, Content-Format and Uri-Path option, response replayed by the Server (Correct Tid) (Client side)
-
-**Configuration** :
-
-_client security context_: [Security Context A](#client-sec), with:
-
-* Sender Context:
-    - Sender Seq Number: 0F
-* Recipient Context:
-    - Recipient Seq Number: **65**
-
-**Test Sequence**
-
-+------+----------+----------------------------------------------------------+
-| Step | Type     | Description                                              |
-+======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request       |
-|      |          | protected with OSCOAP, including:                        |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /helloworld                                 |
-+------+----------+----------------------------------------------------------+
-| 2    | Check    | Client serializes the request                            |
-+------+----------+----------------------------------------------------------+
-| 3    | Verify   | - Client displays the sent packet                        |
-|      |          | - (Optional) Client displays the external_aad for the    |
-|      |          | sent message                                             |
-|      |          | - (Optional) Client displays the COSE object for the     |
-|      |          | sent message                                             |
-+------+----------+----------------------------------------------------------+
-| 4    | Check    | The message verification [6.5] fails and the client      |
-|      |          | stops processing the message                             |
-+------+----------+----------------------------------------------------------+
-| 5    | Verify   | - Client displays the received packet                    |
-|      |          | - (Optional) Client displays the sequence number in the  |
-|      |          | received message                                         |
-|      |          | - (Optional) Client displays the external_aad for the    |
-|      |          | received message                                         |
-|      |          | - (Optional) Client displays the COSE object for the     |
-|      |          | received message                                         |
-+------+----------+----------------------------------------------------------+
-
-#### 4.2.4. Identifier: TEST_15b {#test-15b}
-
-**Objective** : Perform a GET transaction using OSCOAP, Content-Format and Uri-Path option, response replayed by the Server (Correct Tid) (Server side)
-
-**Configuration** :
-
-_server security context_: [Security Context B](#server-sec), with:
-
-* Sender Context:
-    - Sender Seq Number: **00**
-* Recipient Context:
-    - Recipient Seq Number: 0F
-
-_server resources_:
-
-* /helloworld : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
-
-**Test Sequence**
-
-+------+----------+----------------------------------------------------------+
-| Step | Type     | Description                                              |
-+======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request       |
-|      |          | protected with OSCOAP, including:                        |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /helloworld                                 |
-+------+----------+----------------------------------------------------------+
-| 2    | Check    | Server parses the request and continues the CoAP         |
-|      |          | processing (OSCOAP verification succeeds)                |
-+------+----------+----------------------------------------------------------+
-| 3    | Verify   | - Server displays the received packet                    |
-|      |          | - (Optional) Server displays the external_aad for the    |
-|      |          | received message                                         |
-|      |          | - (Optional) Server displays the COSE object for the     |
-|      |          | received message                                         |
-+------+----------+----------------------------------------------------------+
-| 4    | Check    | Server serialize the response correctly, including:      |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Content-Format = 0 (text/plain)                        |
-|      |          | - payload                                                |
-+------+----------+----------------------------------------------------------+
-| 5    | Verify   | - Server displays the sent packet                        |
-|      |          | - (Optional) Server displays the sequence number in the  |
-|      |          | sent message                                             |
-|      |          | - (Optional) Server displays the external_aad for the    |
-|      |          | sent message                                             |
-|      |          | - (Optional) Server displays the COSE object for the     |
-|      |          | sent message                                             |
-+------+----------+----------------------------------------------------------+
-
-#### 4.2.5. Identifier: TEST_16a {#test-16a}
-
-**Objective** : Perform a GET transaction using OSCOAP, Content-Format and Uri-Path option, response replayed by the Server (Wrong Tid) (Client side)
-
-**Configuration** :
-
-_client security context_: [Security Context A](#client-sec), with:
-
-* Sender Context:
-    - Sender Seq Number: **10**
-* Recipient Context:
-    - Recipient Seq Number: 10
-
-**Test Sequence**
-
-+------+----------+----------------------------------------------------------+
-| Step | Type     | Description                                              |
-+======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request       |
-|      |          | protected with OSCOAP, including:                        |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /change-tid                                 |
-+------+----------+----------------------------------------------------------+
-| 2    | Check    | Client serializes the request                            |
-+------+----------+----------------------------------------------------------+
-| 3    | Verify   | - Client displays the sent packet                        |
-|      |          | - (Optional) Client displays the external_aad for the    |
-|      |          | sent message                                             |
-|      |          | - (Optional) Client displays the COSE object for the     |
-|      |          | sent message                                             |
-+------+----------+----------------------------------------------------------+
-| 4    | Check    | The message verification [6.5] fails and the client      |
-|      |          | stops processing the message                             |
-+------+----------+----------------------------------------------------------+
-| 5    | Verify   | - Client displays the received packet                    |
-|      |          | - (Optional) Client displays the external_aad for the    |
-|      |          | received message                                         |
-|      |          | - (Optional) Client displays the COSE object for the     |
-|      |          | received message                                         |
-+------+----------+----------------------------------------------------------+
-
-#### 4.2.6. Identifier: TEST_16b {#test-16b}
-
-**Objective** : Perform a GET transaction using OSCOAP, Content-Format and Uri-Path option, response replayed by the Server (Wrong Tid) (Server side)
-
-**Configuration** :
-
-_server security context_: [Security Context B](#server-sec), with:
-
-* Sender Context:
-    - Sender Seq Number: 10
-* Recipient Context:
-    - Recipient Seq Number: 10
-
-_server resources_:
-
-* /change-tid : protected resource, authorized method: GET, modify the Tid of the response to an arbitrary value, returns the string "Hello World!" with content-format 0 (text/plain) 
-
-**Test Sequence**
-
-+------+----------+----------------------------------------------------------+
-| Step | Type     | Description                                              |
-+======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request       |
-|      |          | protected with OSCOAP, including:                        |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /change-tid                                 |
-+------+----------+----------------------------------------------------------+
-| 2    | Check    | Server parses the request and continues the CoAP         |
-|      |          | processing (OSCOAP verification succeeds)                |
-+------+----------+----------------------------------------------------------+
-| 3    | Verify   | - Server displays the received packet                    |
-|      |          | - (Optional) Server displays the Tid for the received    |
-|      |          | message                                                  |
-|      |          | - (Optional) Server displays the external_aad for the    |
-|      |          | received message                                         |
-|      |          | - (Optional) Server displays the COSE object for the     |
-|      |          | received message                                         |
-+------+----------+----------------------------------------------------------+
-| 4    | Check    | Server serialize the response correctly, including:      |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Content-Format = 0 (text/plain)                        |
-|      |          | - payload                                                |
-+------+----------+----------------------------------------------------------+
-| 5    | Verify   | - Server displays the sent packet                        |
-|      |          | - (Optional) Server displays the external_aad for the    |
-|      |          | sent message                                             |
-|      |          | - (Optional) Server displays the COSE object for the     |
-|      |          | sent message                                             |
-+------+----------+----------------------------------------------------------+
-
-### 4.3. Accessing an OSCOAP-protected resource without OSCOAP {#unauth}
-
-#### 4.3.1. Identifier: TEST_17a {#test-17a}
-
-**Objective** : Perform a GET transaction without using OSCOAP to a protected resource, Content-Format and Uri-Path option (Client side)
-
-**Configuration** :
-
-_client security context_: [Security Context A](#client-sec), with:
-
-N/A
-
-**Test Sequence**
-
-+------+----------+----------------------------------------------------------+
-| Step | Type     | Description                                              |
-+======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request,      |
-|      |          | including:                                               |
-|      |          |                                                          |
-|      |          | - Uri-Path : /helloworld                                 |
+|      |          | - Uri-Path : /hello/1                                    |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Client serializes the request                            |
 +------+----------+----------------------------------------------------------+
 | 3    | Verify   | Client displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
 | 4    | Check    | Client parses the response and continues the CoAP        |
+|      |          | processing (OSCOAP verification succeeds); expected:     |
+|      |          | 2.05 Content Response with:                              |
+|      |          |                                                          |
+|      |          | - Object-Security option                                 |
+|      |          | - Content-Format = 0 (text/plain)                        |
+|      |          | - Payload = "Hello World!"                               |
++------+----------+----------------------------------------------------------+
+| 5    | Verify   | Client displays the received packet                      |
++------+----------+----------------------------------------------------------+
+| 6    | Stimulus | The client is requested to reset its own sequence number |
+|      |          | to the value before executing step 1                     |
++------+----------+----------------------------------------------------------+
+| 7    | Stimulus | The client is requested to send a CoAP GET request       |
+|      |          | protected with OSCOAP, including:                        |
+|      |          |                                                          |
+|      |          | - Object-Security option                                 |
+|      |          | - Uri-Path : /hello/1                                    |
++------+----------+----------------------------------------------------------+
+| 8    | Check    | Client serializes the request                            |
++------+----------+----------------------------------------------------------+
+| 9    | Verify   | Client displays the sent packet                          |
++------+----------+----------------------------------------------------------+
+| 10   | Check    | Client parses the response and continues the CoAP        |
+|      |          | processing (OSCOAP verification succeeds); expected:     |
+|      |          | 4.00 Bad Request error message:                          |
+|      |          |                                                          |
+|      |          | - Object-Security option                                 |
+|      |          | - Payload = Replay protection failed (optional)          |
++------+----------+----------------------------------------------------------+
+| 11   | Verify   | Client displays the received packet                      |
++------+----------+----------------------------------------------------------+
+
+#### 4.2.2. Identifier: TEST_13b {#test-13b}
+
+**Objective** : Perform a CON GET transaction using OSCOAP, Content-Format and Uri-Path option, request replayed by the Client (Client side)
+
+**Configuration** :
+
+_server security context_: [Security Context B](#server-sec)
+
+_server resources_:
+
+* /hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+
+**Test Sequence**
+
++------+----------+----------------------------------------------------------+
+| Step | Type     | Description                                              |
++======+==========+==========================================================+
+| 1    | Stimulus | The client is requested to send a CoAP GET request       |
+|      |          | protected with OSCOAP, including:                        |
+|      |          |                                                          |
+|      |          | - Object-Security option                                 |
+|      |          | - Uri-Path : /hello/1                                    |
++------+----------+----------------------------------------------------------+
+| 2    | Check    | Server parses the request and continues the CoAP         |
 |      |          | processing (OSCOAP verification succeeds)                |
++------+----------+----------------------------------------------------------+
+| 3    | Verify   | Server displays the received packet                      |
++------+----------+----------------------------------------------------------+
+| 4    | Check    | Server serialize the response correctly, which is:       |
+|      |          | 2.05 Content Response with:                              |
+|      |          |                                                          |
+|      |          | - Object-Security option                                 |
+|      |          | - Content-Format = 0 (text/plain)                        |
+|      |          | - Payload = "Hello World!"                               |
++------+----------+----------------------------------------------------------+
+| 5    | Verify   | Server displays the sent packet                          |
++------+----------+----------------------------------------------------------+
+| 6    | Stimulus | The client is requested to reset its own sequence number |
+|      |          | to the value before executing step 1                     |
++------+----------+----------------------------------------------------------+
+| 7    | Stimulus | The client is requested to send a CoAP GET request       |
+|      |          | protected with OSCOAP, including:                        |
+|      |          |                                                          |
+|      |          | - Object-Security option                                 |
+|      |          | - Uri-Path : /hello/1                                    |
++------+----------+----------------------------------------------------------+
+| 2    | Check    | The message verification [6.2] fails and the server      |
+|      |          | sends an error back (stop CoAP processing)               |
++------+----------+----------------------------------------------------------+
+| 3    | Verify   | Server displays the received packet                      |
++------+----------+----------------------------------------------------------+
+| 4    | Check    | Server serialize the response correctly, which is:       |
+|      |          | 4.00 Bad Request error message:                          |
+|      |          |                                                          |
+|      |          | - Object-Security option                                 |
+|      |          | - Payload = Replay protection failed (optional)          |
++------+----------+----------------------------------------------------------+
+| 5    | Verify   | Server displays the sent packet                          |
++------+----------+----------------------------------------------------------+
+
+### 4.3. Accessing a non-OSCOAP-protected resource with OSCOAP {#auth}
+
+#### 4.3.1. Identifier: TEST_14a {#test-14a}
+
+**Objective** : Perform a CON GET transaction using OSCOAP to a non protected resource, Content-Format and Uri-Path option (Client side)
+
+**Configuration** :
+
+_client security context_: [Security Context A](#client-sec)
+
+**Test Sequence**
+
++------+----------+----------------------------------------------------------+
+| Step | Type     | Description                                              |
++======+==========+==========================================================+
+| 1    | Stimulus | The client is requested to send a CoAP GET request       |
+|      |          | protected with OSCOAP, including:                        |
+|      |          |                                                          |
+|      |          | - Object-Security option                                 |
+|      |          | - Uri-Path : /hello/coap                                 |
++------+----------+----------------------------------------------------------+
+| 2    | Check    | Client serializes the request                            |
++------+----------+----------------------------------------------------------+
+| 3    | Verify   | Client displays the sent packet                          |
++------+----------+----------------------------------------------------------+
+| 4    | Check    | Client parses the response :                             |
+|      |          | OSCOAP verification failure [7.4]; response dropped      |
+|      |          | empty ACK sent back to the server                        |
 +------+----------+----------------------------------------------------------+
 | 5    | Verify   | Client displays the received packet                      |
 +------+----------+----------------------------------------------------------+
 
-#### 4.3.2. Identifier: TEST_17b {#test-17b}
 
-**Objective** : Perform a GET transaction without using OSCOAP to a protected resource, Content-Format and Uri-Path option (Server side)
+#### 4.3.2. Identifier: TEST_14b {#test-14b}
+
+**Objective** : Perform a CON GET transaction using OSCOAP to a non protected resource, Content-Format and Uri-Path option (Server side)
 
 **Configuration** :
 
-_server security context_: [Security Context B](#server-sec), with:
-
-* Sender Context:
-    - Sender Seq Number: 11
-* Recipient Context:
-    - Recipient Seq Number: 11
+_server security context_: None
 
 _server resources_:
 
-* /helloworld : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /hello/coap : authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
 
 **Test Sequence**
 
@@ -1642,15 +1299,16 @@ _server resources_:
 |      |          |                                                          |
 |      |          | - Uri-Path : /helloworld                                 |
 +------+----------+----------------------------------------------------------+
-| 2    | Check    | The message verification [6.3] fails                     |
+| 2    | Check    | Server parses the request and continues the CoAP         |
+|      |          | processing                                               |
 +------+----------+----------------------------------------------------------+
 | 3    | Verify   | Server displays the received packet                      |
 +------+----------+----------------------------------------------------------+
-| 4    | Check    | Server serialize the response correctly, including:      |
+| 4    | Check    | Server serialize the response correctly, which is:       |
+|      |          | 2.05 Content Response with:                              |
 |      |          |                                                          |
-|      |          | - Error code 4.01 Unauthorized                           |
-|      |          | - (Optional) Content-Format = 0 (text/plain)             |
-|      |          | - (Optional) payload                                     |
+|      |          | - Content-Format = 0 (text/plain)                        |
+|      |          | - Payload = "Hello World!"                               |
 +------+----------+----------------------------------------------------------+
 | 5    | Verify   | Server displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
