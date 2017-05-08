@@ -1278,6 +1278,8 @@ _client security context_: [Security Context A](#client-sec)
 
 **Configuration** :
 
+The server does not implement OSCOAP.
+
 _server security context_: None
 
 _server resources_:
@@ -1292,18 +1294,18 @@ _server resources_:
 | 1    | Stimulus | The client is requested to send a CoAP GET request,      |
 |      |          | including:                                               |
 |      |          |                                                          |
-|      |          | - Uri-Path : /helloworld                                 |
+|      |          | - Object-Security option                                 |
+|      |          | - Uri-Path : /hello/coap                                 |
 +------+----------+----------------------------------------------------------+
-| 2    | Check    | Server parses the request and continues the CoAP         |
-|      |          | processing                                               |
+| 2    | Check    | Server parses the request and finds an unrecognized      | 
+|      |          | option of class "critical" (the object-security option)  |
 +------+----------+----------------------------------------------------------+
 | 3    | Verify   | Server displays the received packet                      |
 +------+----------+----------------------------------------------------------+
 | 4    | Check    | Server serialize the response correctly, which is:       |
-|      |          | 2.05 Content Response with:                              |
+|      |          | 4.02 Bad Option error response, with:                    |
 |      |          |                                                          |
-|      |          | - Content-Format = 0 (text/plain)                        |
-|      |          | - Payload = "Hello World!"                               |
+|      |          | - Payload = diagnostic payload (optional)                |
 +------+----------+----------------------------------------------------------+
 | 5    | Verify   | Server displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
