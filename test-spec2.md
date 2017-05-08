@@ -63,13 +63,13 @@ When non-indicated, CoAP messages can be NON or CON (implementer's choice)
     - Alg: AES-CCM-64-64-128
 * Sender Context:
     - Sender Id: 63-6C-69-65-6E-74
-    - Sender Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Sender IV: E8-28-A4-79-D0-88-C4
+    - Sender Key: 21-64-42-DA-60-3C-51-59-2D-F4-C3-D0-CD-1D-0D-48
+    - Sender IV: 01-53-DD-FE-DE-44-19
     - Sender Seq Number: 00
 * Recipient Context:
     - Recipient Id: 73-65-72-76-65-72
-    - Recipient Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Recipient IV: 58-F9-1A-5C-DF-F4-F5
+    - Recipient Key: D5-CB-37-10-37-15-34-A1-CA-22-4E-19-EB-96-E9-6D
+    - Recipient IV: 20-75-0B-95-F9-78-C8
 
 ### Security Context B: Server {#server-sec}
 
@@ -78,13 +78,13 @@ When non-indicated, CoAP messages can be NON or CON (implementer's choice)
     - Alg: AES-CCM-64-64-128
 * Sender Context:
     - Sender Id: 73-65-72-76-65-72
-    - Sender Key: EB-43-09-8A-0F-6F-7B-69-CE-DF-29-E0-80-50-95-82
-    - Sender IV: 58-F9-1A-5C-DF-F4-F5
+    - Sender Key: D5-CB-37-10-37-15-34-A1-CA-22-4E-19-EB-96-E9-6D
+    - Sender IV: 20-75-0B-95-F9-78-C8
     - Sender Seq Number: 00
 * Recipient Context:
     - Recipient Id: 63-6C-69-65-6E-74
-    - Recipient Key: F8-20-1E-D1-5E-10-37-BC-AF-69-06-07-9A-D3-0B-4F
-    - Recipient IV: E8-28-A4-79-D0-88-C4
+    - Recipient Key: 21-64-42-DA-60-3C-51-59-2D-F4-C3-D0-CD-1D-0D-48
+    - Recipient IV: 01-53-DD-FE-DE-44-19
 
 ### Resources
 
