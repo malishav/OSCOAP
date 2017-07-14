@@ -1,0 +1,15 @@
+# Object Security of CoAP (OSCOAP) interop: 
+
+Latest test specifications and report:
+
+* [Test specifications v3](test-spec3.html)
+
+Others:
+
+* [Interop 08/05/2017 report](interop3.html)
+* [Test specifications v2](test-spec2.html)
+* [Interop 26/03/2017 report](interop2.html)
+* [Interop 27/02/2017 report](interop1.html)
+* [Test specifications v1](test-spec.html)
+
+## Please refer to the up-to-date version of OSCOAP in the CoRE wg github: [https://github.com/core-wg/oscoap](https://github.com/core-wg/oscoap)
