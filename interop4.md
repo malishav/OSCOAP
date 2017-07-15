@@ -115,9 +115,9 @@ Test12: About the "empty ack": the server is sending the response
 * 10\. Passed
 * 11\. Passed
 * 12\. Passed
-* 13\. 
-* 14\. 
-* 15\. 
+* 13\. Passed
+* 14\. Passed
+* 15\. Passed
 
 ### 4. Client: Christian, Server: Malisa {#CMl}
 
