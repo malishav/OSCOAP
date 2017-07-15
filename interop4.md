@@ -12,7 +12,7 @@
 
 ## Note takers
 
-Francesca
+Francesca, Christian
 
 ## Documentation
 
