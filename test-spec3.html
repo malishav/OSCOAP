@@ -62,10 +62,15 @@
 <li><a href="#test-13a">Test 13a</a></li>
 <li><a href="#test-13b">Test 13b</a></li>
 </ol></li>
-<li><a href="#auth">Accessing an OSCOAP-protected resource without OSCOAP</a>
+<li><a href="#auth">Accessing a non-OSCOAP-protected resource with OSCOAP</a>
 <ol style="list-style-type: decimal">
 <li><a href="#test-14a">Test 14a</a></li>
 <li><a href="#test-14b">Test 14b</a></li>
+</ol></li>
+<li><a href="#unauth">Accessing an OSCOAP-protected resource without OSCOAP</a>
+<ol start="3" style="list-style-type: decimal">
+<li><a href="#test-15a">Test 15a</a></li>
+<li><a href="#test-15b">Test 15b</a></li>
 </ol></li>
 </ol></li>
 </ol>
@@ -358,7 +363,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="test-2a">3.1.3. Identifier: TEST_2a</h4>
+<h4 id="test-2a">4.1.3. Identifier: TEST_2a</h4>
 <p><strong>Objective</strong> : Perform a GET transaction using OSCOAP, Content-Format, Uri-Path, Uri-Query and ETag option (Client side)</p>
 <p><strong>Configuration</strong> :</p>
 <p><em>client security context</em>: <a href="#client-sec">Security Context A</a>, with:</p>
@@ -418,7 +423,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="test-2b">3.1.4. Identifier: TEST_2b</h4>
+<h4 id="test-2b">4.1.4. Identifier: TEST_2b</h4>
 <p><strong>Objective</strong> : Perform a GET transaction using OSCOAP, Content-Format, Uri-Path, Uri-Query and ETag option (Server side)</p>
 <p><strong>Configuration</strong> :</p>
 <p><em>server security context</em>: <a href="#server-sec">Security Context B</a>, with:</p>
@@ -482,7 +487,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="test-3a">3.1.5. Identifier: TEST_3a</h4>
+<h4 id="test-3a">4.1.5. Identifier: TEST_3a</h4>
 <p><strong>Objective</strong> : Perform a GET transaction using OSCOAP, Content-Format, Uri-Path, Accept and Max-Age option (Client side)</p>
 <p><strong>Configuration</strong> :</p>
 <p><em>client security context</em>: <a href="#client-sec">Security Context A</a>, with:</p>
@@ -542,7 +547,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="test-3b">3.1.6. Identifier: TEST_3b</h4>
+<h4 id="test-3b">4.1.6. Identifier: TEST_3b</h4>
 <p><strong>Objective</strong> :Perform a GET transaction using OSCOAP, Content-Format, Uri-Path, Accept and Max-Age option (Server side)</p>
 <p><strong>Configuration</strong> :</p>
 <p><em>server security context</em>: <a href="#server-sec">Security Context B</a>, with:</p>
@@ -606,7 +611,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="test-4a">3.1.7. Identifier: TEST_4a</h4>
+<h4 id="test-4a">4.1.7. Identifier: TEST_4a</h4>
 <p><strong>Objective</strong> : Perform a GET transaction using OSCOAP, Content-Format, Uri-Path, and Observe. Response without observe. (Client side)</p>
 <p><strong>Configuration</strong> :</p>
 <p><em>client security context</em>: <a href="#client-sec">Security Context A</a>, with:</p>
@@ -664,7 +669,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="test-4b">3.1.8. Identifier: TEST_4b</h4>
+<h4 id="test-4b">4.1.8. Identifier: TEST_4b</h4>
 <p><strong>Objective</strong> : Perform a GET transaction using OSCOAP, Content-Format, Uri-Path, and Observe. Response without observe. (Server side)</p>
 <p><strong>Configuration</strong> :</p>
 <p><em>server security context</em>: <a href="#server-sec">Security Context B</a>, with:</p>
@@ -728,7 +733,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="test-5a">3.1.9. Identifier: TEST_5a</h4>
+<h4 id="test-5a">4.1.9. Identifier: TEST_5a</h4>
 <p><strong>Objective</strong> : Perform a GET transaction using OSCOAP, Content-Format, Uri-Path, and Observe (Client side)</p>
 <p><strong>Configuration</strong> :</p>
 <p><em>client security context</em>: <a href="#client-sec">Security Context A</a>, with:</p>
@@ -804,7 +809,7 @@
 </tbody>
 </table>
 <p>Etc.</p>
-<h4 id="test-5b">3.1.10. Identifier: TEST_5b</h4>
+<h4 id="test-5b">4.1.10. Identifier: TEST_5b</h4>
 <p><strong>Objective</strong> : Perform a GET transaction using OSCOAP, Content-Format, Uri-Path, and Observe (Server side)</p>
 <p><strong>Configuration</strong> :</p>
 <p><em>server security context</em>: <a href="#server-sec">Security Context B</a>, with:</p>
@@ -884,8 +889,8 @@
 </tbody>
 </table>
 <p>Etc.</p>
-<h3 id="post">3.2. POST Tests</h3>
-<h4 id="test-6a">3.2.1. Identifier: TEST_6a</h4>
+<h3 id="post">4.2. POST Tests</h3>
+<h4 id="test-6a">4.2.1. Identifier: TEST_6a</h4>
 <p><strong>Objective</strong> : Perform a POST transaction using OSCOAP, Content-Format, and Uri-Path option, creating a resource (Client side)</p>
 <p><strong>Configuration</strong> :</p>
 <p><em>client security context</em>: <a href="#client-sec">Security Context A</a>, with:</p>
@@ -943,7 +948,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="test-6b">3.2.2. Identifier: TEST_6b</h4>
+<h4 id="test-6b">4.2.2. Identifier: TEST_6b</h4>
 <p><strong>Objective</strong> : Perform a POST transaction using OSCOAP, Content-Format, and Uri-Path option, updating a resource (Server side)</p>
 <p><strong>Configuration</strong> :</p>
 <p><em>server security context</em>: <a href="#server-sec">Security Context B</a>, with:</p>
@@ -1005,8 +1010,8 @@
 </tr>
 </tbody>
 </table>
-<h3 id="PUT">3.3 PUT Tests</h3>
-<h4 id="test-7a">3.3.1. Identifier: TEST_7a</h4>
+<h3 id="PUT">4.3 PUT Tests</h3>
+<h4 id="test-7a">4.3.1. Identifier: TEST_7a</h4>
 <p><strong>Objective</strong> : Perform a PUT transaction using OSCOAP, Uri-Path, Content-Format and If-Match option (Client side)</p>
 <p><strong>Configuration</strong> :</p>
 <p><em>client security context</em>: <a href="#client-sec">Security Context A</a>, with:</p>
@@ -1065,7 +1070,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="test-7b">3.3.2. Identifier: TEST_7b</h4>
+<h4 id="test-7b">4.3.2. Identifier: TEST_7b</h4>
 <p><strong>Objective</strong> : Perform a PUT transaction using OSCOAP, Uri-Path, Content-Format and If-Match option (Server side)</p>
 <p><strong>Configuration</strong> :</p>
 <p><em>server security context</em>: <a href="#server-sec">Security Context B</a>, with:</p>
@@ -1128,7 +1133,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="test-8a">3.3.3. Identifier: TEST_8a</h4>
+<h4 id="test-8a">4.3.3. Identifier: TEST_8a</h4>
 <p><strong>Objective</strong> : Perform a PUT transaction using OSCOAP, Uri-Path, Content-Format and If-None-Match option (Client side)</p>
 <p><strong>Configuration</strong> :</p>
 <p><em>client security context</em>: <a href="#client-sec">Security Context A</a>, with:</p>
@@ -1187,7 +1192,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="test-8b">3.3.4. Identifier: TEST_8b</h4>
+<h4 id="test-8b">4.3.4. Identifier: TEST_8b</h4>
 <p><strong>Objective</strong> : Perform a PUT transaction using OSCOAP, Uri-Path, Content-Format and If-None-Match option (Server side)</p>
 <p><strong>Configuration</strong> :</p>
 <p><em>server security context</em>: <a href="#server-sec">Security Context B</a>, with:</p>
@@ -1250,8 +1255,8 @@
 </tr>
 </tbody>
 </table>
-<h3 id="DEL">3.4. DELETE Tests</h3>
-<h4 id="test-9a">3.4.1. Identifier: TEST_9a</h4>
+<h3 id="DEL">4.4. DELETE Tests</h3>
+<h4 id="test-9a">4.4.1. Identifier: TEST_9a</h4>
 <p><strong>Objective</strong> : Perform a DELETE transaction using OSCOAP and Uri-Path option (Client side)</p>
 <p><strong>Configuration</strong> :</p>
 <p><em>client security context</em>: <a href="#client-sec">Security Context A</a>, with:</p>
@@ -1307,7 +1312,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="test-9b">3.4.2. Identifier: TEST_9b</h4>
+<h4 id="test-9b">4.4.2. Identifier: TEST_9b</h4>
 <p><strong>Objective</strong> : Perform a DELETE transaction using OSCOAP and Uri-Path option (Server side)</p>
 <p><strong>Configuration</strong> :</p>
 <p><em>server security context</em>: <a href="#server-sec">Security Context B</a>, with:</p>
@@ -1364,9 +1369,9 @@
 </tr>
 </tbody>
 </table>
-<h2 id="incorrect-oscoap">4. Incorrect OSCOAP use</h2>
-<h3 id="sec-context">4.1. Security Context not matching</h3>
-<h4 id="test-10a">4.1.1. Identifier: TEST_10a</h4>
+<h2 id="incorrect-oscoap">5. Incorrect OSCOAP use</h2>
+<h3 id="sec-context">5.1. Security Context not matching</h3>
+<h4 id="test-10a">5.1.1. Identifier: TEST_10a</h4>
 <p><strong>Objective</strong> : Perform an unauthorized CON GET transaction: non matching Client Sender Id - Server Recipient Id (Client side)</p>
 <p><strong>Configuration</strong> :</p>
 <p><em>client security context</em>: <a href="#client-sec">Security Context A</a>, with:</p>
@@ -1426,7 +1431,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="test-10b">4.1.2. Identifier: TEST_10b</h4>
+<h4 id="test-10b">5.1.2. Identifier: TEST_10b</h4>
 <p><strong>Objective</strong> :Perform an unauthorized GET transaction: non matching Client Sender Id - Server Recipient Id (Server side)</p>
 <p><strong>Configuration</strong> :</p>
 <p><em>server security context</em>: <a href="#server-sec">Security Context B</a></p>
@@ -1484,7 +1489,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="test-11a">4.1.3. Identifier: TEST_11a</h4>
+<h4 id="test-11a">5.1.3. Identifier: TEST_11a</h4>
 <p><strong>Objective</strong> : Perform a CON GET transaction with non matching Client Sender - Server Recipient Keys (Client side)</p>
 <p><strong>Configuration</strong> :</p>
 <p><em>client security context</em>: <a href="#client-sec">Security Context A</a>, with:</p>
@@ -1544,7 +1549,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="test-11b">4.1.4. Identifier: TEST_11b</h4>
+<h4 id="test-11b">5.1.4. Identifier: TEST_11b</h4>
 <p><strong>Objective</strong> : Perform a CON GET transaction with non matching Client Sender - Server Recipient Keys (Server side)</p>
 <p><strong>Configuration</strong> :</p>
 <p><em>server security context</em>: <a href="#server-sec">Security Context B</a></p>
@@ -1602,7 +1607,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="test-12a">4.1.5. Identifier: TEST_12a</h4>
+<h4 id="test-12a">5.1.5. Identifier: TEST_12a</h4>
 <p><strong>Objective</strong> : Perform a CON GET transaction with non matching Client Recipient - Server Sender Keys (Client side)</p>
 <p><strong>Configuration</strong> :</p>
 <p><em>client security context</em>: <a href="#client-sec">Security Context A</a>, with:</p>
@@ -1658,7 +1663,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="test-12b">4.1.6. Identifier: TEST_12b</h4>
+<h4 id="test-12b">5.1.6. Identifier: TEST_12b</h4>
 <p><strong>Objective</strong> : Perform a CON GET transaction with non matching Client Recipient - Server Sender Keys (Server side)</p>
 <p><strong>Configuration</strong> :</p>
 <p><em>server security context</em>: <a href="#server-sec">Security Context B</a></p>
@@ -1717,8 +1722,8 @@
 </tr>
 </tbody>
 </table>
-<h3 id="replay">4.2. Replay of a previously sent message</h3>
-<h4 id="test-13a">4.2.1. Identifier: TEST_13a</h4>
+<h3 id="replay">5.2. Replay of a previously sent message</h3>
+<h4 id="test-13a">5.2.1. Identifier: TEST_13a</h4>
 <p><strong>Objective</strong> : Perform a CON GET transaction using OSCOAP, Content-Format and Uri-Path option, request replayed by the Client (Client side)</p>
 <p><strong>Configuration</strong> :</p>
 <p><em>client security context</em>: <a href="#client-sec">Security Context A</a></p>
@@ -1811,7 +1816,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="test-13b">4.2.2. Identifier: TEST_13b</h4>
+<h4 id="test-13b">5.2.2. Identifier: TEST_13b</h4>
 <p><strong>Objective</strong> : Perform a CON GET transaction using OSCOAP, Content-Format and Uri-Path option, request replayed by the Client (Client side)</p>
 <p><strong>Configuration</strong> :</p>
 <p><em>server security context</em>: <a href="#server-sec">Security Context B</a></p>
@@ -1908,8 +1913,8 @@
 </tr>
 </tbody>
 </table>
-<h3 id="auth">4.3. Accessing a non-OSCOAP-protected resource with OSCOAP</h3>
-<h4 id="test-14a">4.3.1. Identifier: TEST_14a</h4>
+<h3 id="auth">5.3. Accessing a non-OSCOAP-protected resource with OSCOAP</h3>
+<h4 id="test-14a">5.3.1. Identifier: TEST_14a</h4>
 <p><strong>Objective</strong> : Perform a CON GET transaction using OSCOAP to a non protected resource, Content-Format and Uri-Path option (Client side)</p>
 <p><strong>Configuration</strong> :</p>
 <p><em>client security context</em>: <a href="#client-sec">Security Context A</a></p>
@@ -1959,7 +1964,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="test-14b">4.3.2. Identifier: TEST_14b</h4>
+<h4 id="test-14b">5.3.2. Identifier: TEST_14b</h4>
 <p><strong>Objective</strong> : Perform a CON GET transaction using OSCOAP to a non protected resource, Content-Format and Uri-Path option (Server side)</p>
 <p><strong>Configuration</strong> :</p>
 <p>The server does not implement OSCOAP.</p>
@@ -2006,6 +2011,115 @@
 <td><p>4</p></td>
 <td><p>Check</p></td>
 <td><p>Server serialize the response correctly, which is: 4.02 Bad Option error response, with:</p>
+<ul>
+<li>Payload = diagnostic payload (optional)</li>
+</ul></td>
+</tr>
+<tr class="odd">
+<td><p>5</p></td>
+<td><p>Verify</p></td>
+<td><p>Server displays the sent packet</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="unauth">5.4. Accessing an OSCOAP-protected resource without OSCOAP</h3>
+<h4 id="test-15a">5.4.1. Identifier: TEST_15a</h4>
+<p><strong>Objective</strong> : Perform a CON GET transaction to a protected resource, Content-Format and Uri-Path option (Client side)</p>
+<p><strong>Configuration</strong> :</p>
+<p><strong>Test Sequence</strong></p>
+<table>
+<colgroup>
+<col width="9%" />
+<col width="14%" />
+<col width="76%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Step</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><p>1</p></td>
+<td><p>Stimulus</p></td>
+<td><p>The client is requested to send a CoAP GET request protected with OSCOAP, including:</p>
+<ul>
+<li>Uri-Path : /hello/1</li>
+</ul></td>
+</tr>
+<tr class="even">
+<td><p>2</p></td>
+<td><p>Check</p></td>
+<td><p>Client serializes the request</p></td>
+</tr>
+<tr class="odd">
+<td><p>3</p></td>
+<td><p>Verify</p></td>
+<td><p>Client displays the sent packet</p></td>
+</tr>
+<tr class="even">
+<td><p>4</p></td>
+<td><p>Check</p></td>
+<td><p>Server serialize the response correctly, which is: 4.01 Unauthorized error response, with:</p>
+<ul>
+<li>Payload = diagnostic payload (optional)</li>
+</ul></td>
+</tr>
+<tr class="odd">
+<td><p>5</p></td>
+<td><p>Verify</p></td>
+<td><p>Client displays the received packet</p></td>
+</tr>
+</tbody>
+</table>
+<h4 id="test-15b">5.3.2. Identifier: TEST_15b</h4>
+<p><strong>Objective</strong> : Perform a CON GET transaction to a protected resource, Content-Format and Uri-Path option (Server side)</p>
+<p><strong>Configuration</strong> :</p>
+<p>The server does not implement OSCOAP.</p>
+<p><em>server security context</em>: <a href="#server-sec">Security Context B</a></p>
+<p><em>server resources</em>:</p>
+<ul>
+<li>/hello/1 : protected resource, authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain)</li>
+</ul>
+<p><strong>Test Sequence</strong></p>
+<table>
+<colgroup>
+<col width="9%" />
+<col width="14%" />
+<col width="76%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Step</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><p>1</p></td>
+<td><p>Stimulus</p></td>
+<td><p>The client is requested to send a CoAP GET request protected with OSCOAP, including:</p>
+<ul>
+<li>Uri-Path : /hello/1</li>
+</ul></td>
+</tr>
+<tr class="even">
+<td><p>2</p></td>
+<td><p>Check</p></td>
+<td><p>Server parses the request and finds an unrecognized option of class &quot;critical&quot; (the object-security option)</p></td>
+</tr>
+<tr class="odd">
+<td><p>3</p></td>
+<td><p>Verify</p></td>
+<td><p>Server displays the received packet</p></td>
+</tr>
+<tr class="even">
+<td><p>4</p></td>
+<td><p>Check</p></td>
+<td><p>Server serialize the response correctly, which is: 4.01 Unauthorized error response, with:</p>
 <ul>
 <li>Payload = diagnostic payload (optional)</li>
 </ul></td>
