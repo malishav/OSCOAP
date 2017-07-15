@@ -3,6 +3,7 @@
 Latest test specifications and report:
 
 * [Test specifications v3](test-spec3.html)
+* [Interop 14-15/07/2017](interop4.html)
 
 Others:
 
