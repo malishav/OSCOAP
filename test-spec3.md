@@ -11,7 +11,7 @@
 3. [Set up the environment](#env-setup)
     1. [Test 0a](#test-0a)
     2. [Test 0b](#test-0b)
-3. [Correct OSCOAP use](#correct-oscoap-use)
+4. [Correct OSCOAP use](#correct-oscoap-use)
     1. [GET test](#get)
         1. [Test 1a](#test-1a)
         2. [Test 1b](#test-1b)
@@ -34,7 +34,7 @@
     4. [DELETE test](#del)
         1. [Test 9a](#test-9a)
         2. [Test 9b](#test-9b)
-4. [Incorrect OSCOAP use](#incorrect-oscoap)
+5. [Incorrect OSCOAP use](#incorrect-oscoap)
     1. [Security Context not matching](#sec-context)
         1. [Test 10a](#test-10a)
         2. [Test 10b](#test-10b)
@@ -45,9 +45,12 @@
     2. [Replay of a previously sent message](#replay)
         1. [Test 13a](#test-13a)
         2. [Test 13b](#test-13b)
-    3. [Accessing an OSCOAP-protected resource without OSCOAP](#auth)
+    3. [Accessing a non-OSCOAP-protected resource with OSCOAP](#auth)
         1. [Test 14a](#test-14a)
         2. [Test 14b](#test-14b)
+    4. [Accessing an OSCOAP-protected resource without OSCOAP](#unauth)
+        3. [Test 15a](#test-15a)
+        4. [Test 15b](#test-15b)
 
 ## 1. Notes
 
@@ -249,7 +252,7 @@ _server resources_:
 | 5    | Verify   | Server displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
 
-#### 3.1.3. Identifier: TEST_2a {#test-2a}
+#### 4.1.3. Identifier: TEST_2a {#test-2a}
 
 **Objective** : Perform a GET transaction using OSCOAP, Content-Format, Uri-Path, Uri-Query and ETag option (Client side)
 
@@ -287,7 +290,7 @@ _client security context_: [Security Context A](#client-sec), with:
 | 5    | Verify   | Client displays the received packet                      |
 +------+----------+----------------------------------------------------------+
 
-#### 3.1.4. Identifier: TEST_2b {#test-2b}
+#### 4.1.4. Identifier: TEST_2b {#test-2b}
 
 **Objective** : Perform a GET transaction using OSCOAP, Content-Format, Uri-Path, Uri-Query and ETag option (Server side)
 
@@ -329,7 +332,7 @@ _server resources_:
 | 5    | Verify   | Server displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
 
-#### 3.1.5. Identifier: TEST_3a {#test-3a}
+#### 4.1.5. Identifier: TEST_3a {#test-3a}
 
 **Objective** : Perform a GET transaction using OSCOAP, Content-Format, Uri-Path, Accept and Max-Age option (Client side)
 
@@ -368,7 +371,7 @@ _client security context_: [Security Context A](#client-sec), with:
 | 5    | Verify   | Client displays the received packet                      |
 +------+----------+----------------------------------------------------------+
 
-#### 3.1.6. Identifier: TEST_3b {#test-3b}
+#### 4.1.6. Identifier: TEST_3b {#test-3b}
 
 **Objective** :Perform a GET transaction using OSCOAP, Content-Format, Uri-Path, Accept and Max-Age option (Server side)
 
@@ -410,7 +413,7 @@ _server resources_:
 | 5    | Verify   | Server displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
 
-#### 3.1.7. Identifier: TEST_4a {#test-4a}
+#### 4.1.7. Identifier: TEST_4a {#test-4a}
 
 **Objective** : Perform a GET transaction using OSCOAP, Content-Format, Uri-Path, and Observe. Response without observe. (Client side)
 
@@ -447,7 +450,7 @@ _client security context_: [Security Context A](#client-sec), with:
 +------+----------+----------------------------------------------------------+
 
 
-#### 3.1.8. Identifier: TEST_4b {#test-4b}
+#### 4.1.8. Identifier: TEST_4b {#test-4b}
 
 **Objective** : Perform a GET transaction using OSCOAP, Content-Format, Uri-Path, and Observe. Response without observe.  (Server side)
 
@@ -487,7 +490,7 @@ _server resources_:
 | 5    | Verify   | Server displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
 
-#### 3.1.9. Identifier: TEST_5a {#test-5a}
+#### 4.1.9. Identifier: TEST_5a {#test-5a}
 
 **Objective** : Perform a GET transaction using OSCOAP, Content-Format, Uri-Path, and Observe (Client side)
 
@@ -537,7 +540,7 @@ _client security context_: [Security Context A](#client-sec), with:
 
 Etc.
 
-#### 3.1.10. Identifier: TEST_5b {#test-5b}
+#### 4.1.10. Identifier: TEST_5b {#test-5b}
 
 **Objective** : Perform a GET transaction using OSCOAP, Content-Format, Uri-Path, and Observe (Server side)
 
@@ -590,9 +593,9 @@ _server resources_:
 
 Etc.
 
-### 3.2. POST Tests {#post}
+### 4.2. POST Tests {#post}
 
-#### 3.2.1. Identifier: TEST_6a {#test-6a}
+#### 4.2.1. Identifier: TEST_6a {#test-6a}
 
 **Objective** : Perform a POST transaction using OSCOAP, Content-Format, and Uri-Path option, creating a resource (Client side)
 
@@ -628,7 +631,7 @@ _client security context_: [Security Context A](#client-sec), with:
 | 5    | Verify   | Client displays the received packet                      |
 +------+----------+----------------------------------------------------------+
 
-#### 3.2.2. Identifier: TEST_6b {#test-6b}
+#### 4.2.2. Identifier: TEST_6b {#test-6b}
 
 **Objective** : Perform a POST transaction using OSCOAP, Content-Format, and Uri-Path option, updating a resource (Server side)
 
@@ -668,9 +671,9 @@ _server resources_:
 | 5    | Verify   | Server displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
 
-### 3.3 PUT Tests {#PUT}
+### 4.3 PUT Tests {#PUT}
 
-#### 3.3.1. Identifier: TEST_7a {#test-7a}
+#### 4.3.1. Identifier: TEST_7a {#test-7a}
 
 **Objective** : Perform a PUT transaction using OSCOAP, Uri-Path, Content-Format and If-Match option (Client side)
 
@@ -707,7 +710,7 @@ _client security context_: [Security Context A](#client-sec), with:
 | 5    | Verify   | Client displays the received packet                      |
 +------+----------+----------------------------------------------------------+
 
-#### 3.3.2. Identifier: TEST_7b {#test-7b}
+#### 4.3.2. Identifier: TEST_7b {#test-7b}
 
 **Objective** : Perform a PUT transaction using OSCOAP, Uri-Path, Content-Format and If-Match option (Server side)
 
@@ -748,7 +751,7 @@ _server resources_:
 | 5    | Verify   | Server displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
 
-#### 3.3.3. Identifier: TEST_8a {#test-8a}
+#### 4.3.3. Identifier: TEST_8a {#test-8a}
 
 **Objective** : Perform a PUT transaction using OSCOAP, Uri-Path, Content-Format and If-None-Match option (Client side)
 
@@ -785,7 +788,7 @@ _client security context_: [Security Context A](#client-sec), with:
 | 5    | Verify   | Client displays the received packet                      |
 +------+----------+----------------------------------------------------------+
 
-#### 3.3.4. Identifier: TEST_8b {#test-8b}
+#### 4.3.4. Identifier: TEST_8b {#test-8b}
 
 **Objective** : Perform a PUT transaction using OSCOAP, Uri-Path, Content-Format and If-None-Match option (Server side)
 
@@ -826,9 +829,9 @@ _server resources_:
 | 5    | Verify   | Server displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
 
-### 3.4. DELETE Tests {#DEL}
+### 4.4. DELETE Tests {#DEL}
 
-#### 3.4.1. Identifier: TEST_9a {#test-9a}
+#### 4.4.1. Identifier: TEST_9a {#test-9a}
 
 **Objective** : Perform a DELETE transaction using OSCOAP and Uri-Path option (Client side)
 
@@ -862,7 +865,7 @@ _client security context_: [Security Context A](#client-sec), with:
 | 5    | Verify   | Client displays the received packet                      |
 +------+----------+----------------------------------------------------------+
 
-#### 3.4.2. Identifier: TEST_9b {#test-9b}
+#### 4.4.2. Identifier: TEST_9b {#test-9b}
 
 **Objective** : Perform a DELETE transaction using OSCOAP and Uri-Path option (Server side)
 
@@ -873,7 +876,6 @@ _server security context_: [Security Context B](#server-sec), with:
 * Sequence number received not in server's replay window
 
 _server resources_:
-
 
 
 **Test Sequence**
@@ -900,11 +902,11 @@ _server resources_:
 | 5    | Verify   | Server displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
 
-## 4. Incorrect OSCOAP use {#incorrect-oscoap}
+## 5. Incorrect OSCOAP use {#incorrect-oscoap}
 
-### 4.1. Security Context not matching {#sec-context}
+### 5.1. Security Context not matching {#sec-context}
 
-#### 4.1.1. Identifier: TEST_10a {#test-10a}
+#### 5.1.1. Identifier: TEST_10a {#test-10a}
 
 **Objective** : Perform an unauthorized CON GET transaction: non matching Client Sender Id - Server Recipient Id (Client side)
 
@@ -940,7 +942,7 @@ _client security context_: [Security Context A](#client-sec), with:
 | 5    | Verify   | Client displays the received packet                      |
 +------+----------+----------------------------------------------------------+
 
-#### 4.1.2. Identifier: TEST_10b {#test-10b}
+#### 5.1.2. Identifier: TEST_10b {#test-10b}
 
 **Objective** :Perform an unauthorized GET transaction: non matching Client Sender Id - Server Recipient Id (Server side)
 
@@ -977,7 +979,7 @@ _server resources_:
 | 5    | Verify   | Server displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
 
-#### 4.1.3. Identifier: TEST_11a {#test-11a}
+#### 5.1.3. Identifier: TEST_11a {#test-11a}
 
 **Objective** : Perform a CON GET transaction with non matching Client Sender - Server Recipient Keys (Client side)
 
@@ -1013,7 +1015,7 @@ _client security context_: [Security Context A](#client-sec), with:
 | 5    | Verify   | Client displays the received packet                      |
 +------+----------+----------------------------------------------------------+
 
-#### 4.1.4. Identifier: TEST_11b {#test-11b}
+#### 5.1.4. Identifier: TEST_11b {#test-11b}
 
 **Objective** : Perform a CON GET transaction with non matching Client Sender - Server Recipient Keys (Server side)
 
@@ -1050,7 +1052,7 @@ _server resources_:
 | 5    | Verify   | Server displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
 
-#### 4.1.5. Identifier: TEST_12a {#test-12a}
+#### 5.1.5. Identifier: TEST_12a {#test-12a}
 
 **Objective** : Perform a CON GET transaction with non matching Client Recipient - Server Sender Keys (Client side)
 
@@ -1083,7 +1085,7 @@ _client security context_: [Security Context A](#client-sec), with:
 | 5    | Verify   | Client displays the received packet                      |
 +------+----------+----------------------------------------------------------+
 
-#### 4.1.6. Identifier: TEST_12b {#test-12b}
+#### 5.1.6. Identifier: TEST_12b {#test-12b}
 
 **Objective** : Perform a CON GET transaction with non matching Client Recipient - Server Sender Keys (Server side)
 
@@ -1121,9 +1123,9 @@ _server resources_:
 | 5    | Verify   | Server displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
 
-### 4.2. Replay of a previously sent message {#replay}
+### 5.2. Replay of a previously sent message {#replay}
 
-#### 4.2.1. Identifier: TEST_13a {#test-13a}
+#### 5.2.1. Identifier: TEST_13a {#test-13a}
 
 **Objective** : Perform a CON GET transaction using OSCOAP, Content-Format and Uri-Path option, request replayed by the Client (Client side)
 
@@ -1179,7 +1181,7 @@ _client security context_: [Security Context A](#client-sec)
 | 11   | Verify   | Client displays the received packet                      |
 +------+----------+----------------------------------------------------------+
 
-#### 4.2.2. Identifier: TEST_13b {#test-13b}
+#### 5.2.2. Identifier: TEST_13b {#test-13b}
 
 **Objective** : Perform a CON GET transaction using OSCOAP, Content-Format and Uri-Path option, request replayed by the Client (Client side)
 
@@ -1239,9 +1241,9 @@ _server resources_:
 | 5    | Verify   | Server displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
 
-### 4.3. Accessing a non-OSCOAP-protected resource with OSCOAP {#auth}
+### 5.3. Accessing a non-OSCOAP-protected resource with OSCOAP {#auth}
 
-#### 4.3.1. Identifier: TEST_14a {#test-14a}
+#### 5.3.1. Identifier: TEST_14a {#test-14a}
 
 **Objective** : Perform a CON GET transaction using OSCOAP to a non protected resource, Content-Format and Uri-Path option (Client side)
 
@@ -1272,7 +1274,7 @@ _client security context_: [Security Context A](#client-sec)
 +------+----------+----------------------------------------------------------+
 
 
-#### 4.3.2. Identifier: TEST_14b {#test-14b}
+#### 5.3.2. Identifier: TEST_14b {#test-14b}
 
 **Objective** : Perform a CON GET transaction using OSCOAP to a non protected resource, Content-Format and Uri-Path option (Server side)
 
@@ -1304,6 +1306,74 @@ _server resources_:
 +------+----------+----------------------------------------------------------+
 | 4    | Check    | Server serialize the response correctly, which is:       |
 |      |          | 4.02 Bad Option error response, with:                    |
+|      |          |                                                          |
+|      |          | - Payload = diagnostic payload (optional)                |
++------+----------+----------------------------------------------------------+
+| 5    | Verify   | Server displays the sent packet                          |
++------+----------+----------------------------------------------------------+
+
+### 5.4. Accessing an OSCOAP-protected resource without OSCOAP {#unauth}
+
+#### 5.4.1. Identifier: TEST_15a {#test-15a}
+
+**Objective** : Perform a CON GET transaction to a protected resource, Content-Format and Uri-Path option (Client side)
+
+**Configuration** :
+
+**Test Sequence**
+
++------+----------+----------------------------------------------------------+
+| Step | Type     | Description                                              |
++======+==========+==========================================================+
+| 1    | Stimulus | The client is requested to send a CoAP GET request       |
+|      |          | protected with OSCOAP, including:                        |
+|      |          |                                                          |
+|      |          | - Uri-Path : /hello/1                                    |
++------+----------+----------------------------------------------------------+
+| 2    | Check    | Client serializes the request                            |
++------+----------+----------------------------------------------------------+
+| 3    | Verify   | Client displays the sent packet                          |
++------+----------+----------------------------------------------------------+
+| 4    | Check    | Server serialize the response correctly, which is:       |
+|      |          | 4.01 Unauthorized error response, with:                  |
+|      |          |                                                          |
+|      |          | - Payload = diagnostic payload (optional)                |
++------+----------+----------------------------------------------------------+
+| 5    | Verify   | Client displays the received packet                      |
++------+----------+----------------------------------------------------------+
+
+
+#### 5.3.2. Identifier: TEST_15b {#test-15b}
+
+**Objective** : Perform a CON GET transaction to a protected resource, Content-Format and Uri-Path option (Server side)
+
+**Configuration** :
+
+The server does not implement OSCOAP.
+
+_server security context_: [Security Context B](#server-sec)
+
+_server resources_:
+
+* /hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+
+**Test Sequence**
+
++------+----------+----------------------------------------------------------+
+| Step | Type     | Description                                              |
++======+==========+==========================================================+
+| 1    | Stimulus | The client is requested to send a CoAP GET request       |
+|      |          | protected with OSCOAP, including:                        |
+|      |          |                                                          |
+|      |          | - Uri-Path : /hello/1                                    |
++------+----------+----------------------------------------------------------+
+| 2    | Check    | Server parses the request and finds an unrecognized      | 
+|      |          | option of class "critical" (the object-security option)  |
++------+----------+----------------------------------------------------------+
+| 3    | Verify   | Server displays the received packet                      |
++------+----------+----------------------------------------------------------+
+| 4    | Check    | Server serialize the response correctly, which is:       |
+|      |          | 4.01 Unauthorized error response, with:                  |
 |      |          |                                                          |
 |      |          | - Payload = diagnostic payload (optional)                |
 +------+----------+----------------------------------------------------------+
