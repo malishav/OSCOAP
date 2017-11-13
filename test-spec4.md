@@ -100,18 +100,18 @@ To be able to run Test 14, the implementer must run an OSCORE-unaware server.
 
 The list of resources the OSCORE-aware server must implement is the following:
 
-* /hello/coap : authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
-* /hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
-* /hello/2 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain), and with ETag 0x2b
-* /hello/3 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain), and Max-Age 5
-* /hello/6  : protected resource, authorized method: POST, returns the value of the resource with content-format 0 (text/plain)
-* /hello/7  : protected resource, authorized method: PUT, returns the value of the resource with content-format 0 (text/plain), has ETag 0x7b
-* /observe : protected resource, authorized method: GET, returns a counter incremented every 2 seconds, supports observe.
-* /test: protected resource, authorized method: DEL.
+* /oscore/hello/coap : authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /oscore/hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /oscore/hello/2 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain), and with ETag 0x2b
+* /oscore/hello/3 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain), and Max-Age 5
+* /oscore/hello/6 : protected resource, authorized method: POST, returns the value of the resource with content-format 0 (text/plain)
+* /oscore/hello/7 : protected resource, authorized method: PUT, returns the value of the resource with content-format 0 (text/plain), has ETag 0x7b
+* /oscore/observe : protected resource, authorized method: GET, returns a counter incremented every 2 seconds, supports observe.
+* /oscore/test: protected resource, authorized method: DEL.
 
 The list of resource the OSCORE-unaware server must implement is the following:
 
-* /hello/coap : authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /oscore/hello/coap : authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
 
 ------
 
@@ -129,7 +129,7 @@ The list of resource the OSCORE-unaware server must implement is the following:
 | 1    | Stimulus | The client is requested to send a CoAP GET request       |
 |      |          | including:                                               |
 |      |          |                                                          |
-|      |          | - Uri-Path : /hello/coap                                 |
+|      |          | - Uri-Path : /oscore/hello/coap                          |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Client serializes the request                            |
 +------+----------+----------------------------------------------------------+
@@ -153,7 +153,7 @@ The list of resource the OSCORE-unaware server must implement is the following:
 
 _server resources_:
 
-* /hello/coap : authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /oscore/hello/coap : authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
 
 **Test Sequence**
 
@@ -163,7 +163,7 @@ _server resources_:
 | 1    | Stimulus | The client is requested to send a CoAP GET request       |
 |      |          | including:                                               |
 |      |          |                                                          |
-|      |          | - Uri-Path = /hello/coap                                 |
+|      |          | - Uri-Path = /oscore/hello/coap                          |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Server parses the request and continues the CoAP         |
 |      |          | processing                                               |
@@ -202,7 +202,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /hello/1                                    |
+|      |          | - Uri-Path : /oscore/hello/1                             |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Client serializes the request, which is a POST request,  |
 |      |          | with:                                                    |
@@ -210,7 +210,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | - Object-Security option                                 |
 |      |          | - Payload: ciphertext including:                         |
 |      |          |       * Code: GET                                        |
-|      |          |       * Uri-Path : /hello/1                              |
+|      |          |       * Uri-Path : /oscore/hello/1                       |
 +------+----------+----------------------------------------------------------+
 | 3    | Verify   | Client displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
@@ -244,7 +244,7 @@ _server security context_:
 
 _server resources_:
 
-* /hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /oscore/hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
 
 **Test Sequence**
 
@@ -255,7 +255,7 @@ _server resources_:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /hello/1                                    |
+|      |          | - Uri-Path = /oscore/hello/1                             |
 +------+----------+----------------------------------------------------------+
 | 2    | Verify   | Server displays the received packet                      |
 +------+----------+----------------------------------------------------------+
@@ -270,7 +270,7 @@ _server resources_:
 | 5    | Check    | Server parses the request and continues the CoAP         |
 |      |          | processing; expected: CoAP GET request, including:       |
 |      |          |                                                          |
-|      |          | - Uri-Path : /hello/1                                    |
+|      |          | - Uri-Path : /oscore/hello/1                             |
 +------+----------+----------------------------------------------------------+
 | 6    | Verify   | Server displays the received packet                      |
 +------+----------+----------------------------------------------------------+
@@ -305,7 +305,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /hello/2                                    |
+|      |          | - Uri-Path = /oscore/hello/2                             |
 |      |          | - Uri-Query : first=1                                    |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Client serializes the request, which is a POST request,  |
@@ -314,7 +314,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | - Object-Security option                                 |
 |      |          | - Payload: ciphertext including:                         |
 |      |          |     * Code: GET                                          |
-|      |          |     * Uri-Path : /hello/2                                |
+|      |          |     * Uri-Path : /oscore/hello/2                         |
 |      |          |     * Uri-Query : first=1                                |
 +------+----------+----------------------------------------------------------+
 | 3    | Verify   | Client displays the sent packet                          |
@@ -350,7 +350,7 @@ _server security context_: [Security Context B](#server-sec), with:
 
 _server resources_:
 
-* /hello/2 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain), and with ETag 0x2b
+* /oscore/hello/2 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain), and with ETag 0x2b
 
 **Test Sequence**
 
@@ -361,7 +361,7 @@ _server resources_:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-path = /hello/2                                    |
+|      |          | - Uri-path = /oscore/hello/2                             |
 |      |          | - Uri-Query : first=1                                    |
 +------+----------+----------------------------------------------------------+
 | 2    | Verify   | Server displays the received packet                      |
@@ -377,7 +377,7 @@ _server resources_:
 | 5    | Check    | Server parses the request and continues the CoAP         |
 |      |          | processing; expected: CoAP GET request, including:       |
 |      |          |                                                          |
-|      |          | - Uri-path = /hello/2                                    |
+|      |          | - Uri-path = /oscore/hello/2                             |
 |      |          | - Uri-Query : first=1                                    |
 +------+----------+----------------------------------------------------------+
 | 6    | Verify   | Server displays the received packet                      |
@@ -415,7 +415,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-path = /hello/3                                    |
+|      |          | - Uri-path = /oscore/hello/3                             |
 |      |          | - Accept = 0 (text/plain;charset=utf-8)                  |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Client serializes the request, which is a POST request,  |
@@ -424,7 +424,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | - Object-Security option                                 |
 |      |          | - Payload: ciphertext including:                         |
 |      |          |     * Code: GET                                          |
-|      |          |     * Uri-Path = /hello/3                                |
+|      |          |     * Uri-Path = /oscore/hello/3                         |
 |      |          |     * Accept = 0 (text/plain;charset=utf-8)              |
 +------+----------+----------------------------------------------------------+
 | 3    | Verify   | Client displays the sent packet                          |
@@ -459,7 +459,7 @@ _server security context_: [Security Context B](#server-sec), with:
 
 _server resources_:
 
-* /hello/3 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain), and Max-Age 5
+* /oscore/hello/3 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain), and Max-Age 5
 
 **Test Sequence**
 
@@ -470,7 +470,7 @@ _server resources_:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-path = /hello/3                                    |
+|      |          | - Uri-path = /oscore/hello/3                             |
 |      |          | - Accept = 0 (text/plain;charset=utf-8)                  |
 +------+----------+----------------------------------------------------------+
 | 2    | Verify   | Server displays the received packet                      |
@@ -486,7 +486,7 @@ _server resources_:
 | 5    | Check    | Server parses the request and continues the CoAP         |
 |      |          | processing; expected: CoAP GET request, including:       |
 |      |          |                                                          |
-|      |          | - Uri-path = /hello/3                                    |
+|      |          | - Uri-path = /oscore/hello/3                             |
 |      |          | - Accept = 0 (text/plain;charset=utf-8)                  |
 +------+----------+----------------------------------------------------------+
 | 6    | Verify   | Server displays the received packet                      |
@@ -523,7 +523,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-path = /hello/1                                    |
+|      |          | - Uri-path = /oscore/hello/1                             |
 |      |          | - Observe = 0 (Registration)                             |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Client serializes the request, which is a FETCH request, |
@@ -532,7 +532,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | - Object-Security option                                 |
 |      |          | - Payload: ciphertext including:                         |
 |      |          |     * Code: GET                                          |
-|      |          |     * Uri-Path = /hello/1                                |
+|      |          |     * Uri-Path = /oscore/hello/1                         |
 |      |          |     * Observe = 0 (Registration)                         |
 +------+----------+----------------------------------------------------------+
 | 3    | Verify   | Client displays the sent packet                          |
@@ -566,7 +566,7 @@ _server security context_: [Security Context B](#server-sec), with:
 
 _server resources_:
 
-* /hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /oscore/hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
 
 **Test Sequence**
 
@@ -577,7 +577,7 @@ _server resources_:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-path = /hello/1                                    |
+|      |          | - Uri-path = /oscore/hello/1                             |
 |      |          | - Observe = 0 (Registration)                             |
 +------+----------+----------------------------------------------------------+
 | 2    | Verify   | Server displays the received packet                      |
@@ -593,7 +593,7 @@ _server resources_:
 | 5    | Check    | Server parses the request and continues the CoAP         |
 |      |          | processing; expected: CoAP GET request, including:       |
 |      |          |                                                          |
-|      |          | - Uri-path = /hello/1                                    |
+|      |          | - Uri-path = /oscore/hello/1                             |
 |      |          | - Observe = 0 (Registration)                             |
 +------+----------+----------------------------------------------------------+
 | 6    | Verify   | Server displays the received packet                      |
@@ -630,7 +630,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-path = /observe                                    |
+|      |          | - Uri-path = /oscore/observe                             |
 |      |          | - Observe = 0 (Registration)                             |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Client serializes the request, which is a FETCH request, |
@@ -640,7 +640,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | - Object-Security option                                 |
 |      |          | - Payload: ciphertext including:                         |
 |      |          |     * Code: GET                                          |
-|      |          |     * Uri-Path = /observe                                |
+|      |          |     * Uri-Path = /oscore/observe                         |
 +------+----------+----------------------------------------------------------+
 | 3    | Verify   | Client displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
@@ -707,7 +707,7 @@ _server resources_:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-path = /observe                                    |
+|      |          | - Uri-path = /oscore/observe                             |
 |      |          | - Observe = 0 (Registration)                             |
 +------+----------+----------------------------------------------------------+
 | 2    | Verify   | Server displays the received packet                      |
@@ -724,7 +724,7 @@ _server resources_:
 | 5    | Check    | Server parses the request and continues the CoAP         |
 |      |          | processing; expected: CoAP GET request, including:       |
 |      |          |                                                          |
-|      |          | - Uri-path = /observe                                    |
+|      |          | - Uri-path = /oscore/observe                             |
 |      |          | - Observe = 0 (Registration)                             |
 +------+----------+----------------------------------------------------------+
 | 6    | Verify   | Server displays the received packet                      |
@@ -777,7 +777,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /hello/6                                    |
+|      |          | - Uri-Path = /oscore/hello/6                             |
 |      |          | - Content-Format = 0                                     |
 |      |          | - payload = 0x4a                                         |
 +------+----------+----------------------------------------------------------+
@@ -787,7 +787,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | - Object-Security option                                 |
 |      |          | - Payload: ciphertext including:                         |
 |      |          |     * Code: POST                                         |
-|      |          |     * Uri-Path = /hello/6                                |
+|      |          |     * Uri-Path = /oscore/hello/6                         |
 |      |          |     * Content-Format = 0                                 |
 |      |          |     * payload = 0x4a                                     |
 +------+----------+----------------------------------------------------------+
@@ -833,7 +833,7 @@ _server resources_:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /hello/6                                    |
+|      |          | - Uri-Path = /oscore/hello/6                             |
 |      |          | - Content-Format = 0                                     |
 |      |          | - payload = 0x4a                                         |
 +------+----------+----------------------------------------------------------+
@@ -850,7 +850,7 @@ _server resources_:
 | 5    | Check    | Server parses the request and continues the CoAP         |
 |      |          | processing; expected: CoAP POST request, including:      |
 |      |          |                                                          |
-|      |          | - Uri-Path = /hello/6                                    |
+|      |          | - Uri-Path = /oscore/hello/6                             |
 |      |          | - Content-Format = 0 (text/plain)                        |
 |      |          | - Payload = 0x4a                                         |
 +------+----------+----------------------------------------------------------+
@@ -889,7 +889,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /hello/7                                    |
+|      |          | - Uri-Path = /oscore/hello/7                             |
 |      |          | - Content-Format = 0                                     |
 |      |          | - If-Match with value 0x7b                               |
 |      |          | - payload = 0x7a                                         |
@@ -900,7 +900,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | - Object-Security option                                 |
 |      |          | - Payload: ciphertext including:                         |
 |      |          |     * Code: PUT                                          |
-|      |          |     * Uri-Path = /hello/7                                |
+|      |          |     * Uri-Path = /oscore/hello/7                         |
 |      |          |     * Content-Format = 0                                 |
 |      |          |     * If-Match with value 0x7b                           |
 |      |          |     * payload = 0x7a                                     |
@@ -947,7 +947,7 @@ _server resources_:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /hello/7                                    |
+|      |          | - Uri-Path = /oscore/hello/7                             |
 |      |          | - Content-Format = 0                                     |
 |      |          | - If-Match with value 0x7b                               |
 |      |          | - payload = 0x7a                                         |
@@ -965,7 +965,7 @@ _server resources_:
 | 5    | Check    | Server parses the request and continues the CoAP         |
 |      |          | processing; expected: CoAP PUT request, including:       |
 |      |          |                                                          |
-|      |          | - Uri-Path = /hello/7                                    |
+|      |          | - Uri-Path = /oscore/hello/7                             |
 |      |          | - Content-Format = 0                                     |
 |      |          | - If-Match with value 0x7b                               |
 |      |          | - payload = 0x7a                                         |
@@ -1003,7 +1003,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /hello/7                                    |
+|      |          | - Uri-Path = /oscore/hello/7                             |
 |      |          | - Content-Format = 0                                     |
 |      |          | - If-None-Match                                          | 
 |      |          | - payload = 0x8a                                         |
@@ -1014,7 +1014,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | - Object-Security option                                 |
 |      |          | - Payload: ciphertext including:                         |
 |      |          |     * Code: PUT                                          |
-|      |          |     * Uri-Path = /hello/7                                |
+|      |          |     * Uri-Path = /oscore/hello/7                         |
 |      |          |     * Content-Format = 0                                 |
 |      |          |     * If-None-Match                                      |
 |      |          |     * payload = 0x8a                                     |
@@ -1047,7 +1047,7 @@ _server security context_: [Security Context B](#server-sec), with:
 
 _server resources_:
 
-* /hello/7 : protected resource, authorized method: PUT, returns the value of the resource with content-format 0 (text/plain), has ETag 0x7b
+* /oscore/hello/7 : protected resource, authorized method: PUT, returns the value of the resource with content-format 0 (text/plain), has ETag 0x7b
 
 **Test Sequence**
 
@@ -1058,7 +1058,7 @@ _server resources_:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /hello/7                                    |
+|      |          | - Uri-Path = /oscore/hello/7                             |
 |      |          | - Content-Format = 0                                     |
 |      |          | - If-None-Match                                          | 
 |      |          | - payload = 0x8a                                         |
@@ -1076,7 +1076,7 @@ _server resources_:
 | 5    | Check    | Server parses the request and continues the CoAP         |
 |      |          | processing; expected: CoAP PUT request, including:       |
 |      |          |                                                          |
-|      |          | - Uri-Path = /hello/7                                    |
+|      |          | - Uri-Path = /oscore/hello/7                             |
 |      |          | - Content-Format = 0                                     |
 |      |          | - If-None-Match                                          | 
 |      |          | - payload = 0x8a                                         |
@@ -1114,7 +1114,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /test                                       |
+|      |          | - Uri-Path = /oscore/test                                |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Client serializes the request, which is a POST request,  |
 |      |          | with:                                                    |
@@ -1122,7 +1122,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | - Object-Security option                                 |
 |      |          | - Payload: ciphertext including:                         |
 |      |          |     * Code: DEL                                          |
-|      |          |     * Uri-Path = /test                                   |
+|      |          |     * Uri-Path = /oscore/test                            |
 +------+----------+----------------------------------------------------------+
 | 3    | Verify   | Client displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
@@ -1163,7 +1163,7 @@ _server resources_:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /test                                       |
+|      |          | - Uri-Path = /oscore/test                                |
 +------+----------+----------------------------------------------------------+
 | 2    | Verify   | Server displays the received packet                      |
 +------+----------+----------------------------------------------------------+
@@ -1178,7 +1178,7 @@ _server resources_:
 | 5    | Check    | Server parses the request and continues the CoAP         |
 |      |          | processing; expected: CoAP DEL request, including:       |
 |      |          |                                                          |
-|      |          | - Uri-Path = /test                                       |
+|      |          | - Uri-Path = /oscore/test                                |
 +------+----------+----------------------------------------------------------+
 | 6    | Verify   | Server displays the received packet                      |
 +------+----------+----------------------------------------------------------+
@@ -1216,7 +1216,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option (modified Sender ID)            |
-|      |          | - Uri-Path : /hello/1                                    |
+|      |          | - Uri-Path : /oscore/hello/1                             |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Client serializes the request, which is a GET request,   |
 |      |          | with:                                                    |
@@ -1224,7 +1224,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | - Object-Security option                                 |
 |      |          | - Payload: ciphertext including:                         |
 |      |          |     * Code: GET                                          |
-|      |          |     * Uri-Path = /hello/1                                |
+|      |          |     * Uri-Path = /oscore/hello/1                         |
 +------+----------+----------------------------------------------------------+
 | 3    | Verify   | Client displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
@@ -1254,7 +1254,7 @@ _server security context_: [Security Context B](#server-sec)
 
 _server resources_:
 
-* /hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /oscore/hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
 
 **Test Sequence**
 
@@ -1265,7 +1265,7 @@ _server resources_:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option (modified Sender ID)            |
-|      |          | - Uri-Path : /hello/1                                    |
+|      |          | - Uri-Path : /oscore/hello/1                             |
 +------+----------+----------------------------------------------------------+
 | 2    | Verify   | Server displays the received packet                      |
 +------+----------+----------------------------------------------------------+
@@ -1305,7 +1305,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /hello/1                                    |
+|      |          | - Uri-Path : /oscore/hello/1                             |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Client serializes the request, which is a POST request,  |
 |      |          | with:                                                    |
@@ -1313,7 +1313,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | - Object-Security option                                 |
 |      |          | - Payload: ciphertext including:                         |
 |      |          |     * Code: GET                                          |
-|      |          |     * Uri-Path = /hello/1                                |
+|      |          |     * Uri-Path = /oscore/hello/1                         |
 +------+----------+----------------------------------------------------------+
 | 3    | Verify   | Client displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
@@ -1343,7 +1343,7 @@ _server security context_: [Security Context B](#server-sec)
 
 _server resources_:
 
-* /hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /oscore/hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
 
 **Test Sequence**
 
@@ -1354,7 +1354,7 @@ _server resources_:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /hello/1                                    |
+|      |          | - Uri-Path : /oscore/hello/1                             |
 +------+----------+----------------------------------------------------------+
 | 2    | Verify   | Server displays the received packet                      |
 +------+----------+----------------------------------------------------------+
@@ -1394,7 +1394,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /hello/1                                    |
+|      |          | - Uri-Path : /oscore/hello/1                             |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Client serializes the request, which is a POST request,  |
 |      |          | with:                                                    |
@@ -1402,7 +1402,7 @@ _client security context_: [Security Context A](#client-sec), with:
 |      |          | - Object-Security option                                 |
 |      |          | - Payload: ciphertext including:                         |
 |      |          |     * Code: GET                                          |
-|      |          |     * Uri-Path = /hello/1                                |
+|      |          |     * Uri-Path = /oscore/hello/1                         |
 +------+----------+----------------------------------------------------------+
 | 3    | Verify   | Client displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
@@ -1428,7 +1428,7 @@ _server security context_: [Security Context B](#server-sec)
 
 _server resources_:
 
-* /hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /oscore/hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
 
 **Test Sequence**
 
@@ -1439,7 +1439,7 @@ _server resources_:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /hello/1                                    |
+|      |          | - Uri-Path : /oscore/hello/1                             |
 +------+----------+----------------------------------------------------------+
 | 2    | Verify   | Server displays the received packet                      |
 +------+----------+----------------------------------------------------------+
@@ -1454,7 +1454,7 @@ _server resources_:
 | 5    | Check    | Server parses the request and continues the CoAP         |
 |      |          | processing; expected: CoAP GET request, including:       |
 |      |          |                                                          |
-|      |          | - Uri-Path = /hello/1                                     |
+|      |          | - Uri-Path = /oscore/hello/1                              |
 +------+----------+----------------------------------------------------------+
 | 6    | Verify   | Server displays the received packet                      |
 +------+----------+----------------------------------------------------------+
@@ -1489,7 +1489,7 @@ _client security context_: [Security Context A](#client-sec)
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /hello/1                                    |
+|      |          | - Uri-Path : /oscore/hello/1                             |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Client serializes the request, which is a POST request,  |
 |      |          | with:                                                    |
@@ -1497,7 +1497,7 @@ _client security context_: [Security Context A](#client-sec)
 |      |          | - Object-Security option                                 |
 |      |          | - Payload: ciphertext including:                         |
 |      |          |     * Code: GET                                          |
-|      |          |     * Uri-Path = /hello/1                                |
+|      |          |     * Uri-Path = /oscore/hello/1                         |
 +------+----------+----------------------------------------------------------+
 | 3    | Verify   | Client displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
@@ -1524,7 +1524,7 @@ _client security context_: [Security Context A](#client-sec)
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /hello/1                                    |
+|      |          | - Uri-Path : /oscore/hello/1                             |
 +------+----------+----------------------------------------------------------+
 | 10   | Check    | Client serializes the request, which is a POST request,  |
 |      |          | with:                                                    |
@@ -1532,7 +1532,7 @@ _client security context_: [Security Context A](#client-sec)
 |      |          | - Object-Security option                                 |
 |      |          | - Payload: ciphertext including:                         |
 |      |          |     * Code: GET                                          |
-|      |          |     * Uri-Path = /hello/1                                |
+|      |          |     * Uri-Path = /oscore/hello/1                         |
 +------+----------+----------------------------------------------------------+
 | 11   | Verify   | Client displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
@@ -1562,7 +1562,7 @@ _server security context_: [Security Context B](#server-sec)
 
 _server resources_:
 
-* /hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /oscore/hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
 
 **Test Sequence**
 
@@ -1573,7 +1573,7 @@ _server resources_:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /hello/1                                    |
+|      |          | - Uri-Path = /oscore/hello/1                             |
 +------+----------+----------------------------------------------------------+
 | 2    | Verify   | Server displays the received packet                      |
 +------+----------+----------------------------------------------------------+
@@ -1588,7 +1588,7 @@ _server resources_:
 | 5    | Check    | Server parses the request and continues the CoAP         |
 |      |          | processing; expected: CoAP GET request, including:       |
 |      |          |                                                          |
-|      |          | - Uri-Path : /hello/1                                    |
+|      |          | - Uri-Path : /oscore/hello/1                             |
 +------+----------+----------------------------------------------------------+
 | 6    | Verify   | Server displays the received packet                      |
 +------+----------+----------------------------------------------------------+
@@ -1610,7 +1610,7 @@ _server resources_:
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /hello/1                                    |
+|      |          | - Uri-Path : /oscore/hello/1                             |
 +------+----------+----------------------------------------------------------+
 | 2    | Verify   | Server displays the received packet                      |
 +------+----------+----------------------------------------------------------+
@@ -1650,7 +1650,7 @@ _client security context_: [Security Context A](#client-sec)
 |      |          | protected with OSCORE, including:                        |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /hello/coap                                 |
+|      |          | - Uri-Path : /oscore/hello/coap                          |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Client serializes the request, which is a POST request,  |
 |      |          | with:                                                    |
@@ -1658,7 +1658,7 @@ _client security context_: [Security Context A](#client-sec)
 |      |          | - Object-Security option                                 |
 |      |          | - Payload: ciphertext including:                         |
 |      |          |     * Code: GET                                          |
-|      |          |     * Uri-Path = /hello/coap                             |
+|      |          |     * Uri-Path = /oscore/hello/coap                      |
 +------+----------+----------------------------------------------------------+
 | 3    | Verify   | Client displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
@@ -1686,7 +1686,7 @@ _server security context_: None
 
 _server resources_:
 
-* /hello/coap : authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /oscore/hello/coap : authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
 
 **Test Sequence**
 
@@ -1697,7 +1697,7 @@ _server resources_:
 |      |          | including:                                               |
 |      |          |                                                          |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /hello/coap                                 |
+|      |          | - Uri-Path : /oscore/hello/coap                          |
 +------+----------+----------------------------------------------------------+
 | 2    | Verify   | Server displays the received packet                      |
 +------+----------+----------------------------------------------------------+
@@ -1731,12 +1731,12 @@ _server resources_:
 | 1    | Stimulus | The client is requested to send a CoAP GET request,      |
 |      |          | including:                                               |
 |      |          |                                                          |
-|      |          | - Uri-Path : /hello/1                                    |
+|      |          | - Uri-Path : /oscore/hello/1                             |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Client serializes the request, which is a GET request,   |
 |      |          | with:                                                    |
 |      |          |                                                          |
-|      |          | - Uri-Path : /hello/1                                    |
+|      |          | - Uri-Path : /oscore/hello/1                             |
 +------+----------+----------------------------------------------------------+
 | 3    | Verify   | Client displays the sent packet                          |
 +------+----------+----------------------------------------------------------+
@@ -1760,7 +1760,7 @@ _server security context_: [Security Context B](#server-sec)
 
 _server resources_:
 
-* /hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /oscore/hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
 
 **Test Sequence**
 
@@ -1770,7 +1770,7 @@ _server resources_:
 | 1    | Stimulus | The client is requested to send a CoAP GET request,      |
 |      |          | including:                                               |
 |      |          |                                                          |
-|      |          | - Uri-Path : /hello/1                                    |
+|      |          | - Uri-Path : /oscore/hello/1                             |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Server parses the request and finds an unrecognized      | 
 |      |          | option of class "critical" (the Object-Security option)  |
