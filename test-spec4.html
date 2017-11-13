@@ -127,18 +127,18 @@
 <h3 id="resources">Resources</h3>
 <p>The list of resources the OSCORE-aware server must implement is the following:</p>
 <ul>
-<li>/hello/coap : authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain)</li>
-<li>/hello/1 : protected resource, authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain)</li>
-<li>/hello/2 : protected resource, authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain), and with ETag 0x2b</li>
-<li>/hello/3 : protected resource, authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain), and Max-Age 5</li>
-<li>/hello/6 : protected resource, authorized method: POST, returns the value of the resource with content-format 0 (text/plain)</li>
-<li>/hello/7 : protected resource, authorized method: PUT, returns the value of the resource with content-format 0 (text/plain), has ETag 0x7b</li>
-<li>/observe : protected resource, authorized method: GET, returns a counter incremented every 2 seconds, supports observe.</li>
-<li>/test: protected resource, authorized method: DEL.</li>
+<li>/oscore/hello/coap : authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain)</li>
+<li>/oscore/hello/1 : protected resource, authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain)</li>
+<li>/oscore/hello/2 : protected resource, authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain), and with ETag 0x2b</li>
+<li>/oscore/hello/3 : protected resource, authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain), and Max-Age 5</li>
+<li>/oscore/hello/6 : protected resource, authorized method: POST, returns the value of the resource with content-format 0 (text/plain)</li>
+<li>/oscore/hello/7 : protected resource, authorized method: PUT, returns the value of the resource with content-format 0 (text/plain), has ETag 0x7b</li>
+<li>/oscore/observe : protected resource, authorized method: GET, returns a counter incremented every 2 seconds, supports observe.</li>
+<li>/oscore/test: protected resource, authorized method: DEL.</li>
 </ul>
 <p>The list of resource the OSCORE-unaware server must implement is the following:</p>
 <ul>
-<li>/hello/coap : authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain)</li>
+<li>/oscore/hello/coap : authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain)</li>
 </ul>
 <hr />
 <h2 id="env-setup">3. Set up the environment</h2>
@@ -164,7 +164,7 @@
 <td><p>Stimulus</p></td>
 <td><p>The client is requested to send a CoAP GET request including:</p>
 <ul>
-<li>Uri-Path : /hello/coap</li>
+<li>Uri-Path : /oscore/hello/coap</li>
 </ul></td>
 </tr>
 <tr class="even">
@@ -198,7 +198,7 @@
 <p><strong>Configuration</strong> :</p>
 <p><em>server resources</em>:</p>
 <ul>
-<li>/hello/coap : authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain)</li>
+<li>/oscore/hello/coap : authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain)</li>
 </ul>
 <p><strong>Test Sequence</strong></p>
 <table>
@@ -220,7 +220,7 @@
 <td><p>Stimulus</p></td>
 <td><p>The client is requested to send a CoAP GET request including:</p>
 <ul>
-<li>Uri-Path = /hello/coap</li>
+<li>Uri-Path = /oscore/hello/coap</li>
 </ul></td>
 </tr>
 <tr class="even">
@@ -279,7 +279,7 @@
 <td><p>The client is requested to send a CoAP GET request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-Path : /hello/1</li>
+<li>Uri-Path : /oscore/hello/1</li>
 </ul></td>
 </tr>
 <tr class="even">
@@ -291,7 +291,7 @@
 <li>Payload: ciphertext including:
 <ul>
 <li>Code: GET</li>
-<li>Uri-Path : /hello/1</li>
+<li>Uri-Path : /oscore/hello/1</li>
 </ul></li>
 </ul></td>
 </tr>
@@ -339,7 +339,7 @@
 </ul>
 <p><em>server resources</em>:</p>
 <ul>
-<li>/hello/1 : protected resource, authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain)</li>
+<li>/oscore/hello/1 : protected resource, authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain)</li>
 </ul>
 <p><strong>Test Sequence</strong></p>
 <table>
@@ -362,7 +362,7 @@
 <td><p>The client is requested to send a CoAP GET request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-Path = /hello/1</li>
+<li>Uri-Path = /oscore/hello/1</li>
 </ul></td>
 </tr>
 <tr class="even">
@@ -389,7 +389,7 @@
 <td><p>Check</p></td>
 <td><p>Server parses the request and continues the CoAP processing; expected: CoAP GET request, including:</p>
 <ul>
-<li>Uri-Path : /hello/1</li>
+<li>Uri-Path : /oscore/hello/1</li>
 </ul></td>
 </tr>
 <tr class="even">
@@ -446,7 +446,7 @@
 <td><p>The client is requested to send a CoAP GET request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-Path = /hello/2</li>
+<li>Uri-Path = /oscore/hello/2</li>
 <li>Uri-Query : first=1</li>
 </ul></td>
 </tr>
@@ -459,7 +459,7 @@
 <li>Payload: ciphertext including:
 <ul>
 <li>Code: GET</li>
-<li>Uri-Path : /hello/2</li>
+<li>Uri-Path : /oscore/hello/2</li>
 <li>Uri-Query : first=1</li>
 </ul></li>
 </ul></td>
@@ -509,7 +509,7 @@
 </ul>
 <p><em>server resources</em>:</p>
 <ul>
-<li>/hello/2 : protected resource, authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain), and with ETag 0x2b</li>
+<li>/oscore/hello/2 : protected resource, authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain), and with ETag 0x2b</li>
 </ul>
 <p><strong>Test Sequence</strong></p>
 <table>
@@ -532,7 +532,7 @@
 <td><p>The client is requested to send a CoAP GET request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-path = /hello/2</li>
+<li>Uri-path = /oscore/hello/2</li>
 <li>Uri-Query : first=1</li>
 </ul></td>
 </tr>
@@ -560,7 +560,7 @@
 <td><p>Check</p></td>
 <td><p>Server parses the request and continues the CoAP processing; expected: CoAP GET request, including:</p>
 <ul>
-<li>Uri-path = /hello/2</li>
+<li>Uri-path = /oscore/hello/2</li>
 <li>Uri-Query : first=1</li>
 </ul></td>
 </tr>
@@ -619,7 +619,7 @@
 <td><p>The client is requested to send a CoAP GET request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-path = /hello/3</li>
+<li>Uri-path = /oscore/hello/3</li>
 <li>Accept = 0 (text/plain;charset=utf-8)</li>
 </ul></td>
 </tr>
@@ -632,7 +632,7 @@
 <li>Payload: ciphertext including:
 <ul>
 <li>Code: GET</li>
-<li>Uri-Path = /hello/3</li>
+<li>Uri-Path = /oscore/hello/3</li>
 <li>Accept = 0 (text/plain;charset=utf-8)</li>
 </ul></li>
 </ul></td>
@@ -682,7 +682,7 @@
 </ul>
 <p><em>server resources</em>:</p>
 <ul>
-<li>/hello/3 : protected resource, authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain), and Max-Age 5</li>
+<li>/oscore/hello/3 : protected resource, authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain), and Max-Age 5</li>
 </ul>
 <p><strong>Test Sequence</strong></p>
 <table>
@@ -705,7 +705,7 @@
 <td><p>The client is requested to send a CoAP GET request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-path = /hello/3</li>
+<li>Uri-path = /oscore/hello/3</li>
 <li>Accept = 0 (text/plain;charset=utf-8)</li>
 </ul></td>
 </tr>
@@ -733,7 +733,7 @@
 <td><p>Check</p></td>
 <td><p>Server parses the request and continues the CoAP processing; expected: CoAP GET request, including:</p>
 <ul>
-<li>Uri-path = /hello/3</li>
+<li>Uri-path = /oscore/hello/3</li>
 <li>Accept = 0 (text/plain;charset=utf-8)</li>
 </ul></td>
 </tr>
@@ -792,7 +792,7 @@
 <td><p>The client is requested to send a CoAP GET request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-path = /hello/1</li>
+<li>Uri-path = /oscore/hello/1</li>
 <li>Observe = 0 (Registration)</li>
 </ul></td>
 </tr>
@@ -805,7 +805,7 @@
 <li>Payload: ciphertext including:
 <ul>
 <li>Code: GET</li>
-<li>Uri-Path = /hello/1</li>
+<li>Uri-Path = /oscore/hello/1</li>
 <li>Observe = 0 (Registration)</li>
 </ul></li>
 </ul></td>
@@ -854,7 +854,7 @@
 </ul>
 <p><em>server resources</em>:</p>
 <ul>
-<li>/hello/1 : protected resource, authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain)</li>
+<li>/oscore/hello/1 : protected resource, authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain)</li>
 </ul>
 <p><strong>Test Sequence</strong></p>
 <table>
@@ -877,7 +877,7 @@
 <td><p>The client is requested to send a CoAP GET request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-path = /hello/1</li>
+<li>Uri-path = /oscore/hello/1</li>
 <li>Observe = 0 (Registration)</li>
 </ul></td>
 </tr>
@@ -905,7 +905,7 @@
 <td><p>Check</p></td>
 <td><p>Server parses the request and continues the CoAP processing; expected: CoAP GET request, including:</p>
 <ul>
-<li>Uri-path = /hello/1</li>
+<li>Uri-path = /oscore/hello/1</li>
 <li>Observe = 0 (Registration)</li>
 </ul></td>
 </tr>
@@ -964,7 +964,7 @@
 <td><p>The client is requested to send a CoAP GET request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-path = /observe</li>
+<li>Uri-path = /oscore/observe</li>
 <li>Observe = 0 (Registration)</li>
 </ul></td>
 </tr>
@@ -978,7 +978,7 @@
 <li>Payload: ciphertext including:
 <ul>
 <li>Code: GET</li>
-<li>Uri-Path = /observe</li>
+<li>Uri-Path = /oscore/observe</li>
 </ul></li>
 </ul></td>
 </tr>
@@ -1083,7 +1083,7 @@
 <td><p>The client is requested to send a CoAP GET request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-path = /observe</li>
+<li>Uri-path = /oscore/observe</li>
 <li>Observe = 0 (Registration)</li>
 </ul></td>
 </tr>
@@ -1112,7 +1112,7 @@
 <td><p>Check</p></td>
 <td><p>Server parses the request and continues the CoAP processing; expected: CoAP GET request, including:</p>
 <ul>
-<li>Uri-path = /observe</li>
+<li>Uri-path = /oscore/observe</li>
 <li>Observe = 0 (Registration)</li>
 </ul></td>
 </tr>
@@ -1193,7 +1193,7 @@
 <td><p>The client is requested to send a CoAP POST request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-Path = /hello/6</li>
+<li>Uri-Path = /oscore/hello/6</li>
 <li>Content-Format = 0</li>
 <li>payload = 0x4a</li>
 </ul></td>
@@ -1207,7 +1207,7 @@
 <li>Payload: ciphertext including:
 <ul>
 <li>Code: POST</li>
-<li>Uri-Path = /hello/6</li>
+<li>Uri-Path = /oscore/hello/6</li>
 <li>Content-Format = 0</li>
 <li>payload = 0x4a</li>
 </ul></li>
@@ -1280,7 +1280,7 @@
 <td><p>The client is requested to send a CoAP POST request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-Path = /hello/6</li>
+<li>Uri-Path = /oscore/hello/6</li>
 <li>Content-Format = 0</li>
 <li>payload = 0x4a</li>
 </ul></td>
@@ -1309,7 +1309,7 @@
 <td><p>Check</p></td>
 <td><p>Server parses the request and continues the CoAP processing; expected: CoAP POST request, including:</p>
 <ul>
-<li>Uri-Path = /hello/6</li>
+<li>Uri-Path = /oscore/hello/6</li>
 <li>Content-Format = 0 (text/plain)</li>
 <li>Payload = 0x4a</li>
 </ul></td>
@@ -1369,7 +1369,7 @@
 <td><p>The client is requested to send a CoAP PUT request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-Path = /hello/7</li>
+<li>Uri-Path = /oscore/hello/7</li>
 <li>Content-Format = 0</li>
 <li>If-Match with value 0x7b</li>
 <li>payload = 0x7a</li>
@@ -1384,7 +1384,7 @@
 <li>Payload: ciphertext including:
 <ul>
 <li>Code: PUT</li>
-<li>Uri-Path = /hello/7</li>
+<li>Uri-Path = /oscore/hello/7</li>
 <li>Content-Format = 0</li>
 <li>If-Match with value 0x7b</li>
 <li>payload = 0x7a</li>
@@ -1458,7 +1458,7 @@
 <td><p>The client is requested to send a CoAP PUT request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-Path = /hello/7</li>
+<li>Uri-Path = /oscore/hello/7</li>
 <li>Content-Format = 0</li>
 <li>If-Match with value 0x7b</li>
 <li>payload = 0x7a</li>
@@ -1488,7 +1488,7 @@
 <td><p>Check</p></td>
 <td><p>Server parses the request and continues the CoAP processing; expected: CoAP PUT request, including:</p>
 <ul>
-<li>Uri-Path = /hello/7</li>
+<li>Uri-Path = /oscore/hello/7</li>
 <li>Content-Format = 0</li>
 <li>If-Match with value 0x7b</li>
 <li>payload = 0x7a</li>
@@ -1548,7 +1548,7 @@
 <td><p>The client is requested to send a CoAP PUT request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-Path = /hello/7</li>
+<li>Uri-Path = /oscore/hello/7</li>
 <li>Content-Format = 0</li>
 <li>If-None-Match</li>
 <li>payload = 0x8a</li>
@@ -1563,7 +1563,7 @@
 <li>Payload: ciphertext including:
 <ul>
 <li>Code: PUT</li>
-<li>Uri-Path = /hello/7</li>
+<li>Uri-Path = /oscore/hello/7</li>
 <li>Content-Format = 0</li>
 <li>If-None-Match</li>
 <li>payload = 0x8a</li>
@@ -1610,7 +1610,7 @@
 </ul>
 <p><em>server resources</em>:</p>
 <ul>
-<li>/hello/7 : protected resource, authorized method: PUT, returns the value of the resource with content-format 0 (text/plain), has ETag 0x7b</li>
+<li>/oscore/hello/7 : protected resource, authorized method: PUT, returns the value of the resource with content-format 0 (text/plain), has ETag 0x7b</li>
 </ul>
 <p><strong>Test Sequence</strong></p>
 <table>
@@ -1633,7 +1633,7 @@
 <td><p>The client is requested to send a CoAP PUT request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-Path = /hello/7</li>
+<li>Uri-Path = /oscore/hello/7</li>
 <li>Content-Format = 0</li>
 <li>If-None-Match</li>
 <li>payload = 0x8a</li>
@@ -1663,7 +1663,7 @@
 <td><p>Check</p></td>
 <td><p>Server parses the request and continues the CoAP processing; expected: CoAP PUT request, including:</p>
 <ul>
-<li>Uri-Path = /hello/7</li>
+<li>Uri-Path = /oscore/hello/7</li>
 <li>Content-Format = 0</li>
 <li>If-None-Match</li>
 <li>payload = 0x8a</li>
@@ -1722,7 +1722,7 @@
 <td><p>The client is requested to send a CoAP DEL request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-Path = /test</li>
+<li>Uri-Path = /oscore/test</li>
 </ul></td>
 </tr>
 <tr class="even">
@@ -1734,7 +1734,7 @@
 <li>Payload: ciphertext including:
 <ul>
 <li>Code: DEL</li>
-<li>Uri-Path = /test</li>
+<li>Uri-Path = /oscore/test</li>
 </ul></li>
 </ul></td>
 </tr>
@@ -1801,7 +1801,7 @@
 <td><p>The client is requested to send a CoAP DEL request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-Path = /test</li>
+<li>Uri-Path = /oscore/test</li>
 </ul></td>
 </tr>
 <tr class="even">
@@ -1828,7 +1828,7 @@
 <td><p>Check</p></td>
 <td><p>Server parses the request and continues the CoAP processing; expected: CoAP DEL request, including:</p>
 <ul>
-<li>Uri-Path = /test</li>
+<li>Uri-Path = /oscore/test</li>
 </ul></td>
 </tr>
 <tr class="even">
@@ -1888,7 +1888,7 @@
 <td><p>The client is requested to send a CoAP GET request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option (modified Sender ID)</li>
-<li>Uri-Path : /hello/1</li>
+<li>Uri-Path : /oscore/hello/1</li>
 </ul></td>
 </tr>
 <tr class="even">
@@ -1900,7 +1900,7 @@
 <li>Payload: ciphertext including:
 <ul>
 <li>Code: GET</li>
-<li>Uri-Path = /hello/1</li>
+<li>Uri-Path = /oscore/hello/1</li>
 </ul></li>
 </ul></td>
 </tr>
@@ -1944,7 +1944,7 @@
 <p><em>server security context</em>: <a href="#server-sec">Security Context B</a></p>
 <p><em>server resources</em>:</p>
 <ul>
-<li>/hello/1 : protected resource, authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain)</li>
+<li>/oscore/hello/1 : protected resource, authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain)</li>
 </ul>
 <p><strong>Test Sequence</strong></p>
 <table>
@@ -1967,7 +1967,7 @@
 <td><p>The client is requested to send a CoAP GET request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option (modified Sender ID)</li>
-<li>Uri-Path : /hello/1</li>
+<li>Uri-Path : /oscore/hello/1</li>
 </ul></td>
 </tr>
 <tr class="even">
@@ -2035,7 +2035,7 @@
 <td><p>The client is requested to send a CoAP GET request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-Path : /hello/1</li>
+<li>Uri-Path : /oscore/hello/1</li>
 </ul></td>
 </tr>
 <tr class="even">
@@ -2047,7 +2047,7 @@
 <li>Payload: ciphertext including:
 <ul>
 <li>Code: GET</li>
-<li>Uri-Path = /hello/1</li>
+<li>Uri-Path = /oscore/hello/1</li>
 </ul></li>
 </ul></td>
 </tr>
@@ -2091,7 +2091,7 @@
 <p><em>server security context</em>: <a href="#server-sec">Security Context B</a></p>
 <p><em>server resources</em>:</p>
 <ul>
-<li>/hello/1 : protected resource, authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain)</li>
+<li>/oscore/hello/1 : protected resource, authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain)</li>
 </ul>
 <p><strong>Test Sequence</strong></p>
 <table>
@@ -2114,7 +2114,7 @@
 <td><p>The client is requested to send a CoAP GET request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-Path : /hello/1</li>
+<li>Uri-Path : /oscore/hello/1</li>
 </ul></td>
 </tr>
 <tr class="even">
@@ -2182,7 +2182,7 @@
 <td><p>The client is requested to send a CoAP GET request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-Path : /hello/1</li>
+<li>Uri-Path : /oscore/hello/1</li>
 </ul></td>
 </tr>
 <tr class="even">
@@ -2194,7 +2194,7 @@
 <li>Payload: ciphertext including:
 <ul>
 <li>Code: GET</li>
-<li>Uri-Path = /hello/1</li>
+<li>Uri-Path = /oscore/hello/1</li>
 </ul></li>
 </ul></td>
 </tr>
@@ -2230,7 +2230,7 @@
 <p><em>server security context</em>: <a href="#server-sec">Security Context B</a></p>
 <p><em>server resources</em>:</p>
 <ul>
-<li>/hello/1 : protected resource, authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain)</li>
+<li>/oscore/hello/1 : protected resource, authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain)</li>
 </ul>
 <p><strong>Test Sequence</strong></p>
 <table>
@@ -2253,7 +2253,7 @@
 <td><p>The client is requested to send a CoAP GET request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-Path : /hello/1</li>
+<li>Uri-Path : /oscore/hello/1</li>
 </ul></td>
 </tr>
 <tr class="even">
@@ -2280,7 +2280,7 @@
 <td><p>Check</p></td>
 <td><p>Server parses the request and continues the CoAP processing; expected: CoAP GET request, including:</p>
 <ul>
-<li>Uri-Path = /hello/1</li>
+<li>Uri-Path = /oscore/hello/1</li>
 </ul></td>
 </tr>
 <tr class="even">
@@ -2335,7 +2335,7 @@
 <td><p>The client is requested to send a CoAP GET request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-Path : /hello/1</li>
+<li>Uri-Path : /oscore/hello/1</li>
 </ul></td>
 </tr>
 <tr class="even">
@@ -2347,7 +2347,7 @@
 <li>Payload: ciphertext including:
 <ul>
 <li>Code: GET</li>
-<li>Uri-Path = /hello/1</li>
+<li>Uri-Path = /oscore/hello/1</li>
 </ul></li>
 </ul></td>
 </tr>
@@ -2395,7 +2395,7 @@
 <td><p>The client is requested to send a CoAP GET request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-Path : /hello/1</li>
+<li>Uri-Path : /oscore/hello/1</li>
 </ul></td>
 </tr>
 <tr class="even">
@@ -2407,7 +2407,7 @@
 <li>Payload: ciphertext including:
 <ul>
 <li>Code: GET</li>
-<li>Uri-Path = /hello/1</li>
+<li>Uri-Path = /oscore/hello/1</li>
 </ul></li>
 </ul></td>
 </tr>
@@ -2451,7 +2451,7 @@
 <p><em>server security context</em>: <a href="#server-sec">Security Context B</a></p>
 <p><em>server resources</em>:</p>
 <ul>
-<li>/hello/1 : protected resource, authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain)</li>
+<li>/oscore/hello/1 : protected resource, authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain)</li>
 </ul>
 <p><strong>Test Sequence</strong></p>
 <table>
@@ -2474,7 +2474,7 @@
 <td><p>The client is requested to send a CoAP GET request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-Path = /hello/1</li>
+<li>Uri-Path = /oscore/hello/1</li>
 </ul></td>
 </tr>
 <tr class="even">
@@ -2501,7 +2501,7 @@
 <td><p>Check</p></td>
 <td><p>Server parses the request and continues the CoAP processing; expected: CoAP GET request, including:</p>
 <ul>
-<li>Uri-Path : /hello/1</li>
+<li>Uri-Path : /oscore/hello/1</li>
 </ul></td>
 </tr>
 <tr class="even">
@@ -2539,7 +2539,7 @@
 <td><p>The client is requested to send a CoAP GET request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-Path : /hello/1</li>
+<li>Uri-Path : /oscore/hello/1</li>
 </ul></td>
 </tr>
 <tr class="odd">
@@ -2602,7 +2602,7 @@
 <td><p>The client is requested to send a CoAP GET request protected with OSCORE, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-Path : /hello/coap</li>
+<li>Uri-Path : /oscore/hello/coap</li>
 </ul></td>
 </tr>
 <tr class="even">
@@ -2614,7 +2614,7 @@
 <li>Payload: ciphertext including:
 <ul>
 <li>Code: GET</li>
-<li>Uri-Path = /hello/coap</li>
+<li>Uri-Path = /oscore/hello/coap</li>
 </ul></li>
 </ul></td>
 </tr>
@@ -2650,7 +2650,7 @@
 <p><em>server security context</em>: None</p>
 <p><em>server resources</em>:</p>
 <ul>
-<li>/hello/coap : authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain)</li>
+<li>/oscore/hello/coap : authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain)</li>
 </ul>
 <p><strong>Test Sequence</strong></p>
 <table>
@@ -2673,7 +2673,7 @@
 <td><p>The client is requested to send a CoAP GET request, including:</p>
 <ul>
 <li>Object-Security option</li>
-<li>Uri-Path : /hello/coap</li>
+<li>Uri-Path : /oscore/hello/coap</li>
 </ul></td>
 </tr>
 <tr class="even">
@@ -2729,7 +2729,7 @@
 <td><p>Stimulus</p></td>
 <td><p>The client is requested to send a CoAP GET request, including:</p>
 <ul>
-<li>Uri-Path : /hello/1</li>
+<li>Uri-Path : /oscore/hello/1</li>
 </ul></td>
 </tr>
 <tr class="even">
@@ -2737,7 +2737,7 @@
 <td><p>Check</p></td>
 <td><p>Client serializes the request, which is a GET request, with:</p>
 <ul>
-<li>Uri-Path : /hello/1</li>
+<li>Uri-Path : /oscore/hello/1</li>
 </ul></td>
 </tr>
 <tr class="odd">
@@ -2766,7 +2766,7 @@
 <p><em>server security context</em>: <a href="#server-sec">Security Context B</a></p>
 <p><em>server resources</em>:</p>
 <ul>
-<li>/hello/1 : protected resource, authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain)</li>
+<li>/oscore/hello/1 : protected resource, authorized method: GET, returns the string &quot;Hello World!&quot; with content-format 0 (text/plain)</li>
 </ul>
 <p><strong>Test Sequence</strong></p>
 <table>
@@ -2788,7 +2788,7 @@
 <td><p>Stimulus</p></td>
 <td><p>The client is requested to send a CoAP GET request, including:</p>
 <ul>
-<li>Uri-Path : /hello/1</li>
+<li>Uri-Path : /oscore/hello/1</li>
 </ul></td>
 </tr>
 <tr class="even">
