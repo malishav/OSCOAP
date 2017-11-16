@@ -1,4 +1,4 @@
-# Tests Specification for OSCORE
+# Test Description of OSCORE
 
 [//]: # (use Pandoc : pandoc spec.md -o spec.html)
 
@@ -38,11 +38,19 @@
 
 ## 1. Notes
 
+This test description facilitates automated, remote testing of OSCORE as enabled by the [SPOTS](http://spots.ac.me) and [F-Interop](http://www.f-interop.eu) projects.
+
+### Constants
+
 CoAP Version is 2 in all the tests.
 
 Object-Security option is 21 in all the tests.
 
+### Facilitating Debugging
+
 The client and server may optionally display sent and received messages, external_aad and COSE object (before and after compression) to simplify debugging.
+
+### Miscellaneous
 
 When non-indicated, CoAP messages can be NON or CON (implementer's choice).
 
