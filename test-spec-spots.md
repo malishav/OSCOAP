@@ -55,7 +55,9 @@
 
 CoAP Version is 2 in all the tests.
 
-The client and server may optionally display external_aad and COSE object (before and after compression) to simplify debugging.
+Object-Security option is 21 in all the tests.
+
+The client and server may optionally display sent and received messages, external_aad and COSE object (before and after compression) to simplify debugging.
 
 When non-indicated, CoAP messages can be NON or CON (implementer's choice).
 
