@@ -111,7 +111,7 @@ The list of resource the OSCORE-unaware server must implement is the following:
 
 ## 3. Set up the environment {#env-setup}
 
-### 3.1. Identifier: TEST_0 {#test-0a}
+### 3.1. Identifier: TEST_0 {#test-0}
 
 **Objective** : Verify that CoAP exchange works. Perform a simple GET transaction using COAP, Content-Format and Uri-Path option
 
