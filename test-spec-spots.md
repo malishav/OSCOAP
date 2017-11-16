@@ -107,7 +107,7 @@ The list of resources the OSCORE-aware server must implement is the following:
 
 The list of resource the OSCORE-unaware server must implement is the following:
 
-* /oscore/hello/coap : authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /oscore/hello/coap : authorized method: GET, returns the string "Hello World!" with content-format text/plain
 
 ------
 
@@ -121,7 +121,7 @@ The list of resource the OSCORE-unaware server must implement is the following:
 
 _server resources_:
 
-* /oscore/hello/coap : authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /oscore/hello/coap : authorized method: GET, returns the string "Hello World!" with content-format text/plain
 
 **Test Sequence**
 
@@ -129,79 +129,35 @@ _server resources_:
 | Step | Type     | Description                                              |
 +======+==========+==========================================================+
 | 1    | Stimulus | The client is requested to send a CoAP GET request to    |
-|      |          | server to Uri-Path /oscore/hello/coap                    |
+|      |          | the server at Uri-Path /oscore/hello/coap                |
 +------+----------+----------------------------------------------------------+
 | 2    | Check    | Server receives the request from the client, which is    |
 |      |          | decoded as:                                              |
 |      |          |                                                          |
-|      |          | - Code = 1 (GET)                                         |
+|      |          | - Code: GET                                              |
 |      |          | - Uri-Path: /oscore/hello/coap                           |
 +------+----------+----------------------------------------------------------+
 | 3    | Check    | Client receives the response from the server, which is   |
 |      |          | decoded as:                                              |
 |      |          |                                                          |
-|      |          | - Code = 69 (2.05 Content)                               |
-|      |          | - Content-Format = 0 (text/plain)                        |
-|      |          | - Payload = "Hello World!"                               |
+|      |          | - Code: 2.05 Content                                     |
+|      |          | - Content-Format: text/plain                             |
+|      |          | - Payload: "Hello World!"                                |
 +------+----------+----------------------------------------------------------+
 
 ## 4. Correct OSCORE use
 
 ### 4.1 GET Tests {#get}
 
-#### 4.1.1. Identifier: TEST_1a {#test-1a}
+#### 4.1.1. Identifier: TEST_1 {#test-1}
 
-**Objective** : Perform a simple GET transaction using OSCORE, Content-Format and Uri-Path option (Client side)
+**Objective** : Perform a simple GET transaction using OSCORE, Content-Format and Uri-Path option
 
 **Configuration** :
 
 _client security context_: [Security Context A](#client-sec), with:
 
 * Sequence number received not in client's replay window
-
-**Test Sequence**
-
-+------+----------+----------------------------------------------------------+
-| Step | Type     | Description                                              |
-+======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request       |
-|      |          | protected with OSCORE, including:                        |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /oscore/hello/1                             |
-+------+----------+----------------------------------------------------------+
-| 2    | Check    | Client serializes the request, which is a POST request,  |
-|      |          | with:                                                    |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload: ciphertext including:                         |
-|      |          |       * Code: GET                                        |
-|      |          |       * Uri-Path : /oscore/hello/1                       |
-+------+----------+----------------------------------------------------------+
-| 3    | Verify   | Client displays the sent packet                          |
-+------+----------+----------------------------------------------------------+
-| 4    | Check    | Client parses the response; expected:                    |
-|      |          | 2.04 Changed Response with:                              |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload                                                |
-+------+----------+----------------------------------------------------------+
-| 5    | Verify   | Client decrypts the message: OSCORE verification succeeds|
-+------+----------+----------------------------------------------------------+
-| 6    | Check    | Client parses the decrypted response and continues the   |
-|      |          | CoAP processing; expected 2.05 Content Response with:    |
-|      |          |                                                          |
-|      |          | - Content-Format = 0 (text/plain)                        |
-|      |          | - Payload = "Hello World!"                               |
-+------+----------+----------------------------------------------------------+
-| 7    | Verify   | Client displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-
-#### 4.1.2. Identifier: TEST_1b {#test-1b}
-
-**Objective** : Perform a simple GET transaction using OSCORE, Content-Format and Uri-Path option (Server side)
-
-**Configuration** :
 
 _server security context_: 
 [Security Context B](#server-sec), with:
@@ -210,46 +166,41 @@ _server security context_:
 
 _server resources_:
 
-* /oscore/hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /oscore/hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format text/plain
 
 **Test Sequence**
 
 +------+----------+----------------------------------------------------------+
 | Step | Type     | Description                                              |
 +======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request       |
-|      |          | protected with OSCORE, including:                        |
+| 1    | Stimulus | The client is requested to send a CoAP GET request to    |
+|      |          | the server at Uri-Path /oscore/hello/1, protected with   |
+|      |          | OSCORE.                                                  |
++------+----------+----------------------------------------------------------+
+| 2    | Check    | Server receives the request from the client, which is    |
+|      |          | decoded as:                                              |
 |      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /oscore/hello/1                             |
+|      |          | - Code: POST                                             |
+|      |          | - Object-Security: empty                                 |
+|      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 2    | Verify   | Server displays the received packet                      |
+| 3    | Check    | Server decrypts and parses the request:                  |
+|      |          | - OSCORE verification succeeds                           |
+|      |          | - Code: GET                                              |
+|      |          | - Uri-Path: /oscore/hello/1                              |
 +------+----------+----------------------------------------------------------+
-| 3    | Check    | Server parses the request; expected:                     |
-|      |          | 0.02 POST with:                                          |
+| 4    | Check    | Client receives the response from the server, which is   |
+|      |          | decoded as:                                              |
 |      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload                                                |
+|      |          | - Code: 2.04 Changed                                     |
+|      |          | - Object-Security: empty                                 |
+|      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 4    | Verify   | Server decrypts the message: OSCORE verification succeeds|
-+------+----------+----------------------------------------------------------+
-| 5    | Check    | Server parses the request and continues the CoAP         |
-|      |          | processing; expected: CoAP GET request, including:       |
-|      |          |                                                          |
-|      |          | - Uri-Path : /oscore/hello/1                             |
-+------+----------+----------------------------------------------------------+
-| 6    | Verify   | Server displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-| 7    | Check    | Server serialize the response correctly, which is:       |
-|      |          | 2.04 Changed Response with:                              |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload: ciphertext including:                         |
-|      |          |     * Code: 2.05 Content Response                        |
-|      |          |     * Content-Format = 0 (text/plain)                    |
-|      |          |     * Payload = "Hello World!"                           |
-+------+----------+----------------------------------------------------------+
-| 8    | Verify   | Server displays the sent packet                          |
+| 5    | Check    | Client decrypts and parses the response:                 |
+|      |          | - OSCORE verification succeeds                           |
+|      |          | - Code: 2.05 Content                                     |
+|      |          | - Content-Format: text/plain                             |
+|      |          | - Payload: "Hello World!"                                |
 +------+----------+----------------------------------------------------------+
 
 #### 4.1.3. Identifier: TEST_2a {#test-2a}
