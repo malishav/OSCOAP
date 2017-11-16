@@ -183,6 +183,7 @@ _server resources_:
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 3    | Check    | Server decrypts and parses the request:                  |
+|      |          |                                                          |
 |      |          | - OSCORE verification succeeds                           |
 |      |          | - Code: GET                                              |
 |      |          | - Uri-Path: /oscore/hello/1                              |
@@ -195,6 +196,7 @@ _server resources_:
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 5    | Check    | Client decrypts and parses the response:                 |
+|      |          |                                                          |
 |      |          | - OSCORE verification succeeds                           |
 |      |          | - Code: 2.05 Content                                     |
 |      |          | - Content-Format: text/plain                             |
