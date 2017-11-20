@@ -454,9 +454,9 @@ _server resources_:
 
 ### 4.2. POST Tests {#post}
 
-#### 4.2.1. Identifier: TEST_6a {#test-6a}
+#### 4.2.1. Identifier: TEST_6 {#test-6}
 
-**Objective** : Perform a POST transaction using OSCORE, Content-Format, and Uri-Path option, changing a resource (Client side)
+**Objective** : Perform a POST transaction using OSCORE, Content-Format, and Uri-Path option, changing a resource.
 
 **Configuration** :
 
@@ -464,104 +464,52 @@ _client security context_: [Security Context A](#client-sec), with:
 
 * Sequence number sent not in server's replay window
 
-**Test Sequence**
-
-+------+----------+----------------------------------------------------------+
-| Step | Type     | Description                                              |
-+======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP POST request      |
-|      |          | protected with OSCORE, including:                        |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /oscore/hello/6                             |
-|      |          | - Content-Format = 0                                     |
-|      |          | - payload = 0x4a                                         |
-+------+----------+----------------------------------------------------------+
-| 2    | Check    | Client serializes the request, which is a POST request,  |
-|      |          | with:                                                    |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload: ciphertext including:                         |
-|      |          |     * Code: POST                                         |
-|      |          |     * Uri-Path = /oscore/hello/6                         |
-|      |          |     * Content-Format = 0                                 |
-|      |          |     * payload = 0x4a                                     |
-+------+----------+----------------------------------------------------------+
-| 3    | Verify   | Client displays the sent packet                          |
-+------+----------+----------------------------------------------------------+
-| 4    | Check    | Client parses the response; expected:                    |
-|      |          | 2.04 Changed Response with:                              |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload                                                |
-+------+----------+----------------------------------------------------------+
-| 5    | Verify   | Client decrypts the message: OSCORE verification succeeds|
-+------+----------+----------------------------------------------------------+
-| 6    | Check    | Client parses the decrypted response and continues the   |
-|      |          | CoAP processing; expected 2.04 Changed Response with:    |
-|      |          |                                                          |
-|      |          | - Content-Format = 0 (text/plain)                        |
-|      |          | - Payload = 0x4a                                         |
-+------+----------+----------------------------------------------------------+
-| 7    | Verify   | Client displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-
-#### 4.2.2. Identifier: TEST_6b {#test-6b}
-
-**Objective** : Perform a POST transaction using OSCORE, Content-Format, and Uri-Path option, updating a resource (Server side)
-
-**Configuration** :
-
 _server security context_: [Security Context B](#server-sec), with:
 
 * Sequence number received not in server's replay window
 
 _server resources_:
 
-* /hello/6  : protected resource, authorized method: POST, returns the value of the resource with content-format 0 (text/plain)
+* /hello/6  : protected resource, authorized method: POST, returns the value of the resource with content-format text/plain
 
 **Test Sequence**
 
 +------+----------+----------------------------------------------------------+
 | Step | Type     | Description                                              |
 +======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP POST request      |
-|      |          | protected with OSCORE, including:                        |
+| 1    | Stimulus | The client is requested to send a CoAP POST request to   |
+|      |          | the server at Uri-Path /oscore/hello/6 with Content      |
+|      |          | Format set to text/plain and payload 0x4a, protected     |
+|      |          | with OSCORE.                                             |
++------+----------+----------------------------------------------------------+
+| 2    | Check    | Server receives the request from the client, which is    |
+|      |          | decoded as:                                              |
 |      |          |                                                          |
+|      |          | - Code: POST                                             |
 |      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /oscore/hello/6                             |
-|      |          | - Content-Format = 0                                     |
-|      |          | - payload = 0x4a                                         |
+|      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 2    | Verify   | Server displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-| 3    | Check    | Server parses the request; expected:                     |
-|      |          | 0.02 POST with:                                          |
+| 3    | Check    | Server decrypts, parses, and processes the request:      |
 |      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload                                                |
+|      |          | - OSCORE verification succeeds                           |
+|      |          | - Code: POST                                             |
+|      |          | - Uri-Path: /oscore/hello/6                              |
+|      |          | - Content-Format: text/plain                             |
+|      |          | - Payload: 0x4a                                          |
 +------+----------+----------------------------------------------------------+
-| 4    | Verify   | Server decrypts the message: OSCORE verification succeeds|
-+------+----------+----------------------------------------------------------+
-| 5    | Check    | Server parses the request and continues the CoAP         |
-|      |          | processing; expected: CoAP POST request, including:      |
+| 4    | Check    | Client receives the response from the server, which is   |
+|      |          | decoded as:                                              |
 |      |          |                                                          |
-|      |          | - Uri-Path = /oscore/hello/6                             |
-|      |          | - Content-Format = 0 (text/plain)                        |
-|      |          | - Payload = 0x4a                                         |
+|      |          | - Code: 2.04 Changed                                     |
+|      |          | - Content-Format: text/plain                             |
+|      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 6    | Verify   | Server displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-| 7    | Check    | Server serialize the response correctly, which is:       |
-|      |          | 2.04 Changed Response with:                              |
+| 5    | Check    | Client decrypts, parses, and processes the response:     |
 |      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload: ciphertext including:                         |
-|      |          |     * Code: 2.04 Changed Response                        |
-|      |          |     * Content-Format = 0 (text/plain)                    |
-|      |          |     * Payload = 0x4a                                     |
-+------+----------+----------------------------------------------------------+
-| 8    | Verify   | Server displays the sent packet                          |
+|      |          | - OSCORE verification succeeds                           |
+|      |          | - Code: 2.04 Changed                                     |
+|      |          | - Content-Format: text/plain                             |
+|      |          | - Payload: 0x4a                                          |
 +------+----------+----------------------------------------------------------+
 
 ### 4.3 PUT Tests {#PUT}
