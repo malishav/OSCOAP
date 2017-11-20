@@ -711,7 +711,7 @@ _server resources_:
 +------+----------+----------------------------------------------------------+
 | Step | Type     | Description                                              |
 +======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request to    |
+| 1    | Stimulus | The client is requested to send a CoAP CON GET request to|
 |      |          | the server at Uri-Path /oscore/hello/1, protected with   |
 |      |          | OSCORE.                                                  |
 +------+----------+----------------------------------------------------------+
@@ -755,7 +755,7 @@ _server resources_:
 +------+----------+----------------------------------------------------------+
 | Step | Type     | Description                                              |
 +======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request to    |
+| 1    | Stimulus | The client is requested to send a CoAP CON GET request to|
 |      |          | the server at Uri-Path /oscore/hello/1, protected with   |
 |      |          | OSCORE.                                                  |
 +------+----------+----------------------------------------------------------+
@@ -799,7 +799,7 @@ _server resources_:
 +------+----------+----------------------------------------------------------+
 | Step | Type     | Description                                              |
 +======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request to    |
+| 1    | Stimulus | The client is requested to send a CoAP CON GET request to|
 |      |          | the server at Uri-Path /oscore/hello/1, protected with   |
 |      |          | OSCORE.                                                  |
 +------+----------+----------------------------------------------------------+
