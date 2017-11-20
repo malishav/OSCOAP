@@ -573,9 +573,9 @@ _server resources_:
 |      |          | - Payload: 0x7a                                          |
 +------+----------+----------------------------------------------------------+
 
-#### 4.3.3. Identifier: TEST_8a {#test-8a}
+#### 4.3.3. Identifier: TEST_8 {#test-8}
 
-**Objective** : Perform a PUT transaction using OSCORE, Uri-Path, Content-Format and If-None-Match option (Client side)
+**Objective** : Perform a PUT transaction using OSCORE, Uri-Path, Content-Format and If-None-Match option.
 
 **Configuration** :
 
@@ -583,103 +583,51 @@ _client security context_: [Security Context A](#client-sec), with:
 
 * Sequence number sent not in server's replay window
 
-**Test Sequence**
-
-+------+----------+----------------------------------------------------------+
-| Step | Type     | Description                                              |
-+======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP PUT request       |
-|      |          | protected with OSCORE, including:                        |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /oscore/hello/7                             |
-|      |          | - Content-Format = 0                                     |
-|      |          | - If-None-Match                                          | 
-|      |          | - payload = 0x8a                                         |
-+------+----------+----------------------------------------------------------+
-| 2    | Check    | Client serializes the request, which is a POST request,  |
-|      |          | with:                                                    |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload: ciphertext including:                         |
-|      |          |     * Code: PUT                                          |
-|      |          |     * Uri-Path = /oscore/hello/7                         |
-|      |          |     * Content-Format = 0                                 |
-|      |          |     * If-None-Match                                      |
-|      |          |     * payload = 0x8a                                     |
-+------+----------+----------------------------------------------------------+
-| 3    | Verify   | Client displays the sent packet                          |
-+------+----------+----------------------------------------------------------+
-| 4    | Check    | Client parses the response; expected:                    |
-|      |          | 2.04 Changed Response with:                              |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload                                                |
-+------+----------+----------------------------------------------------------+
-| 5    | Verify   | Client decrypts the message: OSCORE verification succeeds|
-+------+----------+----------------------------------------------------------+
-| 6    | Check    | Client parses the decrypted response and continues the   |
-|      |          | CoAP processing; expected 4.12 Precondition Failed       |
-+------+----------+----------------------------------------------------------+
-| 7    | Verify   | Client displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-
-#### 4.3.4. Identifier: TEST_8b {#test-8b}
-
-**Objective** : Perform a PUT transaction using OSCORE, Uri-Path, Content-Format and If-None-Match option (Server side)
-
-**Configuration** :
-
 _server security context_: [Security Context B](#server-sec), with:
 
 * Sequence number received not in server's replay window
 
 _server resources_:
 
-* /oscore/hello/7 : protected resource, authorized method: PUT, returns the value of the resource with content-format 0 (text/plain), has ETag 0x7b
+* /oscore/hello/7 : protected resource, authorized method: PUT, returns the value of the resource with content-format text/plain, has ETag 0x7b
 
 **Test Sequence**
 
 +------+----------+----------------------------------------------------------+
 | Step | Type     | Description                                              |
 +======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP PUT request       |
-|      |          | protected with OSCORE, including:                        |
+| 1    | Stimulus | The client is requested to send a CoAP PUT request to    |
+|      |          | the server at Uri-Path /oscore/hello/7 with Content      |
+|      |          | Format set to text/plain, If-None-Match option present   |
+|      |          | and payload set to 0x8a, protected with OSCORE.          |
++------+----------+----------------------------------------------------------+
+| 2    | Check    | Server receives the request from the client, which is    |
+|      |          | decoded as:                                              |
 |      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /oscore/hello/7                             |
-|      |          | - Content-Format = 0                                     |
-|      |          | - If-None-Match                                          | 
-|      |          | - payload = 0x8a                                         |
+|      |          | - Code: POST                                             |
+|      |          | - Object-Security: empty                                 |
+|      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 2    | Verify   | Server displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-| 3    | Check    | Server parses the request; expected:                     |
-|      |          | 0.02 POST with:                                          |
+| 3    | Check    | Server decrypts, parses, and processes the request:      |
 |      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload                                                |
+|      |          | - OSCORE verification succeeds                           |
+|      |          | - Code: PUT                                              |
+|      |          | - Uri-Path: /oscore/hello/7                              |
+|      |          | - Content-Format: text/plain                             |
+|      |          | - If-None-Match: empty                                   |
+|      |          | - Payload: 0x8a                                          |
 +------+----------+----------------------------------------------------------+
-| 4    | Verify   | Server decrypts the message: OSCORE verification succeeds|
-+------+----------+----------------------------------------------------------+
-| 5    | Check    | Server parses the request and continues the CoAP         |
-|      |          | processing; expected: CoAP PUT request, including:       |
+| 4    | Check    | Client receives the response from the server, which is   |
+|      |          | decoded as:                                              |
 |      |          |                                                          |
-|      |          | - Uri-Path = /oscore/hello/7                             |
-|      |          | - Content-Format = 0                                     |
-|      |          | - If-None-Match                                          | 
-|      |          | - payload = 0x8a                                         |
+|      |          | - Code: 2.04 Changed                                     |
+|      |          | - Object-Security: empty                                 |
+|      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 6    | Verify   | Server displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-| 7    | Check    | Server serialize the response correctly, which is:       |
-|      |          | 2.04 Changed Response with:                              |
+| 5    | Check    | Client decrypts, parses, and processes the response:     |
 |      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload: ciphertext including:                         |
-|      |          |     * Code: 4.12 Precondition Failed                     |
-+------+----------+----------------------------------------------------------+
-| 8    | Verify   | Server displays the sent packet                          |
+|      |          | - OSCORE verification succeeds                           |
+|      |          | - Code: 4.12 Precondition Failed                         |
 +------+----------+----------------------------------------------------------+
 
 ### 4.4. DELETE Tests {#DEL}
