@@ -832,163 +832,50 @@ _server resources_:
 
 ### 5.2. Replay of a previously sent message {#replay}
 
-#### 5.2.1. Identifier: TEST_13a {#test-13a}
+#### 5.2.1. Identifier: TEST_13 {#test-13}
 
-**Objective** : Perform a CON GET transaction using OSCORE, Content-Format and Uri-Path option, request replayed by the Client (Client side)
-
-**Configuration** :
-
-_client security context_: [Security Context A](#client-sec)
-
-**Test Sequence**
-
-+------+----------+----------------------------------------------------------+
-| Step | Type     | Description                                              |
-+======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request       |
-|      |          | protected with OSCORE, including:                        |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /oscore/hello/1                             |
-+------+----------+----------------------------------------------------------+
-| 2    | Check    | Client serializes the request, which is a POST request,  |
-|      |          | with:                                                    |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload: ciphertext including:                         |
-|      |          |     * Code: GET                                          |
-|      |          |     * Uri-Path = /oscore/hello/1                         |
-+------+----------+----------------------------------------------------------+
-| 3    | Verify   | Client displays the sent packet                          |
-+------+----------+----------------------------------------------------------+
-| 4    | Check    | Client parses the response; expected:                    |
-|      |          | 2.04 Changed Response with:                              |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload                                                |
-+------+----------+----------------------------------------------------------+
-| 5    | Verify   | Client decrypts the message: OSCORE verification succeeds|
-+------+----------+----------------------------------------------------------+
-| 6    | Check    | Client parses the decrypted response and continues the   |
-|      |          | CoAP processing; expected 2.05 Content Response with:    |
-|      |          |                                                          |
-|      |          | - Content-Format = 0 (text/plain)                        |
-|      |          | - Payload = "Hello World!"                               |
-+------+----------+----------------------------------------------------------+
-| 7    | Verify   | Client displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-| 8    | Stimulus | The client is requested to reset its own sequence number |
-|      |          | to the value before executing step 1                     |
-+------+----------+----------------------------------------------------------+
-| 9    | Stimulus | The client is requested to send a CoAP GET request       |
-|      |          | protected with OSCORE, including:                        |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /oscore/hello/1                             |
-+------+----------+----------------------------------------------------------+
-| 10   | Check    | Client serializes the request, which is a POST request,  |
-|      |          | with:                                                    |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload: ciphertext including:                         |
-|      |          |     * Code: GET                                          |
-|      |          |     * Uri-Path = /oscore/hello/1                         |
-+------+----------+----------------------------------------------------------+
-| 11   | Verify   | Client displays the sent packet                          |
-+------+----------+----------------------------------------------------------+
-| 12   | Check    | Client parses the response; expected:                    |
-|      |          | 2.04 Changed Response with:                              |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload                                                |
-+------+----------+----------------------------------------------------------+
-| 13   | Verify   | Client decrypts the message: OSCORE verification succeeds|
-+------+----------+----------------------------------------------------------+
-| 14   | Check    | Client parses the decrypted response and continues the   |
-|      |          | CoAP processing; expected 4.00 Bad Request, with:        |
-|      |          |                                                          |
-|      |          | - Payload: Replay protection failed (optional)           |
-+------+----------+----------------------------------------------------------+
-| 15   | Verify   | Client displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-
-#### 5.2.2. Identifier: TEST_13b {#test-13b}
-
-**Objective** : Perform a CON GET transaction using OSCORE, Content-Format and Uri-Path option, request replayed by the Client (Client side)
+**Objective** : Perform a CON GET transaction using OSCORE, Content-Format and Uri-Path option, request replayed by the Client.
 
 **Configuration** :
 
-_server security context_: [Security Context B](#server-sec)
+_client security context_: [Security Context A](#client-sec), with:
+
+* Sequence number sent *IN* server's replay window
+
+_server security context_: [Security Context B](#server-sec), with:
+
+* Sequence number received *IN* server's replay window
 
 _server resources_:
 
-* /oscore/hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /oscore/hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format text/plain
 
 **Test Sequence**
 
 +------+----------+----------------------------------------------------------+
 | Step | Type     | Description                                              |
 +======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request       |
-|      |          | protected with OSCORE, including:                        |
+| 1    | Stimulus | The client is requested to send a CoAP CON GET request to|
+|      |          | the server at Uri-Path /oscore/hello/1, protected with   |
+|      |          | OSCORE.                                                  |
++------+----------+----------------------------------------------------------+
+| 2    | Check    | Server receives the request from the client, which is    |
+|      |          | decoded as:                                              |
 |      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /oscore/hello/1                             |
+|      |          | - Code: POST                                             |
+|      |          | - Object-Security: empty                                 |
+|      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 2    | Verify   | Server displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-| 3    | Check    | Server parses the request; expected:                     |
-|      |          | 0.02 POST with:                                          |
+| 3    | Check    | Server decrypts, parses, and processes the request:      |
 |      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload                                                |
+|      |          | - OSCORE verification fails (Replay protection failed)   |
 +------+----------+----------------------------------------------------------+
-| 4    | Verify   | Server decrypts the message: OSCORE verification succeeds|
-+------+----------+----------------------------------------------------------+
-| 5    | Check    | Server parses the request and continues the CoAP         |
-|      |          | processing; expected: CoAP GET request, including:       |
+| 4    | Check    | Client receives the response from the server, which is   |
+|      |          | decoded as:                                              |
 |      |          |                                                          |
-|      |          | - Uri-Path : /oscore/hello/1                             |
-+------+----------+----------------------------------------------------------+
-| 6    | Verify   | Server displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-| 7    | Check    | Server serialize the response correctly, which is:       |
-|      |          | 2.04 Changed Response with:                              |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload: ciphertext including:                         |
-|      |          |     * Code: 2.05 Content Response                        |
-|      |          |     * Content-Format = 0 (text/plain)                    |
-|      |          |     * Payload = "Hello World!"                           |
-+------+----------+----------------------------------------------------------+
-| 8    | Verify   | Server displays the sent packet                          |
-+------+----------+----------------------------------------------------------+
-| 8    | Stimulus | The client is requested to reset its own sequence number |
-|      |          | to the value before executing step 1                     |
-+------+----------+----------------------------------------------------------+
-| 9    | Stimulus | The client is requested to send a CoAP GET request       |
-|      |          | protected with OSCORE, including:                        |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /oscore/hello/1                             |
-+------+----------+----------------------------------------------------------+
-| 2    | Verify   | Server displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-| 3    | Check    | Server parses the request; expected:                     |
-|      |          | 0.02 POST with:                                          |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload                                                |
-+------+----------+----------------------------------------------------------+
-| 4    | Verify   | Server: OSCORE verification fails (Replay protection     |
-|      |          | failed)                                                  |
-+------+----------+----------------------------------------------------------+
-| 5    | Check    | Server serialize the response correctly, which is        |
-|      |          | 4.00 Bad Request, with:                                  |
-|      |          |                                                          |
-|      |          | - Payload: Replay protection failed (optional)           |
-+------+----------+----------------------------------------------------------+
-| 8    | Verify   | Server displays the sent packet                          |
+|      |          | - Code: 5.03 Service Unavailable                         |
+|      |          | - Max-Age: 0                                             |
+|      |          | - Payload: "Replay protection failed" (optional)         |
 +------+----------+----------------------------------------------------------+
 
 ### 5.3. Accessing a non-OSCORE-protected resource with OSCORE {#auth}
