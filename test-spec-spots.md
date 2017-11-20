@@ -689,9 +689,9 @@ _server resources_:
 
 ### 5.1. Security Context not matching {#sec-context}
 
-#### 5.1.1. Identifier: TEST_10a {#test-10a}
+#### 5.1.1. Identifier: TEST_10 {#test-10}
 
-**Objective** : Perform an unauthorized CON GET transaction: non matching Client Sender Id - Server Recipient Id (Client side)
+**Objective** : Perform an unauthorized CON GET transaction: non matching Client Sender Id - Server Recipient Id.
 
 **Configuration** :
 
@@ -700,82 +700,37 @@ _client security context_: [Security Context A](#client-sec), with:
 * Sender Context:
     - Sender ID: modified sender ID (arbitrarily set by the Client)
 
-**Test Sequence**
-
-+------+----------+----------------------------------------------------------+
-| Step | Type     | Description                                              |
-+======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request       |
-|      |          | protected with OSCORE, including:                        |
-|      |          |                                                          |
-|      |          | - Object-Security option (modified Sender ID)            |
-|      |          | - Uri-Path : /oscore/hello/1                             |
-+------+----------+----------------------------------------------------------+
-| 2    | Check    | Client serializes the request, which is a GET request,   |
-|      |          | with:                                                    |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload: ciphertext including:                         |
-|      |          |     * Code: GET                                          |
-|      |          |     * Uri-Path = /oscore/hello/1                         |
-+------+----------+----------------------------------------------------------+
-| 3    | Verify   | Client displays the sent packet                          |
-+------+----------+----------------------------------------------------------+
-| 4    | Check    | Client parses the response; expected:                    |
-|      |          | 2.04 Changed Response with:                              |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload                                                |
-+------+----------+----------------------------------------------------------+
-| 5    | Verify   | Client decrypts the message: OSCORE verification succeeds|
-+------+----------+----------------------------------------------------------+
-| 6    | Check    | Client parses the decrypted response and continues the   |
-|      |          | CoAP processing; expected 4.01 Unauthorized, with:       |
-|      |          |                                                          |
-|      |          | - Payload: Security context not found (optional)         |
-+------+----------+----------------------------------------------------------+
-| 7    | Verify   | Client displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-
-#### 5.1.2. Identifier: TEST_10b {#test-10b}
-
-**Objective** :Perform an unauthorized GET transaction: non matching Client Sender Id - Server Recipient Id (Server side)
-
-**Configuration** :
-
 _server security context_: [Security Context B](#server-sec)
 
 _server resources_:
 
-* /oscore/hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /oscore/hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format text/plain
 
 **Test Sequence**
 
 +------+----------+----------------------------------------------------------+
 | Step | Type     | Description                                              |
 +======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request       |
-|      |          | protected with OSCORE, including:                        |
+| 1    | Stimulus | The client is requested to send a CoAP GET request to    |
+|      |          | the server at Uri-Path /oscore/hello/1, protected with   |
+|      |          | OSCORE.                                                  |
++------+----------+----------------------------------------------------------+
+| 2    | Check    | Server receives the request from the client, which is    |
+|      |          | decoded as:                                              |
 |      |          |                                                          |
-|      |          | - Object-Security option (modified Sender ID)            |
-|      |          | - Uri-Path : /oscore/hello/1                             |
+|      |          | - Code: POST                                             |
+|      |          | - Object-Security: empty                                 |
+|      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 2    | Verify   | Server displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-| 3    | Check    | Server parses the request; expected:                     |
-|      |          | 0.02 POST with:                                          |
+| 3    | Check    | Server decrypts, parses, and processes the request:      |
 |      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload                                                |
+|      |          | - OSCORE verification fails (Context not found)          |
 +------+----------+----------------------------------------------------------+
-| 4    | Verify   | Server: OSCORE verification fails (Context not found)    |
-+------+----------+----------------------------------------------------------+
-| 5    | Check    | Server serialize the response correctly, which is        |
-|      |          | 4.01 Unauthorized, with:                                 |
+| 4    | Check    | Client receives the response from the server, which is   |
+|      |          | decoded as:                                              |
 |      |          |                                                          |
-|      |          | - Payload: Security context not found (optional)         |
-+------+----------+----------------------------------------------------------+
-| 8    | Verify   | Server displays the sent packet                          |
+|      |          | - Code: 4.01 Unauthorized                                |
+|      |          | - Payload: "Security context not found" (optional)       |
 +------+----------+----------------------------------------------------------+
 
 #### 5.1.3. Identifier: TEST_11a {#test-11a}
