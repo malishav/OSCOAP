@@ -182,7 +182,7 @@ _server resources_:
 |      |          | - Object-Security: empty                                 |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 3    | Check    | Server decrypts and parses the request:                  |
+| 3    | Check    | Server decrypts, parses, and processes the request:      |
 |      |          |                                                          |
 |      |          | - OSCORE verification succeeds                           |
 |      |          | - Code: GET                                              |
@@ -195,7 +195,7 @@ _server resources_:
 |      |          | - Object-Security: empty                                 |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 5    | Check    | Client decrypts and parses the response:                 |
+| 5    | Check    | Client decrypts, parses, and processes the response:     |
 |      |          |                                                          |
 |      |          | - OSCORE verification succeeds                           |
 |      |          | - Code: 2.05 Content                                     |
@@ -237,7 +237,7 @@ _server resources_:
 |      |          | - Object-Security: empty                                 |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 3    | Check    | Server decrypts and parses the request:                  |
+| 3    | Check    | Server decrypts, parses, and processes the request:      |
 |      |          |                                                          |
 |      |          | - OSCORE verification succeeds                           |
 |      |          | - Code: GET                                              |
@@ -251,7 +251,7 @@ _server resources_:
 |      |          | - Object-Security: empty                                 |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 5    | Check    | Client decrypts and parses the response:                 |
+| 5    | Check    | Client decrypts, parses, and processes the response:     |
 |      |          |                                                          |
 |      |          | - OSCORE verification succeeds                           |
 |      |          | - Code: 2.05 Content                                     |
@@ -295,7 +295,7 @@ _server resources_:
 |      |          | - Object-Security: empty                                 |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 3    | Check    | Server decrypts and parses the request:                  |
+| 3    | Check    | Server decrypts, parses, and processes the request:      |
 |      |          |                                                          |
 |      |          | - OSCORE verification succeeds                           |
 |      |          | - Code: GET                                              |
@@ -309,7 +309,7 @@ _server resources_:
 |      |          | - Object-Security: empty                                 |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 5    | Check    | Client decrypts and parses the response:                 |
+| 5    | Check    | Client decrypts, parses, and processes the response:     |
 |      |          |                                                          |
 |      |          | - OSCORE verification succeeds                           |
 |      |          | - Code: 2.05 Content                                     |
@@ -353,7 +353,7 @@ _server resources_:
 |      |          | - Object-Security: empty                                 |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 3    | Check    | Server decrypts and parses the request:                  |
+| 3    | Check    | Server decrypts, parses, and processes the request:      |
 |      |          |                                                          |
 |      |          | - OSCORE verification succeeds                           |
 |      |          | - Code: GET                                              |
@@ -367,7 +367,7 @@ _server resources_:
 |      |          | - Object-Security: empty                                 |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 5    | Check    | Client decrypts and parses the response:                 |
+| 5    | Check    | Client decrypts, parses, and processes the response:     |
 |      |          |                                                          |
 |      |          | - OSCORE verification succeeds                           |
 |      |          | - Code: 2.05 Content                                     |
@@ -412,7 +412,7 @@ _server resources_:
 |      |          | - Object-Security: empty                                 |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 3    | Check    | Server decrypts and parses the request:                  |
+| 3    | Check    | Server decrypts, parses, and processes the request:      |
 |      |          |                                                          |
 |      |          | - OSCORE verification succeeds                           |
 |      |          | - Code: GET                                              |
@@ -427,7 +427,7 @@ _server resources_:
 |      |          | - Object-Security: empty                                 |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 5    | Check    | Client decrypts and parses the request:                  |
+| 5    | Check    | Client decrypts, parses, and processes the request:      |
 |      |          |                                                          |
 |      |          | - OSCORE verification succeeds                           |
 |      |          | - Code: 2.05 Content                                     |
@@ -443,7 +443,7 @@ _server resources_:
 |      |          | - Object-Security: empty                                 |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 7    | Check    | Client decrypts and parses the request:                  |
+| 7    | Check    | Client decrypts, parses, and processes the request:      |
 |      |          |                                                          |
 |      |          | - OSCORE verification succeeds                           |
 |      |          | - Code: 2.05 Content                                     |
