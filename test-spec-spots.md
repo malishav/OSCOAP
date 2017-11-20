@@ -880,154 +880,87 @@ _server resources_:
 
 ### 5.3. Accessing a non-OSCORE-protected resource with OSCORE {#auth}
 
-#### 5.3.1. Identifier: TEST_14a {#test-14a}
+#### 5.3.1. Identifier: TEST_14 {#test-14}
 
-**Objective** : Perform a CON GET transaction using OSCORE to an OSCORE-unaware resource server, Content-Format and Uri-Path option (Client side)
+**Objective** : Perform a CON GET transaction using OSCORE to an OSCORE-unaware resource server, Content-Format and Uri-Path option.
 
 **Configuration** :
 
 _client security context_: [Security Context A](#client-sec)
 
-**Test Sequence**
-
-+------+----------+----------------------------------------------------------+
-| Step | Type     | Description                                              |
-+======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request       |
-|      |          | protected with OSCORE, including:                        |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /oscore/hello/coap                          |
-+------+----------+----------------------------------------------------------+
-| 2    | Check    | Client serializes the request, which is a POST request,  |
-|      |          | with:                                                    |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload: ciphertext including:                         |
-|      |          |     * Code: GET                                          |
-|      |          |     * Uri-Path = /oscore/hello/coap                      |
-+------+----------+----------------------------------------------------------+
-| 3    | Verify   | Client displays the sent packet                          |
-+------+----------+----------------------------------------------------------+
-| 4    | Check    | Client parses the response; expected:                    |
-|      |          | 4.02 Bad Option with:                                    |
-|      |          |                                                          |
-|      |          | - (Optional) Payload                                     |
-+------+----------+----------------------------------------------------------+
-| 5    | Verify   | Client: OSCORE verification fails (expected OSCORE)      |
-|      |          | response dropped, empty ACK sent back to the             |
-+------+----------+----------------------------------------------------------+
-| 6    | Verify   | Client displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-
-
-#### 5.3.2. Identifier: TEST_14b {#test-14b}
-
-**Objective** : Perform a CON GET transaction using OSCORE to a non protected resource, Content-Format and Uri-Path option (Server side)
-
-**Configuration** :
-
-The server does not implement OSCORE.
+The server does *not* implement OSCORE.
 
 _server security context_: None
 
 _server resources_:
 
-* /oscore/hello/coap : authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /oscore/hello/coap : authorized method: GET, returns the string "Hello World!" with content-format text/plain
 
 **Test Sequence**
 
 +------+----------+----------------------------------------------------------+
 | Step | Type     | Description                                              |
 +======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request,      |
-|      |          | including:                                               |
+| 1    | Stimulus | The client is requested to send a CoAP CON GET request to|
+|      |          | the server at Uri-Path /oscore/hello/coap, protected with|
+|      |          | OSCORE.                                                  |
++------+----------+----------------------------------------------------------+
+| 2    | Check    | Server receives the request from the client, which is    |
+|      |          | decoded as:                                              |
 |      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /oscore/hello/coap                          |
+|      |          | - Code: POST                                             |
+|      |          | - Object-Security: empty                                 |
+|      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 2    | Verify   | Server displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-| 3    | Check    | Server parses the request; expected:                     |
-|      |          | 0.02 POST with:                                          |
+| 3    | Check    | Server decrypts, parses, and processes the request:      |
 |      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload                                                |
+|      |          | - OSCORE verification succeeds                           |
+|      |          | - Code: GET                                              |
+|      |          | - Uri-Path: /oscore/hello/coap                           |
 +------+----------+----------------------------------------------------------+
-| 4    | Check    | Server serialize the response correctly, which is:       |
-|      |          | 4.02 Bad Option with:                                    |
+| 4    | Check    | Client receives the response from the server, which is   |
+|      |          | decoded as:                                              |
 |      |          |                                                          |
-|      |          | - (Optional) Payload                                     |
+|      |          | - Code: 4.02 Bad Option                                  |
+|      |          | - Payload: arbitrary (optional)                          |
 +------+----------+----------------------------------------------------------+
-| 5    | Verify   | Server displays the sent packet                          |
+| 5    | Check    | Server receives an empty ACK from the client             |
 +------+----------+----------------------------------------------------------+
 
 ### 5.4. Accessing an OSCORE-protected resource without OSCORE {#unauth}
 
-#### 5.4.1. Identifier: TEST_15a {#test-15a}
+#### 5.4.1. Identifier: TEST_15 {#test-15}
 
-**Objective** : Perform a CON GET transaction to a protected resource, Content-Format and Uri-Path option (Client side)
-
-**Configuration** :
-
-**Test Sequence**
-
-+------+----------+----------------------------------------------------------+
-| Step | Type     | Description                                              |
-+======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request,      |
-|      |          | including:                                               |
-|      |          |                                                          |
-|      |          | - Uri-Path : /oscore/hello/1                             |
-+------+----------+----------------------------------------------------------+
-| 2    | Check    | Client serializes the request, which is a GET request,   |
-|      |          | with:                                                    |
-|      |          |                                                          |
-|      |          | - Uri-Path : /oscore/hello/1                             |
-+------+----------+----------------------------------------------------------+
-| 3    | Verify   | Client displays the sent packet                          |
-+------+----------+----------------------------------------------------------+
-| 4    | Check    | Client parses the response and continues the CoAP        |
-|      |          | processing; expected:                                    |
-|      |          | 4.01 Unauthorized error response, with:                  |
-|      |          |                                                          |
-|      |          | - Payload = diagnostic payload (optional)                |
-+------+----------+----------------------------------------------------------+
-| 5    | Verify   | Client displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-
-
-#### 5.3.2. Identifier: TEST_15b {#test-15b}
-
-**Objective** : Perform a CON GET transaction to a protected resource, Content-Format and Uri-Path option (Server side)
+**Objective** : Perform a CON GET transaction to a protected resource, Content-Format and Uri-Path option.
 
 **Configuration** :
+
+No client-side OSCORE configuration present.
 
 _server security context_: [Security Context B](#server-sec)
 
 _server resources_:
 
-* /oscore/hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /oscore/hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format text/plain
 
 **Test Sequence**
 
 +------+----------+----------------------------------------------------------+
 | Step | Type     | Description                                              |
 +======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request,      |
-|      |          | including:                                               |
+| 1    | Stimulus | The client is requested to send a CoAP CON GET request to|
+|      |          | the server at Uri-Path /oscore/hello/1.                  |
++------+----------+----------------------------------------------------------+
+| 2    | Check    | Server receives the request from the client, which is    |
+|      |          | decoded as:                                              |
 |      |          |                                                          |
-|      |          | - Uri-Path : /oscore/hello/1                             |
+|      |          | - Code: GET                                              |
+|      |          | - Uri-Path: /oscore/hello/1                              |
 +------+----------+----------------------------------------------------------+
-| 2    | Check    | Server parses the request and finds an unrecognized      | 
-|      |          | option of class "critical" (the Object-Security option)  |
-+------+----------+----------------------------------------------------------+
-| 3    | Verify   | Server displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-| 4    | Check    | Server serialize the response correctly, which is:       |
-|      |          | 4.01 Unauthorized error response, with:                  |
+| 3    | Check    | Client receives the response from the server, which is   |
+|      |          | decoded as:                                              |
 |      |          |                                                          |
-|      |          | - Payload = diagnostic payload (optional)                |
+|      |          | - Code: 4.01 Unauthorized                                |
+|      |          | - Payload: arbitrary (optional)                          |
 +------+----------+----------------------------------------------------------+
-| 5    | Verify   | Server displays the sent packet                          |
-+------+----------+----------------------------------------------------------+
+
