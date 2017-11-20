@@ -632,9 +632,9 @@ _server resources_:
 
 ### 4.4. DELETE Tests {#DEL}
 
-#### 4.4.1. Identifier: TEST_9a {#test-9a}
+#### 4.4.1. Identifier: TEST_9 {#test-9}
 
-**Objective** : Perform a DELETE transaction using OSCORE and Uri-Path option (Client side)
+**Objective** : Perform a DELETE transaction using OSCORE and Uri-Path option.
 
 **Configuration** :
 
@@ -642,91 +642,47 @@ _client security context_: [Security Context A](#client-sec), with:
 
 * Sequence number sent not in server's replay window
 
-**Test Sequence**
-
-+------+----------+----------------------------------------------------------+
-| Step | Type     | Description                                              |
-+======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP DEL request       |
-|      |          | protected with OSCORE, including:                        |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /oscore/test                                |
-+------+----------+----------------------------------------------------------+
-| 2    | Check    | Client serializes the request, which is a POST request,  |
-|      |          | with:                                                    |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload: ciphertext including:                         |
-|      |          |     * Code: DEL                                          |
-|      |          |     * Uri-Path = /oscore/test                            |
-+------+----------+----------------------------------------------------------+
-| 3    | Verify   | Client displays the sent packet                          |
-+------+----------+----------------------------------------------------------+
-| 4    | Check    | Client parses the response; expected:                    |
-|      |          | 2.04 Changed Response with:                              |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload                                                |
-+------+----------+----------------------------------------------------------+
-| 5    | Verify   | Client decrypts the message: OSCORE verification succeeds|
-+------+----------+----------------------------------------------------------+
-| 6    | Check    | Client parses the decrypted response and continues the   |
-|      |          | CoAP processing; expected 2.02 Deleted                   |
-+------+----------+----------------------------------------------------------+
-| 7    | Verify   | Client displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-
-#### 4.4.2. Identifier: TEST_9b {#test-9b}
-
-**Objective** : Perform a DELETE transaction using OSCORE and Uri-Path option (Server side)
-
-**Configuration** :
-
 _server security context_: [Security Context B](#server-sec), with:
 
 * Sequence number received not in server's replay window
 
 _server resources_:
 
-* /test: protected resource, authorized method: DEL.
+* /oscore/test: protected resource, authorized method: DEL.
 
 **Test Sequence**
 
 +------+----------+----------------------------------------------------------+
 | Step | Type     | Description                                              |
 +======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP DEL request       |
-|      |          | protected with OSCORE, including:                        |
+| 1    | Stimulus | The client is requested to send a CoAP DEL request to    |
+|      |          | the server at Uri-Path /oscore/test, protected with      |
+|      |          | OSCORE.                                                  |
++------+----------+----------------------------------------------------------+
+| 2    | Check    | Server receives the request from the client, which is    |
+|      |          | decoded as:                                              |
 |      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-Path = /oscore/test                                |
+|      |          | - Code: POST                                             |
+|      |          | - Object-Security: empty                                 |
+|      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 2    | Verify   | Server displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-| 3    | Check    | Server parses the request; expected:                     |
-|      |          | 0.02 POST with:                                          |
+| 3    | Check    | Server decrypts, parses, and processes the request:      |
 |      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload                                                |
+|      |          | - OSCORE verification succeeds                           |
+|      |          | - Code: DEL                                              |
+|      |          | - Uri-Path: /oscore/test                                 |
 +------+----------+----------------------------------------------------------+
-| 4    | Verify   | Server decrypts the message: OSCORE verification succeeds|
-+------+----------+----------------------------------------------------------+
-| 5    | Check    | Server parses the request and continues the CoAP         |
-|      |          | processing; expected: CoAP DEL request, including:       |
+| 4    | Check    | Client receives the response from the server, which is   |
+|      |          | decoded as:                                              |
 |      |          |                                                          |
-|      |          | - Uri-Path = /oscore/test                                |
+|      |          | - Code: 2.04 Changed                                     |
+|      |          | - Object-Security: empty                                 |
+|      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 6    | Verify   | Server displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-| 7    | Check    | Server serialize the response correctly, which is:       |
-|      |          | 2.04 Changed Response with:                              |
+| 5    | Check    | Client decrypts, parses, and processes the response:     |
 |      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload: ciphertext including:                         |
-|      |          |     * Code: 2.02 Deleted                                 |
-+------+----------+----------------------------------------------------------+
-| 8    | Verify   | Server displays the sent packet                          |
+|      |          | - OSCORE verification succeeds                           |
+|      |          | - Code: 2.02 Deleted                                     |
 +------+----------+----------------------------------------------------------+
 
 ## 5. Incorrect OSCORE use {#incorrect-oscore}
