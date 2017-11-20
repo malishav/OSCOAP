@@ -777,9 +777,9 @@ _server resources_:
 |      |          | - Payload: "Decryption failed" (optional)                |
 +------+----------+----------------------------------------------------------+
 
-#### 5.1.5. Identifier: TEST_12a {#test-12a}
+#### 5.1.5. Identifier: TEST_12 {#test-12}
 
-**Objective** : Perform a CON GET transaction with non matching Client Recipient - Server Sender Keys (Client side)
+**Objective** : Perform a CON GET transaction with non matching Client Recipient - Server Sender Keys.
 
 **Configuration** :
 
@@ -788,89 +788,46 @@ _client security context_: [Security Context A](#client-sec), with:
 * Recipient Context:
     - Recipient Key: modified key (arbitrarily set by the Client)
 
-**Test Sequence**
-
-+------+----------+----------------------------------------------------------+
-| Step | Type     | Description                                              |
-+======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request       |
-|      |          | protected with OSCORE, including:                        |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /oscore/hello/1                             |
-+------+----------+----------------------------------------------------------+
-| 2    | Check    | Client serializes the request, which is a POST request,  |
-|      |          | with:                                                    |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload: ciphertext including:                         |
-|      |          |     * Code: GET                                          |
-|      |          |     * Uri-Path = /oscore/hello/1                         |
-+------+----------+----------------------------------------------------------+
-| 3    | Verify   | Client displays the sent packet                          |
-+------+----------+----------------------------------------------------------+
-| 4    | Check    | Client parses the response; expected:                    |
-|      |          | 2.04 Changed Response with:                              |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload                                                |
-+------+----------+----------------------------------------------------------+
-| 5    | Verify   | Client: OSCORE verification fails (Decryption failed)    |
-|      |          | response dropped, empty ACK sent back to the Server      |
-+------+----------+----------------------------------------------------------+
-| 6    | Verify   | Client displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-
-#### 5.1.6. Identifier: TEST_12b {#test-12b}
-
-**Objective** : Perform a CON GET transaction with non matching Client Recipient - Server Sender Keys (Server side)
-
-**Configuration** :
-
 _server security context_: [Security Context B](#server-sec)
 
 _server resources_:
 
-* /oscore/hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
+* /oscore/hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format text/plain
 
 **Test Sequence**
 
 +------+----------+----------------------------------------------------------+
 | Step | Type     | Description                                              |
 +======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request       |
-|      |          | protected with OSCORE, including:                        |
+| 1    | Stimulus | The client is requested to send a CoAP GET request to    |
+|      |          | the server at Uri-Path /oscore/hello/1, protected with   |
+|      |          | OSCORE.                                                  |
++------+----------+----------------------------------------------------------+
+| 2    | Check    | Server receives the request from the client, which is    |
+|      |          | decoded as:                                              |
 |      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-Path : /oscore/hello/1                             |
+|      |          | - Code: POST                                             |
+|      |          | - Object-Security: empty                                 |
+|      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 2    | Verify   | Server displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-| 3    | Check    | Server parses the request; expected:                     |
-|      |          | 0.02 POST with:                                          |
+| 3    | Check    | Server decrypts, parses, and processes the request:      |
 |      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload                                                |
+|      |          | - OSCORE verification succeeds                           |
+|      |          | - Code: GET                                              |
+|      |          | - Uri-Path: /oscore/hello/1                              |
 +------+----------+----------------------------------------------------------+
-| 4    | Verify   | Server decrypts the message: OSCORE verification succeeds|
-+------+----------+----------------------------------------------------------+
-| 5    | Check    | Server parses the request and continues the CoAP         |
-|      |          | processing; expected: CoAP GET request, including:       |
+| 4    | Check    | Client receives the response from the server, which is   |
+|      |          | decoded as:                                              |
 |      |          |                                                          |
-|      |          | - Uri-Path = /oscore/hello/1                              |
+|      |          | - Code: 2.04 Changed                                     |
+|      |          | - Object-Security: empty                                 |
+|      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 6    | Verify   | Server displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-| 7    | Check    | Server serialize the response correctly, which is:       |
-|      |          | 2.04 Changed Response with:                              |
+| 5    | Check    | Client decrypts, parses, and processes the request:      |
 |      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload: ciphertext including:                         |
-|      |          |     * Code: 2.05 Content                                 |
-|      |          |     * Content-Format = 0 (text/plain)                    |
-|      |          |     * Payload = "Hello World!"                           |
+|      |          | - OSCORE verification fails (Decryption failed)          |
 +------+----------+----------------------------------------------------------+
-| 8    | Verify   | Server displays the sent packet                          |
+| 6    | Check    | Server receives an empty ACK from the client             |
 +------+----------+----------------------------------------------------------+
 
 ### 5.2. Replay of a previously sent message {#replay}
