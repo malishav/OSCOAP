@@ -358,6 +358,7 @@ _server resources_:
 |      |          | - OSCORE verification succeeds                           |
 |      |          | - Code: GET                                              |
 |      |          | - Uri-Path: /oscore/hello/1                              |
+|      |          | - Observe: Registration
 +------+----------+----------------------------------------------------------+
 | 4    | Check    | Client receives the response from the server, which is   |
 |      |          | decoded as:                                              |
