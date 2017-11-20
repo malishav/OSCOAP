@@ -375,9 +375,9 @@ _server resources_:
 |      |          | - Payload: "Hello World!"                                |
 +------+----------+----------------------------------------------------------+
 
-#### 4.1.9. Identifier: TEST_5a {#test-5a}
+#### 4.1.9. Identifier: TEST_5 {#test-5}
 
-**Objective** : Perform a GET transaction using OSCORE, Content-Format, Uri-Path, and Observe (Client side)
+**Objective** : Perform a GET transaction using OSCORE, Content-Format, Uri-Path, and Observe.
 
 **Configuration** :
 
@@ -386,74 +386,6 @@ _client security context_: [Security Context A](#client-sec), with:
 * Sequence number sent not in server's replay window
 * Sequence number received not in client's replay window
 
-**Test Sequence**
-
-+------+----------+----------------------------------------------------------+
-| Step | Type     | Description                                              |
-+======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request       |
-|      |          | protected with OSCORE, including:                        |
-|      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-path = /oscore/observe                             |
-|      |          | - Observe = 0 (Registration)                             |
-+------+----------+----------------------------------------------------------+
-| 2    | Check    | Client serializes the request, which is a FETCH request, |
-|      |          | with:                                                    |
-|      |          |                                                          |
-|      |          | - Observe = 0 (Registration)                             |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload: ciphertext including:                         |
-|      |          |     * Code: GET                                          |
-|      |          |     * Uri-Path = /oscore/observe                         |
-+------+----------+----------------------------------------------------------+
-| 3    | Verify   | Client displays the sent packet                          |
-+------+----------+----------------------------------------------------------+
-| 4    | Check    | Client parses the response; expected:                    |
-|      |          | 2.05 Content Response with:                              |
-|      |          |                                                          |
-|      |          | - Observe (Notification)                                 |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload                                                |
-+------+----------+----------------------------------------------------------+
-| 5    | Verify   | Client decrypts the message: OSCORE verification succeeds|
-+------+----------+----------------------------------------------------------+
-| 6    | Check    | Client parses the decrypted response and continues the   |
-|      |          | CoAP processing; expected 2.05 Content Response with:    |
-|      |          |                                                          |
-|      |          | - Observe (Notification)                                 |
-|      |          | - Content-Format = 0 (text/plain)                        |
-|      |          | - Payload = ...                                          |
-+------+----------+----------------------------------------------------------+
-| 7    | Verify   | Client displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-| 8    | Check    | Client parses the response; expected:                    |
-|      |          | 2.05 Content Response with:                              |
-|      |          |                                                          |
-|      |          | - Observe (Notification)                                 |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload                                                |
-+------+----------+----------------------------------------------------------+
-| 9    | Verify   | Client decrypts the message: OSCORE verification succeeds|
-+------+----------+----------------------------------------------------------+
-| 10   | Check    | Client parses the decrypted response and continues the   |
-|      |          | CoAP processing; expected 2.05 Content Response with:    |
-|      |          |                                                          |
-|      |          | - Observe (Notification)                                 |
-|      |          | - Content-Format = 0 (text/plain)                        |
-|      |          | - Payload = ...                                          |
-+------+----------+----------------------------------------------------------+
-| 11   | Verify   | Client displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-
-Etc.
-
-#### 4.1.10. Identifier: TEST_5b {#test-5b}
-
-**Objective** : Perform a GET transaction using OSCORE, Content-Format, Uri-Path, and Observe (Server side)
-
-**Configuration** :
-
 _server security context_: [Security Context B](#server-sec), with:
 
 * Sequence number received not in server's replay window
@@ -461,65 +393,64 @@ _server security context_: [Security Context B](#server-sec), with:
 
 _server resources_:
 
-* /observe : protected resource, authorized method: GET, returns a counter incremented every 2 seconds, supports observe.
+* /oscore/observe : protected resource, authorized method: GET, returns a counter incremented every 2 seconds, supports observe.
 
 **Test Sequence**
 
 +------+----------+----------------------------------------------------------+
 | Step | Type     | Description                                              |
 +======+==========+==========================================================+
-| 1    | Stimulus | The client is requested to send a CoAP GET request       |
-|      |          | protected with OSCORE, including:                        |
+| 1    | Stimulus | The client is requested to send a CoAP GET request to    |
+|      |          | the server at Uri-Path /oscore/observe with Observe      |
+|      |          | option registration, protected with OSCORE.              |
++------+----------+----------------------------------------------------------+
+| 2    | Check    | Server receives the request from the client, which is    |
+|      |          | decoded as:                                              |
 |      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Uri-path = /oscore/observe                             |
-|      |          | - Observe = 0 (Registration)                             |
+|      |          | - Code: FETCH                                            |
+|      |          | - Observe: Registration                                  |
+|      |          | - Object-Security: empty                                 |
+|      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 2    | Verify   | Server displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-| 3    | Check    | Server parses the request; expected:                     |
-|      |          | 0.05 FETCH with:                                         |
+| 3    | Check    | Server decrypts and parses the request:                  |
 |      |          |                                                          |
-|      |          | - Observe = 0 (Registration)                             |
-|      |          | - Object-Security option                                 |
-|      |          | - Payload                                                |
+|      |          | - OSCORE verification succeeds                           |
+|      |          | - Code: GET                                              |
+|      |          | - Uri-Path: /oscore/observe                              |
+|      |          | - Observe: Registration                                  |
 +------+----------+----------------------------------------------------------+
-| 4    | Verify   | Server decrypts the message: OSCORE verification succeeds|
-+------+----------+----------------------------------------------------------+
-| 5    | Check    | Server parses the request and continues the CoAP         |
-|      |          | processing; expected: CoAP GET request, including:       |
+| 4    | Check    | Client receives the response from the server, which is   |
+|      |          | decoded as:                                              |
 |      |          |                                                          |
-|      |          | - Uri-path = /oscore/observe                             |
-|      |          | - Observe = 0 (Registration)                             |
+|      |          | - Code: 2.05 Content                                     |
+|      |          | - Observe: Notification                                  |
+|      |          | - Object-Security: empty                                 |
+|      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 6    | Verify   | Server displays the received packet                      |
-+------+----------+----------------------------------------------------------+
-| 7    | Check    | Server serialize the response correctly, which is:       |
-|      |          | 2.05 Content Response with:                              |
+| 5    | Check    | Client decrypts and parses the request:                  |
 |      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Observe (Notification)                                 |
-|      |          | - Payload: ciphertext including:                         |
-|      |          |     * Code: 2.05 Content Response                        |
-|      |          |     * Content-Format = 0 (text/plain)                    |
-|      |          |     * Payload = ...                                      |
+|      |          | - OSCORE verification succeeds                           |
+|      |          | - Code: 2.05 Content                                     |
+|      |          | - Observe: Notification                                  |
+|      |          | - Content-Format: text/plain                             |
+|      |          | - Payload: arbitrary                                     |
 +------+----------+----------------------------------------------------------+
-| 8    | Verify   | Server displays the sent packet                          |
-+------+----------+----------------------------------------------------------+
-| 9    | Check    | Server serialize the response correctly, which is:       |
-|      |          | 2.05 Content Response with:                              |
+| 6    | Check    | Client receives the response from the server, which is   |
+|      |          | decoded as:                                              |
 |      |          |                                                          |
-|      |          | - Object-Security option                                 |
-|      |          | - Observe (Notification)                                 |
-|      |          | - Payload: ciphertext including:                         |
-|      |          |     * Code: 2.05 Content Response                        |
-|      |          |     * Content-Format = 0 (text/plain)                    |
-|      |          |     * Payload = ...                                      |
+|      |          | - Code: 2.05 Content                                     |
+|      |          | - Observe: Notification                                  |
+|      |          | - Object-Security: empty                                 |
+|      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
-| 10   | Verify   | Server displays the sent packet                          |
+| 7    | Check    | Client decrypts and parses the request:                  |
+|      |          |                                                          |
+|      |          | - OSCORE verification succeeds                           |
+|      |          | - Code: 2.05 Content                                     |
+|      |          | - Observe: Notification                                  |
+|      |          | - Content-Format: text/plain                             |
+|      |          | - Payload: arbitrary                                     |
 +------+----------+----------------------------------------------------------+
-
-Etc.
 
 ### 4.2. POST Tests {#post}
 
