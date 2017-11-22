@@ -827,8 +827,6 @@ _server resources_:
 |      |          |                                                          |
 |      |          | - OSCORE verification fails (Decryption failed)          |
 +------+----------+----------------------------------------------------------+
-| 6    | Check    | Server receives an empty ACK from the client             |
-+------+----------+----------------------------------------------------------+
 
 ### 5.2. Replay of a previously sent message {#replay}
 
@@ -873,7 +871,7 @@ _server resources_:
 | 4    | Check    | Client receives the response from the server, which is   |
 |      |          | decoded as:                                              |
 |      |          |                                                          |
-|      |          | - Code: 5.03 Service Unavailable                         |
+|      |          | - Code: 4.01 Unauthorized                                |
 |      |          | - Max-Age: 0                                             |
 |      |          | - Payload: "Replay protection failed" (optional)         |
 +------+----------+----------------------------------------------------------+
@@ -923,8 +921,6 @@ _server resources_:
 |      |          |                                                          |
 |      |          | - Code: 4.02 Bad Option                                  |
 |      |          | - Payload: arbitrary (optional)                          |
-+------+----------+----------------------------------------------------------+
-| 5    | Check    | Server receives an empty ACK from the client             |
 +------+----------+----------------------------------------------------------+
 
 ### 5.4. Accessing an OSCORE-protected resource without OSCORE {#unauth}
