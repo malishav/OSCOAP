@@ -179,7 +179,7 @@ _server resources_:
 |      |          | decoded as:                                              |
 |      |          |                                                          |
 |      |          | - Code: POST                                             |
-|      |          | - Object-Security: empty                                 |
+|      |          | - Object-Security: non-empty                             |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 3    | Check    | Server decrypts, parses, and processes the request:      |
@@ -192,7 +192,7 @@ _server resources_:
 |      |          | decoded as:                                              |
 |      |          |                                                          |
 |      |          | - Code: 2.04 Changed                                     |
-|      |          | - Object-Security: empty                                 |
+|      |          | - Object-Security: non-empty                             |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 5    | Check    | Client decrypts, parses, and processes the response:     |
@@ -234,7 +234,7 @@ _server resources_:
 |      |          | decoded as:                                              |
 |      |          |                                                          |
 |      |          | - Code: POST                                             |
-|      |          | - Object-Security: empty                                 |
+|      |          | - Object-Security: non-empty                             |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 3    | Check    | Server decrypts, parses, and processes the request:      |
@@ -248,7 +248,7 @@ _server resources_:
 |      |          | decoded as:                                              |
 |      |          |                                                          |
 |      |          | - Code: 2.04 Changed                                     |
-|      |          | - Object-Security: empty                                 |
+|      |          | - Object-Security: non-empty                             |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 5    | Check    | Client decrypts, parses, and processes the response:     |
@@ -292,7 +292,7 @@ _server resources_:
 |      |          | decoded as:                                              |
 |      |          |                                                          |
 |      |          | - Code: POST                                             |
-|      |          | - Object-Security: empty                                 |
+|      |          | - Object-Security: non-empty                             |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 3    | Check    | Server decrypts, parses, and processes the request:      |
@@ -306,7 +306,7 @@ _server resources_:
 |      |          | decoded as:                                              |
 |      |          |                                                          |
 |      |          | - Code: 2.04 Changed                                     |
-|      |          | - Object-Security: empty                                 |
+|      |          | - Object-Security: non-empty                             |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 5    | Check    | Client decrypts, parses, and processes the response:     |
@@ -350,7 +350,7 @@ _server resources_:
 |      |          |                                                          |
 |      |          | - Code: FETCH                                            |
 |      |          | - Observe: Registration                                  |
-|      |          | - Object-Security: empty                                 |
+|      |          | - Object-Security: non-empty                             |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 3    | Check    | Server decrypts, parses, and processes the request:      |
@@ -364,7 +364,7 @@ _server resources_:
 |      |          | decoded as:                                              |
 |      |          |                                                          |
 |      |          | - Code: 2.04 Changed                                     |
-|      |          | - Object-Security: empty                                 |
+|      |          | - Object-Security: non-empty                             |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 5    | Check    | Client decrypts, parses, and processes the response:     |
@@ -409,7 +409,7 @@ _server resources_:
 |      |          |                                                          |
 |      |          | - Code: FETCH                                            |
 |      |          | - Observe: Registration                                  |
-|      |          | - Object-Security: empty                                 |
+|      |          | - Object-Security: non-empty                             |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 3    | Check    | Server decrypts, parses, and processes the request:      |
@@ -424,7 +424,7 @@ _server resources_:
 |      |          |                                                          |
 |      |          | - Code: 2.05 Content                                     |
 |      |          | - Observe: Notification                                  |
-|      |          | - Object-Security: empty                                 |
+|      |          | - Object-Security: non-empty                             |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 5    | Check    | Client decrypts, parses, and processes the request:      |
@@ -440,7 +440,7 @@ _server resources_:
 |      |          |                                                          |
 |      |          | - Code: 2.05 Content                                     |
 |      |          | - Observe: Notification                                  |
-|      |          | - Object-Security: empty                                 |
+|      |          | - Object-Security: non-empty                             |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 7    | Check    | Client decrypts, parses, and processes the request:      |
@@ -546,7 +546,7 @@ _server resources_:
 |      |          | decoded as:                                              |
 |      |          |                                                          |
 |      |          | - Code: POST                                             |
-|      |          | - Object-Security: empty                                 |
+|      |          | - Object-Security: non-empty                             |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 3    | Check    | Server decrypts, parses, and processes the request:      |
@@ -562,7 +562,7 @@ _server resources_:
 |      |          | decoded as:                                              |
 |      |          |                                                          |
 |      |          | - Code: 2.04 Changed                                     |
-|      |          | - Object-Security: empty                                 |
+|      |          | - Object-Security: non-empty                             |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 5    | Check    | Client decrypts, parses, and processes the response:     |
@@ -605,7 +605,7 @@ _server resources_:
 |      |          | decoded as:                                              |
 |      |          |                                                          |
 |      |          | - Code: POST                                             |
-|      |          | - Object-Security: empty                                 |
+|      |          | - Object-Security: non-empty                             |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 3    | Check    | Server decrypts, parses, and processes the request:      |
@@ -621,7 +621,7 @@ _server resources_:
 |      |          | decoded as:                                              |
 |      |          |                                                          |
 |      |          | - Code: 2.04 Changed                                     |
-|      |          | - Object-Security: empty                                 |
+|      |          | - Object-Security: non-empty                             |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 5    | Check    | Client decrypts, parses, and processes the response:     |
@@ -663,7 +663,7 @@ _server resources_:
 |      |          | decoded as:                                              |
 |      |          |                                                          |
 |      |          | - Code: POST                                             |
-|      |          | - Object-Security: empty                                 |
+|      |          | - Object-Security: non-empty                             |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 3    | Check    | Server decrypts, parses, and processes the request:      |
@@ -676,7 +676,7 @@ _server resources_:
 |      |          | decoded as:                                              |
 |      |          |                                                          |
 |      |          | - Code: 2.04 Changed                                     |
-|      |          | - Object-Security: empty                                 |
+|      |          | - Object-Security: non-empty                             |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 5    | Check    | Client decrypts, parses, and processes the response:     |
@@ -719,7 +719,7 @@ _server resources_:
 |      |          | decoded as:                                              |
 |      |          |                                                          |
 |      |          | - Code: POST                                             |
-|      |          | - Object-Security: empty                                 |
+|      |          | - Object-Security: non-empty                             |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 3    | Check    | Server decrypts, parses, and processes the request:      |
@@ -764,7 +764,7 @@ _server resources_:
 |      |          | decoded as:                                              |
 |      |          |                                                          |
 |      |          | - Code: POST                                             |
-|      |          | - Object-Security: empty                                 |
+|      |          | - Object-Security: non-empty                             |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 3    | Check    | Server decrypts, parses, and processes the request:      |
@@ -809,7 +809,7 @@ _server resources_:
 |      |          | decoded as:                                              |
 |      |          |                                                          |
 |      |          | - Code: POST                                             |
-|      |          | - Object-Security: empty                                 |
+|      |          | - Object-Security: non-empty                             |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 3    | Check    | Server decrypts, parses, and processes the request:      |
@@ -822,7 +822,7 @@ _server resources_:
 |      |          | decoded as:                                              |
 |      |          |                                                          |
 |      |          | - Code: 2.04 Changed                                     |
-|      |          | - Object-Security: empty                                 |
+|      |          | - Object-Security: non-empty                             |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 5    | Check    | Client decrypts, parses, and processes the request:      |
@@ -863,7 +863,7 @@ _server resources_:
 |      |          | decoded as:                                              |
 |      |          |                                                          |
 |      |          | - Code: POST                                             |
-|      |          | - Object-Security: empty                                 |
+|      |          | - Object-Security: non-empty                             |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 3    | Check    | Server decrypts, parses, and processes the request:      |
@@ -909,7 +909,7 @@ _server resources_:
 |      |          | decoded as:                                              |
 |      |          |                                                          |
 |      |          | - Code: POST                                             |
-|      |          | - Object-Security: empty                                 |
+|      |          | - Object-Security: non-empty                             |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 3    | Check    | Server decrypts, parses, and processes the request:      |
