@@ -730,6 +730,7 @@ _server resources_:
 |      |          | decoded as:                                              |
 |      |          |                                                          |
 |      |          | - Code: 4.01 Unauthorized                                |
+|      |          | - Max-Age: 0                                             |
 |      |          | - Payload: "Security context not found" (optional)       |
 +------+----------+----------------------------------------------------------+
 
@@ -774,6 +775,7 @@ _server resources_:
 |      |          | decoded as:                                              |
 |      |          |                                                          |
 |      |          | - Code: 4.00 Bad Request                                 |
+|      |          | - Max-Age: 0                                             |
 |      |          | - Payload: "Decryption failed" (optional)                |
 +------+----------+----------------------------------------------------------+
 
@@ -920,6 +922,7 @@ _server resources_:
 |      |          | decoded as:                                              |
 |      |          |                                                          |
 |      |          | - Code: 4.02 Bad Option                                  |
+|      |          | - Max-Age: 0                                             |
 |      |          | - Payload: arbitrary (optional)                          |
 +------+----------+----------------------------------------------------------+
 
