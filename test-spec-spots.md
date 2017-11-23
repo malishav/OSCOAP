@@ -38,7 +38,12 @@
 
 ## 1. Notes
 
-This test description facilitates automated, remote testing of OSCORE as enabled by the [SPOTS](http://spots.ac.me) and [F-Interop](http://www.f-interop.eu) projects.
+This test description (TD) facilitates automated, remote testing of OSCORE ([https://tools.ietf.org/html/draft-ietf-core-object-security-07](https://tools.ietf.org/html/draft-ietf-core-object-security-07)) as enabled by the [SPOTS](http://spots.ac.me) and [F-Interop](http://www.f-interop.eu) projects.
+
+The TD follows the structure used for previous OSCORE interop events but the test cases have been redesigned to enable automated test execution based on F-Interop 6TiSCH testing tool and Wireshark.
+
+University of Montenegro reserves the right to update the TD as tests are implemented in the F-Interop 6TiSCH testing tool. 
+An up to date version of the TD can be found at: [https://github.com/malishav/TD-OSCORE](https://github.com/malishav/TD-OSCORE).
 
 ### Constants
 
