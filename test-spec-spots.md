@@ -158,7 +158,7 @@ _server resources_:
 
 _client security context_: [Security Context A](#client-sec), with:
 
-* Sequence number received not in client's replay window
+* Sequence number sent not in server's replay window
 
 _server security context_: 
 [Security Context B](#server-sec), with:
