@@ -47,8 +47,6 @@ An up to date version of the TD can be found at: [https://github.com/malishav/TD
 
 ### Constants
 
-CoAP Version is 2 in all the tests.
-
 Object-Security option is 21 in all the tests.
 
 ### Facilitating Debugging
