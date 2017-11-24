@@ -150,7 +150,7 @@ _server resources_:
 
 ### 4.1 GET Tests {#get}
 
-#### 4.1.1. Identifier: TD_OSCORE_CORRECT_01 {#test-1}
+#### 4.1.1. Identifier: TD_OSCORE_CORRECTUSE_01 {#test-1}
 
 **Objective** : Perform a simple GET transaction using OSCORE, Content-Format and Uri-Path option
 
@@ -206,7 +206,7 @@ _server resources_:
 |      |          | - Payload: "Hello World!"                                |
 +------+----------+----------------------------------------------------------+
 
-#### 4.1.3. Identifier: TD_OSCORE_CORRECT_02 {#test-2}
+#### 4.1.3. Identifier: TD_OSCORE_CORRECTUSE_02 {#test-2}
 
 **Objective** : Perform a GET transaction using OSCORE, Content-Format, Uri-Path, Uri-Query and ETag option
 
@@ -263,7 +263,7 @@ _server resources_:
 |      |          | - Payload: "Hello World!"                                |
 +------+----------+----------------------------------------------------------+
 
-#### 4.1.5. Identifier: TD_OSCORE_CORRECT_03 {#test-3}
+#### 4.1.5. Identifier: TD_OSCORE_CORRECTUSE_03 {#test-3}
 
 **Objective** : Perform a GET transaction using OSCORE, Content-Format, Uri-Path, Accept and Max-Age option
 
@@ -321,7 +321,7 @@ _server resources_:
 |      |          | - Payload: "Hello World!"                                |
 +------+----------+----------------------------------------------------------+
 
-#### 4.1.7. Identifier: TD_OSCORE_CORRECT_04 {#test-4}
+#### 4.1.7. Identifier: TD_OSCORE_CORRECTUSE_04 {#test-4}
 
 **Objective** : Perform a GET transaction using OSCORE, Content-Format, Uri-Path, and Observe. Response without observe.
 
@@ -378,7 +378,7 @@ _server resources_:
 |      |          | - Payload: "Hello World!"                                |
 +------+----------+----------------------------------------------------------+
 
-#### 4.1.9. Identifier: TD_OSCORE_CORRECT_05 {#test-5}
+#### 4.1.9. Identifier: TD_OSCORE_CORRECTUSE_05 {#test-5}
 
 **Objective** : Perform a GET transaction using OSCORE, Content-Format, Uri-Path, and Observe.
 
@@ -457,7 +457,7 @@ _server resources_:
 
 ### 4.2. POST Tests {#post}
 
-#### 4.2.1. Identifier: TD_OSCORE_CORRECT_06 {#test-6}
+#### 4.2.1. Identifier: TD_OSCORE_CORRECTUSE_06 {#test-6}
 
 **Objective** : Perform a POST transaction using OSCORE, Content-Format, and Uri-Path option, changing a resource.
 
@@ -517,7 +517,7 @@ _server resources_:
 
 ### 4.3 PUT Tests {#PUT}
 
-#### 4.3.1. Identifier: TD_OSCORE_CORRECT_07 {#test-7}
+#### 4.3.1. Identifier: TD_OSCORE_CORRECTUSE_07 {#test-7}
 
 **Objective** : Perform a PUT transaction using OSCORE, Uri-Path, Content-Format and If-Match option.
 
@@ -576,7 +576,7 @@ _server resources_:
 |      |          | - Payload: 0x7a                                          |
 +------+----------+----------------------------------------------------------+
 
-#### 4.3.3. Identifier: TD_OSCORE_CORRECT_08 {#test-8}
+#### 4.3.3. Identifier: TD_OSCORE_CORRECTUSE_08 {#test-8}
 
 **Objective** : Perform a PUT transaction using OSCORE, Uri-Path, Content-Format and If-None-Match option.
 
@@ -635,7 +635,7 @@ _server resources_:
 
 ### 4.4. DELETE Tests {#DEL}
 
-#### 4.4.1. Identifier: TD_OSCORE_CORRECT_09 {#test-9}
+#### 4.4.1. Identifier: TD_OSCORE_CORRECTUSE_09 {#test-9}
 
 **Objective** : Perform a DELETE transaction using OSCORE and Uri-Path option.
 
@@ -692,7 +692,7 @@ _server resources_:
 
 ### 5.1. Security Context not matching {#sec-context}
 
-#### 5.1.1. Identifier: TD_OSCORE_INCORRECT_01 {#test-10}
+#### 5.1.1. Identifier: TD_OSCORE_INCORRECTUSE_01 {#test-10}
 
 **Objective** : Perform an unauthorized CON GET transaction: non matching Client Sender Id - Server Recipient Id.
 
@@ -737,7 +737,7 @@ _server resources_:
 |      |          | - Payload: "Security context not found" (optional)       |
 +------+----------+----------------------------------------------------------+
 
-#### 5.1.3. Identifier: TD_OSCORE_INCORRECT_02 {#test-11}
+#### 5.1.3. Identifier: TD_OSCORE_INCORRECTUSE_02 {#test-11}
 
 **Objective** : Perform a CON GET transaction with non matching Client Sender - Server Recipient Keys.
 
@@ -782,7 +782,7 @@ _server resources_:
 |      |          | - Payload: "Decryption failed" (optional)                |
 +------+----------+----------------------------------------------------------+
 
-#### 5.1.5. Identifier: TD_OSCORE_INCORRECT_03 {#test-12}
+#### 5.1.5. Identifier: TD_OSCORE_INCORRECTUSE_03 {#test-12}
 
 **Objective** : Perform a CON GET transaction with non matching Client Recipient - Server Sender Keys.
 
@@ -835,7 +835,7 @@ _server resources_:
 
 ### 5.2. Replay of a previously sent message {#replay}
 
-#### 5.2.1. Identifier: TD_OSCORE_INCORRECT_04 {#test-13}
+#### 5.2.1. Identifier: TD_OSCORE_INCORRECTUSE_04 {#test-13}
 
 **Objective** : Perform a CON GET transaction using OSCORE, Content-Format and Uri-Path option, request replayed by the Client.
 
@@ -883,7 +883,7 @@ _server resources_:
 
 ### 5.3. Accessing a non-OSCORE-protected resource with OSCORE {#auth}
 
-#### 5.3.1. Identifier: TD_OSCORE_INCORRECT_05 {#test-14}
+#### 5.3.1. Identifier: TD_OSCORE_INCORRECTUSE_05 {#test-14}
 
 **Objective** : Perform a CON GET transaction using OSCORE to an OSCORE-unaware resource server, Content-Format and Uri-Path option.
 
@@ -931,7 +931,7 @@ _server resources_:
 
 ### 5.4. Accessing an OSCORE-protected resource without OSCORE {#unauth}
 
-#### 5.4.1. Identifier: TD_OSCORE_INCORRECT_06 {#test-15}
+#### 5.4.1. Identifier: TD_OSCORE_INCORRECTUSE_06 {#test-15}
 
 **Objective** : Perform a CON GET transaction to a protected resource, Content-Format and Uri-Path option.
 
