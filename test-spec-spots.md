@@ -64,43 +64,43 @@ To be able to run Test 14, the implementer must run an OSCORE-unaware server.
 ### Security Context A: Client {#client-sec}
 
 * Common Context:
-    - Master Secret: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
+    - Master Secret: `01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23`
     - Alg: AES-CCM-16-64-128
-    - Context IV: 6B-D5-EF-74-94-47-95-DC-B4-A7-A2-D0-6B
+    - Context IV: `6B-D5-EF-74-94-47-95-DC-B4-A7-A2-D0-6B`
 * Sender Context:
-    - Sender Id: 63-6C-69-65-6E-74
-    - Sender Key: 8D-41-3A-D6-59-FA-1C-F0-B0-7C-2F-D9-6A-53-75-C3
+    - Sender Id: `63-6C-69-65-6E-74`
+    - Sender Key: `8D-41-3A-D6-59-FA-1C-F0-B0-7C-2F-D9-6A-53-75-C3`
     - Sender Seq Number: 00
-    - Sender IV: 6D-D5-8C-18-FD-22-FB-A8-B4-A7-A2-D0-6B (using Partial IV: 00)
+    - Sender IV: `6D-D5-8C-18-FD-22-FB-A8-B4-A7-A2-D0-6B` (using Partial IV: 00)
 * Recipient Context:
-    - Recipient Id: 73-65-72-76-65-72
-    - Recipient Key: 4E-48-F7-CB-DC-2E-71-89-9A-6B-3C-82-13-4F-E5-09
-    - Recipient IV: 6D-D5-9C-11-E6-31-F0-AE-B4-A7-A2-D0-6B (using Partial IV: 00)
+    - Recipient Id: `73-65-72-76-65-72`
+    - Recipient Key: `4E-48-F7-CB-DC-2E-71-89-9A-6B-3C-82-13-4F-E5-09`
+    - Recipient IV: `6D-D5-9C-11-E6-31-F0-AE-B4-A7-A2-D0-6B` (using Partial IV: 00)
 
 ### Security Context B: Server {#server-sec}
 
 * Common Context:
-    - Master Secret: 01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23
+    - Master Secret: `01-02-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-10-11-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-20-21-22-23`
     - Alg: AES-CCM-16-64-128
-    - Context IV: 6B-D5-EF-74-94-47-95-DC-B4-A7-A2-D0-6B
+    - Context IV: `6B-D5-EF-74-94-47-95-DC-B4-A7-A2-D0-6B`
 * Sender Context:
-    - Sender Id: 73-65-72-76-65-72
-    - Sender Key: 4E-48-F7-CB-DC-2E-71-89-9A-6B-3C-82-13-4F-E5-09
+    - Sender Id: `73-65-72-76-65-72`
+    - Sender Key: `4E-48-F7-CB-DC-2E-71-89-9A-6B-3C-82-13-4F-E5-09`
     - Sender Seq Number: 00
-    - Sender IV: 6D-D5-9C-11-E6-31-F0-AE-B4-A7-A2-D0-6B (using Partial IV: 00)
+    - Sender IV: `6D-D5-9C-11-E6-31-F0-AE-B4-A7-A2-D0-6B` (using Partial IV: 00)
 * Recipient Context:
-    - Recipient Id: 63-6C-69-65-6E-74
-    - Recipient Key: 8D-41-3A-D6-59-FA-1C-F0-B0-7C-2F-D9-6A-53-75-C3
-    - Recipient IV: 6D-D5-8C-18-FD-22-FB-A8-B4-A7-A2-D0-6B (using Partial IV: 00)
+    - Recipient Id: `63-6C-69-65-6E-74`
+    - Recipient Key: `8D-41-3A-D6-59-FA-1C-F0-B0-7C-2F-D9-6A-53-75-C3`
+    - Recipient IV: `6D-D5-8C-18-FD-22-FB-A8-B4-A7-A2-D0-6B` (using Partial IV: 00)
 
 ### Resources
 
 The list of resources the OSCORE-aware server must implement is the following:
 
-* /oscore/hello/coap : authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
-* /oscore/hello/1 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain)
-* /oscore/hello/2 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain), and with ETag 0x2b
-* /oscore/hello/3 : protected resource, authorized method: GET, returns the string "Hello World!" with content-format 0 (text/plain), and Max-Age 5
+* /oscore/hello/coap : authorized method: GET, returns the string `Hello World!` with content-format 0 (text/plain)
+* /oscore/hello/1 : protected resource, authorized method: GET, returns the string `Hello World!` with content-format 0 (text/plain)
+* /oscore/hello/2 : protected resource, authorized method: GET, returns the string `Hello World!` with content-format 0 (text/plain), and with ETag 0x2b
+* /oscore/hello/3 : protected resource, authorized method: GET, returns the string `Hello World!` with content-format 0 (text/plain), and Max-Age 5
 * /oscore/hello/6 : protected resource, authorized method: POST, returns the value of the resource with content-format 0 (text/plain)
 * /oscore/hello/7 : protected resource, authorized method: PUT, returns the value of the resource with content-format 0 (text/plain), has ETag 0x7b
 * /oscore/observe : protected resource, authorized method: GET, returns a counter incremented every 2 seconds, supports observe.
@@ -143,7 +143,7 @@ _server resources_:
 |      |          |                                                          |
 |      |          | - Code: 2.05 Content                                     |
 |      |          | - Content-Format: text/plain                             |
-|      |          | - Payload: "Hello World!"                                |
+|      |          | - Payload: `Hello World!`                                |
 +------+----------+----------------------------------------------------------+
 
 ## 4. Correct OSCORE use
@@ -203,7 +203,7 @@ _server resources_:
 |      |          | - OSCORE verification succeeds                           |
 |      |          | - Code: 2.05 Content                                     |
 |      |          | - Content-Format: text/plain                             |
-|      |          | - Payload: "Hello World!"                                |
+|      |          | - Payload: `Hello World!`                                |
 +------+----------+----------------------------------------------------------+
 
 #### 4.1.3. Identifier: TD_OSCORE_CORRECTUSE_02 {#test-2}
@@ -260,7 +260,7 @@ _server resources_:
 |      |          | - Code: 2.05 Content                                     |
 |      |          | - Content-Format: text/plain                             |
 |      |          | - ETag: 0x2b                                             |
-|      |          | - Payload: "Hello World!"                                |
+|      |          | - Payload: `Hello World!`                                |
 +------+----------+----------------------------------------------------------+
 
 #### 4.1.5. Identifier: TD_OSCORE_CORRECTUSE_03 {#test-3}
@@ -318,7 +318,7 @@ _server resources_:
 |      |          | - Code: 2.05 Content                                     |
 |      |          | - Content-Format: text/plain                             |
 |      |          | - Max-Age: 05                                            |
-|      |          | - Payload: "Hello World!"                                |
+|      |          | - Payload: `Hello World!`                                |
 +------+----------+----------------------------------------------------------+
 
 #### 4.1.7. Identifier: TD_OSCORE_CORRECTUSE_04 {#test-4}
@@ -375,7 +375,7 @@ _server resources_:
 |      |          | - OSCORE verification succeeds                           |
 |      |          | - Code: 2.05 Content                                     |
 |      |          | - Content-Format: text/plain                             |
-|      |          | - Payload: "Hello World!"                                |
+|      |          | - Payload: `Hello World!`                                |
 +------+----------+----------------------------------------------------------+
 
 #### 4.1.9. Identifier: TD_OSCORE_CORRECTUSE_05 {#test-5}
@@ -734,7 +734,7 @@ _server resources_:
 |      |          |                                                          |
 |      |          | - Code: 4.01 Unauthorized                                |
 |      |          | - Max-Age: 0                                             |
-|      |          | - Payload: "Security context not found" (optional)       |
+|      |          | - Payload: `Security context not found` (optional)       |
 +------+----------+----------------------------------------------------------+
 
 #### 5.1.3. Identifier: TD_OSCORE_INCORRECTUSE_02 {#test-11}
@@ -779,7 +779,7 @@ _server resources_:
 |      |          |                                                          |
 |      |          | - Code: 4.00 Bad Request                                 |
 |      |          | - Max-Age: 0                                             |
-|      |          | - Payload: "Decryption failed" (optional)                |
+|      |          | - Payload: `Decryption failed` (optional)                |
 +------+----------+----------------------------------------------------------+
 
 #### 5.1.5. Identifier: TD_OSCORE_INCORRECTUSE_03 {#test-12}
@@ -878,7 +878,7 @@ _server resources_:
 |      |          |                                                          |
 |      |          | - Code: 4.01 Unauthorized                                |
 |      |          | - Max-Age: 0                                             |
-|      |          | - Payload: "Replay protection failed" (optional)         |
+|      |          | - Payload: `Replay protection failed` (optional)         |
 +------+----------+----------------------------------------------------------+
 
 ### 5.3. Accessing a non-OSCORE-protected resource with OSCORE {#auth}
