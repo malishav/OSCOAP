@@ -3,14 +3,21 @@
 [//]: # (use Pandoc : pandoc spec.md -o spec.html)
 
 ## Table of Contents
-1. [Notes](#notes)
-2. [Security Contexts and Resources](#security-contexts-and-resources)
-    1. [Security Context A: Client](#client-sec)
-    2. [Security Context B: Server](#server-sec)
-    3. [Resources](#resources)
-3. [Set up the environment](#env-setup)
+0. [Glossary](#glossary)
+1. [Introduction](#intro)
+2. [Overview of OSCORE](#oscore)
+3. [Testing with F-Interop Platform](#finterop)
+4. [The Test Description Proforma](#proforma)
+5. [Conventions](#conventions)
+6. [Test Configuration](#config)
+    1. [Implementation Under Test](#iut)
+    2. [System Under Test](#sut)
+    3. [Security Context A: Client](#client-sec)
+    4. [Security Context B: Server](#server-sec)
+    5. [Resources](#resources)
+7. [Environment Setup Tests](#env-setup)
     1. [Test 0](#test-0)
-4. [Correct OSCORE use](#correct-oscore-use)
+8. [Correct OSCORE Use Tests](#correct-oscore)
     1. [GET test](#get)
         1. [Test 1](#test-1)
         2. [Test 2](#test-2)
@@ -24,7 +31,7 @@
         3. [Test 8](#test-8)
     4. [DELETE test](#del)
         1. [Test 9](#test-9)
-5. [Incorrect OSCORE use](#incorrect-oscore)
+9. [Incorrect OSCORE Use Tests](#incorrect-oscore)
     1. [Security Context not matching](#sec-context)
         1. [Test 10](#test-10)
         3. [Test 11](#test-11)
@@ -36,14 +43,72 @@
     4. [Accessing an OSCORE-protected resource without OSCORE](#unauth)
         1. [Test 15](#test-15)
 
-## 1. Notes
+## Glossary {#glossary}
 
-This test description (TD) facilitates automated, remote testing of OSCORE ([https://tools.ietf.org/html/draft-ietf-core-object-security-07](https://tools.ietf.org/html/draft-ietf-core-object-security-07)) as enabled by the [SPOTS](http://spots.ac.me) and [F-Interop](http://www.f-interop.eu) projects.
+* OSCORE: Object Security for Constrained RESTful Environments. See [Overview of OSCORE](#oscore).
+* Stimulus: Type of a test step. See [The Test Description Proforma](#proforma).
+* Configure: Type of a test step. See [The Test Description Proforma](#proforma).
+* Check: Type of a test step. See [The Test Description Proforma](#proforma).
+* IUT: Implementation Under Test. See [Test Configuration](#config).
+* SUT: System Under Test. See [Test Configuration](#config).
+
+## 1. Introduction {#intro}
+
+This test description (TD) facilitates automated, remote testing of [OSCORE](https://tools.ietf.org/html/draft-ietf-core-object-security-07) as enabled by the [SPOTS](http://spots.ac.me) and [F-Interop](http://www.f-interop.eu) projects.
 
 The TD follows the structure used for previous OSCORE interop events but the test cases have been redesigned to enable automated test execution based on F-Interop 6TiSCH testing tool and Wireshark.
 
 University of Montenegro reserves the right to update the TD as tests are implemented in the F-Interop 6TiSCH testing tool. 
 An up to date version of the TD can be found at: [https://github.com/malishav/TD-OSCORE](https://github.com/malishav/TD-OSCORE).
+
+## 2. Overview of OSCORE {#oscore}
+
+Object Security for Constrained RESTful Environments (OSCORE) is a mechanism to secure Constrained Application Protocol (CoAP).
+Its distinguishing feature is that it provides end-to-end security in all scenarios where CoAP can be used, including communication through CoAP proxies, CoAP-to-HTTP proxies, and group communication (specified in a companion document).
+Note how this contrasts (D)TLS-secured CoAP that only supports basic client-server exchanges with no intermediary proxies.
+
+OSCORE assumes the existence of a security context shared between the client and the server.
+How this context is established is considered out-of-scope and happens either out-of-band or through a separate protocol such as [EDHOC](https://tools.ietf.org/html/draft-selander-ace-cose-ecdhe-07) or [DTLS handshake](https://tools.ietf.org/html/rfc6347).
+The context, among other parameters, contains security keys used to encrypt (resp. decrypt) outgoing (resp. incoming) messages.
+
+OSCORE takes an unsecured CoAP message as its input and transforms it into an 'OSCORE message'.
+OSCORE message complies with the base CoAP header format but its contents is encrypted and integrity protected.
+For example, a GET request protected with OSCORE appears on the wire as a generic POST request.
+Once the server receives and processes the request with OSCORE, it recognizes it as a GET, from where on CoAP processing takes place.
+To test OSCORE processing, one needs to check that the OSCORE implementation generates correct on-the-wire format, as well as that it correctly decrypts and composes an underlying CoAP message.
+Responses are cryptographically bound to requests, and both are protected against replay attacks.
+For details on OSCORE processing, the reader is referred to the latest [technical specification](https://tools.ietf.org/html/draft-ietf-core-object-security-07).
+
+## 3. Testing with F-Interop Platform {#finterop}
+
+The tests described in this document will be implemented as part of the [F-Interop](http://www.f-interop.eu) platform.
+We will integrate OSCORE tests as a test suite within the 6TiSCH Testing Tool.
+A stub OSCORE test has already been implemented and tested with the 6TiSCH testing tool.
+
+Because 6TiSCH Testing Tool is based on Wireshark (tshark), an ongoing work develops the Wireshark dissector of OSCORE.
+Tests in this TD were designed to make use of a dissection that can provide information both on:
+
+* OSCORE-protected CoAP message, i.e. fields legible on-the-wire.
+* Decrypted OSCORE message, i.e. CoAP message resulting from OSCORE decryption and processing.
+
+The developed Wireshark dissector will support filtering by these two high level criteria.
+It will then be used within the 6TiSCH Testing Tool to implement the specific tests.
+
+## 4. The Test Description Proforma {#proforma}
+
+The test descriptions are provided in proforma tables, which include the different steps of the Test Sequence.
+The steps can be of different types, depending on their purpose:
+
+* A *stimulus* corresponds to an event that triggers a specific protocol action on an Implementation Under Test (IUT), such as sending a message.
+
+* A *configure* corresponds to an action to modify the IUT or System Under Test (SUT) configuration.
+
+* A *check* consists of observing that one IUT behaves as described in the standard: i.e. resource creation, update, deletion, etc.
+For each check in the Test Sequence, a result can be recorded.
+
+* The overall *Verdict* is considered "PASS" if and only if all the checks in the sequence are "PASS".
+
+## 5. Conventions {#conventions}
 
 ### Constants
 
@@ -52,14 +117,40 @@ Object-Security option is 21 in all the tests.
 ### Facilitating Debugging
 
 The client and server may optionally display sent and received messages, external_aad and COSE object (before and after compression) to simplify debugging.
+How this is done is implementation-specific.
+
+### Test Naming Conventions
+
+The tests in this document are grouped into 3 categories:
+
+* Set-up (SETUP): CoAP environment setup tests.
+* Correct use (CORRECTUSE): Tests of correct OSCORE use.
+* Incorrect use (INCORRECTUSE): Incorrect OSCORE use, testing error handling.
+
+To identify each test, this TD uses the following naming convention: TD_OSCORE_X_Y.
+X denotes the category, Y denotes the unique test identifier within category X.
 
 ### Miscellaneous
 
 When non-indicated, CoAP messages can be NON or CON (implementer's choice).
+The type of the CoAP message does not influence the corresponding behavior when OSCORE is correcly used.
+The type is explicitly defined for incorrect usage tests, where it influences the behavior.
 
 To be able to run Test 14, the implementer must run an OSCORE-unaware server.
 
-## 2. Security Contexts and Resources
+## 6. Test Configuration {#config}
+
+### Implementation Under Test {#iut}
+
+In the context of OSCORE, an Implementation Under Test (IUT) implements at least:
+
+* [RFC7252](https://tools.ietf.org/html/rfc7252) (CoAP)
+* [draft-ietf-core-object-security](https://tools.ietf.org/html/draft-ietf-core-object-security-07)
+
+### System Under Test {#sut}
+
+The System Under Test (SUT) is composed of two Implementations Under Test (IUTs), one implementing CoAP client and the other implementing CoAP server.
+IP connectivity between the client and the server is assumed for the tests to be executed.
 
 ### Security Context A: Client {#client-sec}
 
@@ -112,9 +203,9 @@ The list of resource the OSCORE-unaware server must implement is the following:
 
 ------
 
-## 3. Set up the environment {#env-setup}
+## 7. Environment Setup Tests {#env-setup}
 
-### 3.1. Identifier: TD_OSCORE_SETUP_01 {#test-0}
+### 7.1. Identifier: TD_OSCORE_SETUP_01 {#test-0}
 
 **Objective** : Verify that CoAP exchange works. Perform a simple GET transaction using COAP, Content-Format and Uri-Path option
 
@@ -146,11 +237,11 @@ _server resources_:
 |      |          | - Payload: `Hello World!`                                |
 +------+----------+----------------------------------------------------------+
 
-## 4. Correct OSCORE use
+## 8. Correct OSCORE Use Tests {#correct-oscore}
 
-### 4.1 GET Tests {#get}
+### 8.1 GET Tests {#get}
 
-#### 4.1.1. Identifier: TD_OSCORE_CORRECTUSE_01 {#test-1}
+#### 8.1.1. Identifier: TD_OSCORE_CORRECTUSE_01 {#test-1}
 
 **Objective** : Perform a simple GET transaction using OSCORE, Content-Format and Uri-Path option
 
@@ -206,7 +297,7 @@ _server resources_:
 |      |          | - Payload: `Hello World!`                                |
 +------+----------+----------------------------------------------------------+
 
-#### 4.1.3. Identifier: TD_OSCORE_CORRECTUSE_02 {#test-2}
+#### 8.1.2. Identifier: TD_OSCORE_CORRECTUSE_02 {#test-2}
 
 **Objective** : Perform a GET transaction using OSCORE, Content-Format, Uri-Path, Uri-Query and ETag option
 
@@ -263,7 +354,7 @@ _server resources_:
 |      |          | - Payload: `Hello World!`                                |
 +------+----------+----------------------------------------------------------+
 
-#### 4.1.5. Identifier: TD_OSCORE_CORRECTUSE_03 {#test-3}
+#### 8.1.3. Identifier: TD_OSCORE_CORRECTUSE_03 {#test-3}
 
 **Objective** : Perform a GET transaction using OSCORE, Content-Format, Uri-Path, Accept and Max-Age option
 
@@ -321,7 +412,7 @@ _server resources_:
 |      |          | - Payload: `Hello World!`                                |
 +------+----------+----------------------------------------------------------+
 
-#### 4.1.7. Identifier: TD_OSCORE_CORRECTUSE_04 {#test-4}
+#### 8.1.4. Identifier: TD_OSCORE_CORRECTUSE_04 {#test-4}
 
 **Objective** : Perform a GET transaction using OSCORE, Content-Format, Uri-Path, and Observe. Response without observe.
 
@@ -378,7 +469,7 @@ _server resources_:
 |      |          | - Payload: `Hello World!`                                |
 +------+----------+----------------------------------------------------------+
 
-#### 4.1.9. Identifier: TD_OSCORE_CORRECTUSE_05 {#test-5}
+#### 8.1.5. Identifier: TD_OSCORE_CORRECTUSE_05 {#test-5}
 
 **Objective** : Perform a GET transaction using OSCORE, Content-Format, Uri-Path, and Observe.
 
@@ -455,9 +546,9 @@ _server resources_:
 |      |          | - Payload: arbitrary                                     |
 +------+----------+----------------------------------------------------------+
 
-### 4.2. POST Tests {#post}
+### 8.2. POST Tests {#post}
 
-#### 4.2.1. Identifier: TD_OSCORE_CORRECTUSE_06 {#test-6}
+#### 8.2.1. Identifier: TD_OSCORE_CORRECTUSE_06 {#test-6}
 
 **Objective** : Perform a POST transaction using OSCORE, Content-Format, and Uri-Path option, changing a resource.
 
@@ -515,9 +606,9 @@ _server resources_:
 |      |          | - Payload: 0x4a                                          |
 +------+----------+----------------------------------------------------------+
 
-### 4.3 PUT Tests {#PUT}
+### 8.3 PUT Tests {#PUT}
 
-#### 4.3.1. Identifier: TD_OSCORE_CORRECTUSE_07 {#test-7}
+#### 8.3.1. Identifier: TD_OSCORE_CORRECTUSE_07 {#test-7}
 
 **Objective** : Perform a PUT transaction using OSCORE, Uri-Path, Content-Format and If-Match option.
 
@@ -576,7 +667,7 @@ _server resources_:
 |      |          | - Payload: 0x7a                                          |
 +------+----------+----------------------------------------------------------+
 
-#### 4.3.3. Identifier: TD_OSCORE_CORRECTUSE_08 {#test-8}
+#### 8.3.2. Identifier: TD_OSCORE_CORRECTUSE_08 {#test-8}
 
 **Objective** : Perform a PUT transaction using OSCORE, Uri-Path, Content-Format and If-None-Match option.
 
@@ -633,9 +724,9 @@ _server resources_:
 |      |          | - Code: 4.12 Precondition Failed                         |
 +------+----------+----------------------------------------------------------+
 
-### 4.4. DELETE Tests {#DEL}
+### 8.4. DELETE Tests {#DEL}
 
-#### 4.4.1. Identifier: TD_OSCORE_CORRECTUSE_09 {#test-9}
+#### 8.4.1. Identifier: TD_OSCORE_CORRECTUSE_09 {#test-9}
 
 **Objective** : Perform a DELETE transaction using OSCORE and Uri-Path option.
 
@@ -688,11 +779,11 @@ _server resources_:
 |      |          | - Code: 2.02 Deleted                                     |
 +------+----------+----------------------------------------------------------+
 
-## 5. Incorrect OSCORE use {#incorrect-oscore}
+## 9. Incorrect OSCORE use {#incorrect-oscore}
 
-### 5.1. Security Context not matching {#sec-context}
+### 9.1. Security Context not matching {#sec-context}
 
-#### 5.1.1. Identifier: TD_OSCORE_INCORRECTUSE_01 {#test-10}
+#### 9.1.1. Identifier: TD_OSCORE_INCORRECTUSE_01 {#test-10}
 
 **Objective** : Perform an unauthorized CON GET transaction: non matching Client Sender Id - Server Recipient Id.
 
@@ -737,7 +828,7 @@ _server resources_:
 |      |          | - Payload: `Security context not found` (optional)       |
 +------+----------+----------------------------------------------------------+
 
-#### 5.1.3. Identifier: TD_OSCORE_INCORRECTUSE_02 {#test-11}
+#### 9.1.2. Identifier: TD_OSCORE_INCORRECTUSE_02 {#test-11}
 
 **Objective** : Perform a CON GET transaction with non matching Client Sender - Server Recipient Keys.
 
@@ -782,7 +873,7 @@ _server resources_:
 |      |          | - Payload: `Decryption failed` (optional)                |
 +------+----------+----------------------------------------------------------+
 
-#### 5.1.5. Identifier: TD_OSCORE_INCORRECTUSE_03 {#test-12}
+#### 9.1.3. Identifier: TD_OSCORE_INCORRECTUSE_03 {#test-12}
 
 **Objective** : Perform a CON GET transaction with non matching Client Recipient - Server Sender Keys.
 
@@ -833,9 +924,9 @@ _server resources_:
 |      |          | - OSCORE verification fails (Decryption failed)          |
 +------+----------+----------------------------------------------------------+
 
-### 5.2. Replay of a previously sent message {#replay}
+### 9.2. Replay of a previously sent message {#replay}
 
-#### 5.2.1. Identifier: TD_OSCORE_INCORRECTUSE_04 {#test-13}
+#### 9.2.1. Identifier: TD_OSCORE_INCORRECTUSE_04 {#test-13}
 
 **Objective** : Perform a CON GET transaction using OSCORE, Content-Format and Uri-Path option, request replayed by the Client.
 
@@ -881,9 +972,9 @@ _server resources_:
 |      |          | - Payload: `Replay protection failed` (optional)         |
 +------+----------+----------------------------------------------------------+
 
-### 5.3. Accessing a non-OSCORE-protected resource with OSCORE {#auth}
+### 9.3. Accessing a non-OSCORE-protected resource with OSCORE {#auth}
 
-#### 5.3.1. Identifier: TD_OSCORE_INCORRECTUSE_05 {#test-14}
+#### 9.3.1. Identifier: TD_OSCORE_INCORRECTUSE_05 {#test-14}
 
 **Objective** : Perform a CON GET transaction using OSCORE to an OSCORE-unaware resource server, Content-Format and Uri-Path option.
 
@@ -929,9 +1020,9 @@ _server resources_:
 |      |          | - Payload: arbitrary (optional)                          |
 +------+----------+----------------------------------------------------------+
 
-### 5.4. Accessing an OSCORE-protected resource without OSCORE {#unauth}
+### 9.4. Accessing an OSCORE-protected resource without OSCORE {#unauth}
 
-#### 5.4.1. Identifier: TD_OSCORE_INCORRECTUSE_06 {#test-15}
+#### 9.4.1. Identifier: TD_OSCORE_INCORRECTUSE_06 {#test-15}
 
 **Objective** : Perform a CON GET transaction to a protected resource, Content-Format and Uri-Path option.
 
