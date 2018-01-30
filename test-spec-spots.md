@@ -286,7 +286,7 @@ _server resources_:
 |      |          | decoded as:                                              |
 |      |          |                                                          |
 |      |          | - Code: 2.04 Changed                                     |
-|      |          | - Object-Security: non-empty                             |
+|      |          | - Object-Security: empty                                 |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 5    | Check    | Client decrypts, parses, and processes the response:     |
@@ -342,7 +342,7 @@ _server resources_:
 |      |          | decoded as:                                              |
 |      |          |                                                          |
 |      |          | - Code: 2.04 Changed                                     |
-|      |          | - Object-Security: non-empty                             |
+|      |          | - Object-Security: empty                                 |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 5    | Check    | Client decrypts, parses, and processes the response:     |
@@ -400,7 +400,7 @@ _server resources_:
 |      |          | decoded as:                                              |
 |      |          |                                                          |
 |      |          | - Code: 2.04 Changed                                     |
-|      |          | - Object-Security: non-empty                             |
+|      |          | - Object-Security: empty                                 |
 |      |          | - Payload: ciphertext                                    |
 +------+----------+----------------------------------------------------------+
 | 5    | Check    | Client decrypts, parses, and processes the response:     |
