@@ -82,17 +82,28 @@ For details on OSCORE processing, the reader is referred to the latest [technica
 ## 3. Testing with F-Interop Platform {#finterop}
 
 The tests described in this document will be implemented as part of the [F-Interop](http://www.f-interop.eu) platform.
-We will integrate OSCORE tests as a test suite within the 6TiSCH Testing Tool.
-A stub OSCORE test has already been implemented and tested with the 6TiSCH testing tool.
+More specifically, SPOTS complements the 6TiSCH Testing Tool of F-Interop.
+This is illustrated in the following figure.
 
-Because 6TiSCH Testing Tool is based on Wireshark (tshark), an ongoing work develops the Wireshark dissector of OSCORE.
-Tests in this TD were designed to make use of a dissection that can provide information both on:
+<img src="spots-finterop.png" alt="SPOTS test suites within F-Interop." style="width: 500px;" align="middle"/>
 
-* OSCORE-protected CoAP message, i.e. fields legible on-the-wire.
-* Decrypted OSCORE message, i.e. CoAP message resulting from OSCORE decryption and processing.
+6TiSCH Testing Tool connects to the AMQP bus provided by the Orchestrator component and implements the [F-Interop API](http://doc.f-interop.eu/).
+To allow the user to run a SPOTS test from an F-Interop GUI session, 6TiSCH Testing Tool interacts with the GUI through AMQP messages conformant to the F-Interop API.
+The GUI is agnostic of different testing tools available as part of F-Interop and simply renders the messages received, shifting the test logic and workflow completely to the testing tool.
 
-The developed Wireshark dissector will support filtering by these two high level criteria.
-It will then be used within the 6TiSCH Testing Tool to implement the specific tests.
+For example, to allow the user to select a 6TiSCH Secure Join test from the list of tests available as part of the 6TiSCH Testing Tool, an AMQP message sent by the testing tool simply needs to be complemented with an additional map entry containing label "TD\_6TiSCH\_SECJOIN\_01" and a default value triggering the corresponding test.
+The GUI component renders the drop-down menu in the web interface and publishes back the user selection, used by the testing tool to launch a specific test.
+
+<img src="6tisch-finterop.png" alt="F-Interop 6TiSCH architecture." style="width: 500px;" align="middle"/>
+
+The figure above illustrates in more details how the actual testing with 6TiSCH Testing Tool is performed.
+
+The 6TiSCH Agent programs one of user devices to act as a sniffer node and transfer to the F-Interop Cloud the actual packets exchanged over the air in user's physical vicinity.
+Another user device is programmed as a reference implementation, with the image of the reference implementation being provided by F-Interop.
+Finally, the user provides an Implementation Under Test (IUT) that runs on another device and communicates with the reference implementation over the air, as instructed by the Agent.
+
+The 6TiSCH Testing tool expects the sniffed packets sent by the Agent, and runs tests against them.
+Internally, the 6TiSCH Testing Tool uses Wireshark to dissect the packets and verify conformance of different fields, as specified in indvidual test cases of this test description.
 
 ## 4. The Test Description Proforma {#proforma}
 
